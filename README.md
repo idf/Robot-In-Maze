@@ -1,4 +1,4 @@
 ntu.sce.mdp.15
 ==============
-TO BE FASTEST.  
+TO BE THE FASTEST.  
 Swifter, stronger, and more precise.
