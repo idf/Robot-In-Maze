@@ -1,3 +1,4 @@
 ntu.sce.mdp.15
 ==============
-SWIFTER, STRONGER, AND MORE ACCURATE.
+TO BE FASTEST.
+Swifter, stronger, and more precise.
