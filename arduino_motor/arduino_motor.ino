@@ -1,24 +1,17 @@
 #include <PololuWheelEncoders.h>
-#include <PID_v1.h>
-#include <Servo.h>
+#include <PID_v1.h>  // install from https://github.com/br3ttb/Arduino-PID-Library/
+#include <Servo.h>   // Arduino Internal Library // RC (hobby) servo motors. 
 static boolean informReadyOnce = false;
 static boolean countTicksForAngleOrDist = false;
 
 Servo myServo;
-//PololuWheelEncoders encoder;
 
-const int wheelDiameter = 6; 
-const int countsPerRevolution = 2249;
-const float thresh = 20;
-//const float noOfTicksPerCm = 2249/(PI*6);
-const float noOfCmPerTick = (PI*6)/2249;
-//const float noOfCmPerDegree = (PI*17.2)/360;
-//float leftCounter, rightCounter;
-
-// Analog Pins; middle sensor [0], left sensor [1], right sensor [2]
+const int WHEEL_DIAMETER = 6; 
+const int COUNTS_PER_REVOLUTION = 2249;
+const float DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 const int sensorPin0 = 0, sensorPin1 = 1, sensorPin2 = 2, sensorPin3 = 3;
-const int maxSpeedA = 225; // Max speed for motor based on pwn A (right)
-const int maxSpeedB = 225; // Max speed for motor based on pwn B (left)
+const int MAX_SPEED_A = 225; // Max speed for motor based on pwn A (right)
+const int MAX_SPEED_B = 225; // Max speed for motor based on pwn B (left)
 
 // Digital Pins
 int pwm_right = 3;  // PWM control for motor outputs 1 and 2 is on digital pin 3
@@ -27,16 +20,10 @@ int dir_right = 12;  // Direction control for motor outputs 1 and 2 is on digita
 int dir_left = 13;  // Direction control for motor outputs 3 and 4 is on digital pin 13
 int caseCheck = 8;
 
-
-
-
-// 2249 ticks for one full revolution
 double leftWheelTickCount = 0;  
 double rightWheelTickCount = 0;
 float leftTicksForAngleOrDist = 0;
 float rightTicksForAngleOrDist = 0;
-
-
 
 int LOOPTIME = 100;
 unsigned long lastMilli = 0;
@@ -59,12 +46,9 @@ int leftEncoderOne = 8;
 int leftEncoderTwo = 9;
 long currentTicks = 0;
 
-
-
 double setMotor;
 
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup()
 {
   // Set sensor control pins to be outputs
@@ -104,7 +88,7 @@ void setup()
   timing = millis();
   myServo.attach(A4);
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Uses specified distance(cm) to calculate the distance
 float distCentimeter(float centimeter) {
   float divisibleTicks;
@@ -137,6 +121,7 @@ float distCentimeter(float centimeter) {
   return dist;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Uses specified angle(degree) to calculate the turns
 float turnAngle(int angle) {
   float divisibleTicks;
@@ -205,6 +190,7 @@ float turnAngleR(int angle) {
   float angleToTurn = ticksForOneDegree * angle;
   return angleToTurn;
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Infinite loop routine for robot
 void loop()
 {
@@ -227,7 +213,7 @@ void loop()
   detectObstacle();
   readSensor(sensorValue0, sensorValue1, sensorValue2, sensorValue3); // prints sensors' readings
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void configureMotorForTurn() {
   //resetPololuTicks();
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
@@ -242,8 +228,8 @@ void configureMotorForTurn() {
       float leftTime = leftPololuCount - previousLeftTick;
       float rightTime = rightPololuCount - previousRightTick;
 
-      float leftcm = noOfCmPerTick * leftTime;
-      float rightcm = noOfCmPerTick * rightTime;
+      float leftcm = DISTANCE_PER_TICK_CM * leftTime;
+      float rightcm = DISTANCE_PER_TICK_CM * rightTime;
 
       leftTime = leftTime / (timez);
       leftTime = leftTime * 1000;
@@ -271,7 +257,7 @@ void configureMotorForTurn() {
     halt();
   }
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void configureMotor() {
 
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
@@ -287,8 +273,8 @@ void configureMotor() {
       float leftTime = leftPololuCount -previousLeftTick;
       float rightTime = rightPololuCount -previousRightTick;
 
-      float leftcm = noOfCmPerTick * leftTime;
-      float rightcm = noOfCmPerTick * rightTime;
+      float leftcm = DISTANCE_PER_TICK_CM * leftTime;
+      float rightcm = DISTANCE_PER_TICK_CM * rightTime;
       float distanceToTravel = (leftcm + rightcm)/2;
       deltaHeading =  (leftcm-rightcm) / 17.2 + deltaHeading;
       deltaX = (distanceToTravel * cos(deltaHeading) + deltaX); // + 0.2
@@ -320,7 +306,7 @@ void configureMotor() {
     halt();
   }
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void detectObstacle() {
   int sensorValue0, sensorValue1, sensorValue2, sensorValue3;
   int meanSensorValue0 = 0, meanSensorValue1 = 0, meanSensorValue2 = 0, meanSensorValue3 = 0;
@@ -416,7 +402,7 @@ void detectObstacle() {
  
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Read value from sensors
 void readSensor(int sensorValue0, int sensorValue1, int sensorValue2, int sensorValue3) {
   int rightDistance = rightSensorDistanceMeasuredInCM(sensorValue2);
@@ -425,6 +411,7 @@ void readSensor(int sensorValue0, int sensorValue1, int sensorValue2, int sensor
   int bottomDistance = bottomSensorDistanceMeasuredInCM(sensorValue3);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Listen for serial data from raspberry
 long readSerial() {
   unsigned long serialData = 0;
@@ -447,6 +434,7 @@ long readSerial() {
   return serialData;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void executeCommand() {
   //resetPololuTicks();
   float timeDelay, multiple;
@@ -487,7 +475,7 @@ void executeCommand() {
 }
 
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void resetPololuTicks() {
   PololuWheelEncoders::getCountsAndResetM1();
   PololuWheelEncoders::getCountsAndResetM2();
@@ -496,18 +484,20 @@ void resetPololuTicks() {
 float getDistance() {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-  float leftcm = ((PI*6)/2249) * leftPololuCount;
-  float rightcm = ((PI*6)/2249) * rightPololuCount;
+  float leftcm = (DISTANCE_PER_TICK_CM * leftPololuCount;
+  float rightcm = (DISTANCE_PER_TICK_CM * rightPololuCount;
   float averageDist = (leftcm + rightcm) / 2;
   return averageDist;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Run robot at max speed
 void runMotor(int moveSpeedA, int moveSpeedB) {
   analogWrite(pwm_right, moveSpeedA);  
   analogWrite(pwm_left, moveSpeedB);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Move forward
 void moveForward(float dist) {
   //resetPololuTicks();
@@ -543,7 +533,7 @@ void moveForward(float dist) {
   delay(40);
   halt();
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Turn right
 void turnRight(int angle) {
   resetPololuTicks();
@@ -583,10 +573,10 @@ void turnRight(int angle) {
   resetPololuTicks();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Turn left
 void turnLeft(int angle) {
   resetPololuTicks();
-  //runMotor(maxSpeedA, maxSpeedB); //Set both motors to run at 100% duty cycle (fast)
   digitalWrite(dir_right, LOW);  //Set motor direction, 1 low, 2 high
   digitalWrite(dir_left, HIGH); //Set motor direction, 3 high, 4 low
   //turnAngle(angle+1);
@@ -633,6 +623,7 @@ void reverse(float dist) {
   //resetPololuTicks();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop movement
 void halt() 
 { 
@@ -661,6 +652,7 @@ float bottomSensorDistanceMeasuredInCM(int btmSensor) {
   return distance;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Servo Turn
 void servoTurn(int angle) {
   if(angle>=0 && angle<5){
@@ -722,4 +714,4 @@ void servoTurn(int angle) {
   }
   
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
