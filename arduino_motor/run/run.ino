@@ -38,14 +38,20 @@ void accelerateTo(DualVNH5019MotorShield md,int initialSpeed, int targetSpeed, i
 
 void loop()
 {
-      
+  
+    md.setM2Speed(SPEED);
+    md.setM1Speed(SPEED);
+    
+      /*
     accelerateTo(md, 0, SPEED, DELAY);
     delay(1000);
     accelerateTo(md, SPEED, 0, DELAY);
     accelerateTo(md, 0, -SPEED, DELAY);
     delay(1000);
     accelerateTo(md, -SPEED, 0, DELAY);
-    // M1 & M2
+    */
+    
+    //M1 & M2
     /*
     for (int i = 0; i <= 400; i++)
     { 

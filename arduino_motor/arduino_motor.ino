@@ -1,4 +1,4 @@
-#include <PololuWheelEncoders.h>
+#include <PololuWheelEncoders.h> // read instruction: https://github.com/pololu/libpololu-avr/blob/master/src/README-Arduino.txt
 #include <PID_v1.h>  // install from https://github.com/br3ttb/Arduino-PID-Library/
 #include <Servo.h>   // Arduino Internal Library // RC (hobby) servo motors. 
 static boolean informReadyOnce = false;
@@ -484,8 +484,8 @@ void resetPololuTicks() {
 float getDistance() {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-  float leftcm = (DISTANCE_PER_TICK_CM * leftPololuCount;
-  float rightcm = (DISTANCE_PER_TICK_CM * rightPololuCount;
+  float leftcm = DISTANCE_PER_TICK_CM * leftPololuCount;
+  float rightcm = DISTANCE_PER_TICK_CM * rightPololuCount;
   float averageDist = (leftcm + rightcm) / 2;
   return averageDist;
 }
