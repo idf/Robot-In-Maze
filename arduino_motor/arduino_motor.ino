@@ -3,7 +3,6 @@
 #include <Servo.h>   // Arduino Internal Library // RC (hobby) servo motors. 
 #include <PID_AutoTune_v0.h> // install from https://github.com/br3ttb/Arduino-PID-AutoTune-Library
 static boolean informReadyOnce = false;
-static boolean countTicksForAngleOrDist = false;
 
 Servo myServo;
 const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
@@ -11,32 +10,27 @@ const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu whee
 48 CPR quadrature encoder on the motor shaft, 
 which provides 2249 counts per revolution (gear ratio: 47:1)
 */
-const int COUNTS_PER_REVOLUTION = 2249; 
+const int COUNTS_PER_REVOLUTION = 2249; // Not perfect - depends on wheels not slipping too much, but good enough
 const float DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 const int sensorPin0 = 0, sensorPin1 = 1, sensorPin2 = 2, sensorPin3 = 3;
 // analogWrite, max duty cycle
-const int MAX_SPEED = 255;
-const int MAX_SPEED_A = MAX_SPEED; // Max speed for motor based on pwn A (right)
-const int MAX_SPEED_B = MAX_SPEED; // Max speed for motor based on pwn B (left) 
+const int MAX_SPEED_ANALOG = 255;
 
 // Digital Pins
+
 int pwm_right = 3;  // PWM control for motor outputs 1 and 2 is on digital pin 3
 int pwm_left = 11;  // PWM control for motor outputs 3 and 4 is on digital pin 11
 int dir_right = 12;  // Direction control for motor outputs 1 and 2 is on digital pin 12
 int dir_left = 13;  // Direction control for motor outputs 3 and 4 is on digital pin 13
-int caseCheck = 8;
 
-double leftWheelTickCount = 0;  
-double rightWheelTickCount = 0;
 float leftTicksForAngleOrDist = 0;
 float rightTicksForAngleOrDist = 0;
-
-int LOOPTIME = 100;
-unsigned long lastMilli = 0;
 
 long timing = 0;
 long previousLeftTick = 0;
 long previousRightTick = 0;
+
+// PID
 double SetpointLeft, InputLeft, OutputLeft;
 double SetpointRight, InputRight, OutputRight;
 double SetpointMid, InputMid, OutputMid;
@@ -44,15 +38,15 @@ PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft,1,1,0, DIRECT);
 PID rightPID(&InputRight, &OutputRight, &SetpointRight,1,1,0, DIRECT);
 PID midPID(&InputMid, &OutputMid, &SetpointMid,1,1,1, DIRECT);
 
-float distanceS, deltaHeading, deltaX, deltaY;
+// Deduced Reckoning 
+float deltaHeading, deltaX, deltaY;
 
+// Encoder
 int rightEncoderOne = 6;
 int rightEncoderTwo = 7;
 int leftEncoderOne = 8;
 int leftEncoderTwo = 9;
-long currentTicks = 0;
 
-double setMotor;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup()
