@@ -2,6 +2,9 @@
 #include <PID_v1.h>  // install from https://github.com/br3ttb/Arduino-PID-Library/
 #include <Servo.h>   // Arduino Internal Library // RC (hobby) servo motors. 
 #include <PID_AutoTune_v0.h> // install from https://github.com/br3ttb/Arduino-PID-AutoTune-Library
+// not using DualVNH5019MotorShield.h
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 static boolean informReadyOnce = false;
 
 Servo myServo;
@@ -17,11 +20,35 @@ const int sensorPin0 = 0, sensorPin1 = 1, sensorPin2 = 2, sensorPin3 = 3;
 const int MAX_SPEED_ANALOG = 255;
 
 // Digital Pins
+/* 
+Changes:
+Default Pin Mapping 
+Arduino Pin VNH5019   Basic Function
+Digital 2   M1INA     Motor 1 *direction input A
+Digital 4   M1INB     Motor 1 *direction input B
+Digital 6   M1EN/DIAG Motor 1 enable input/fault output
+Digital 7   M2INA     Motor 2 *direction input A
+Digital 8   M2INB     Motor 2 *direction input B
+Digital 9   M1PWM     Motor 1 *speed input
+Digital 10  M2PWM     Motor 2 *speed input
+Digital 12  M2EN/DIAG Motor 2 enable input/fault output
+Analog  0   M1CS      Motor 1 current sense output
+Analog  1   M2CS      Motor 2 current sense output
 
+*/
+/*
+Original: Ardumoto
+more on https://www.sparkfun.com/products/9815
+
+Pin set up are from: http://dlnmh9ip6v2uc.cloudfront.net/downloads/Ardumoto/ardumoto_example.ino
+
+TODO: completely replaced by DualVNH5019MotorShield
+*/
 int pwm_right = 3;  // PWM control for motor outputs 1 and 2 is on digital pin 3
 int pwm_left = 11;  // PWM control for motor outputs 3 and 4 is on digital pin 11
 int dir_right = 12;  // Direction control for motor outputs 1 and 2 is on digital pin 12
 int dir_left = 13;  // Direction control for motor outputs 3 and 4 is on digital pin 13
+int val = 0;   
 
 float leftTicksForAngleOrDist = 0;
 float rightTicksForAngleOrDist = 0;
@@ -42,6 +69,7 @@ PID midPID(&InputMid, &OutputMid, &SetpointMid,1,1,1, DIRECT);
 float deltaHeading, deltaX, deltaY;
 
 // Encoder
+// Two channels for both speed and direction 
 int rightEncoderOne = 6;
 int rightEncoderTwo = 7;
 int leftEncoderOne = 8;
