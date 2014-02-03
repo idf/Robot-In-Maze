@@ -1,17 +1,23 @@
 #include <PololuWheelEncoders.h> // read instruction: https://github.com/pololu/libpololu-avr/blob/master/src/README-Arduino.txt
 #include <PID_v1.h>  // install from https://github.com/br3ttb/Arduino-PID-Library/
 #include <Servo.h>   // Arduino Internal Library // RC (hobby) servo motors. 
+#include <PID_AutoTune_v0.h> // install from https://github.com/br3ttb/Arduino-PID-AutoTune-Library
 static boolean informReadyOnce = false;
 static boolean countTicksForAngleOrDist = false;
 
 Servo myServo;
-
-const int WHEEL_DIAMETER = 6; 
-const int COUNTS_PER_REVOLUTION = 2249;
+const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
+/*
+48 CPR quadrature encoder on the motor shaft, 
+which provides 2249 counts per revolution (gear ratio: 47:1)
+*/
+const int COUNTS_PER_REVOLUTION = 2249; 
 const float DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 const int sensorPin0 = 0, sensorPin1 = 1, sensorPin2 = 2, sensorPin3 = 3;
-const int MAX_SPEED_A = 225; // Max speed for motor based on pwn A (right)
-const int MAX_SPEED_B = 225; // Max speed for motor based on pwn B (left)
+// analogWrite, max duty cycle
+const int MAX_SPEED = 255;
+const int MAX_SPEED_A = MAX_SPEED; // Max speed for motor based on pwn A (right)
+const int MAX_SPEED_B = MAX_SPEED; // Max speed for motor based on pwn B (left) 
 
 // Digital Pins
 int pwm_right = 3;  // PWM control for motor outputs 1 and 2 is on digital pin 3
@@ -68,8 +74,6 @@ void setup()
   
   PololuWheelEncoders::init(rightEncoderOne,rightEncoderTwo,leftEncoderOne,leftEncoderTwo);
   
-  //PID_left.SetMode(AUTOMATIC);
-  //PID_right.SetMode(AUTOMATIC);
   deltaHeading = PI/2;
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
