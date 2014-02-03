@@ -47,8 +47,7 @@ TODO: completely replaced by DualVNH5019MotorShield
 int pwm_right = 3;  // PWM control for motor outputs 1 and 2 is on digital pin 3
 int pwm_left = 11;  // PWM control for motor outputs 3 and 4 is on digital pin 11
 int dir_right = 12;  // Direction control for motor outputs 1 and 2 is on digital pin 12
-int dir_left = 13;  // Direction control for motor outputs 3 and 4 is on digital pin 13
-int val = 0;   
+int dir_left = 13;  // Direction control for motor outputs 3 and 4 is on digital pin 13  
 
 float leftTicksForAngleOrDist = 0;
 float rightTicksForAngleOrDist = 0;
