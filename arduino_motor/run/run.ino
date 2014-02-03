@@ -63,9 +63,9 @@ long previousRightTick = 0;
 double SetpointLeft, InputLeft, OutputLeft;
 double SetpointRight, InputRight, OutputRight;
 double SetpointMid, InputMid, OutputMid;
-PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft,1,1,0, DIRECT);
-PID rightPID(&InputRight, &OutputRight, &SetpointRight,1,1,0, DIRECT);
-PID midPID(&InputMid, &OutputMid, &SetpointMid,1,1,1, DIRECT);
+PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft, 1, 1, 0, DIRECT);
+PID rightPID(&InputRight, &OutputRight, &SetpointRight, 1, 1, 0, DIRECT);
+PID midPID(&InputMid, &OutputMid, &SetpointMid, 1, 1, 1, DIRECT);
 
 // Deduced Reckoning 
 float deltaHeading, deltaX, deltaY;
@@ -79,7 +79,7 @@ void setup()
   motorShield.init();
 
   // Encoder
-  PololuWheelEncoders::init(rightEncoderA,rightEncoderB,leftEncoderA,leftEncoderB);
+  PololuWheelEncoders::init(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB);
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
