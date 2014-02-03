@@ -32,8 +32,9 @@ Digital 8   M2INB     Motor 2 *direction input B
 Digital 9   M1PWM     Motor 1 *speed input
 Digital 10  M2PWM     Motor 2 *speed input
 Digital 12  M2EN/DIAG Motor 2 enable input/fault output
-Analog  0   M1CS      Motor 1 current sense output
-Analog  1   M2CS      Motor 2 current sense output
+
+Analog  A0  M1CS      Motor 1 current sense output
+Analog  A1  M2CS      Motor 2 current sense output
 
 */
 /*
@@ -49,6 +50,7 @@ int pwm_left = 11;  // PWM control for motor outputs 3 and 4 is on digital pin 1
 int dir_right = 12;  // Direction control for motor outputs 1 and 2 is on digital pin 12
 int dir_left = 13;  // Direction control for motor outputs 3 and 4 is on digital pin 13  
 
+// Ticking
 float leftTicksForAngleOrDist = 0;
 float rightTicksForAngleOrDist = 0;
 
@@ -64,9 +66,6 @@ PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft,1,1,0, DIRECT);
 PID rightPID(&InputRight, &OutputRight, &SetpointRight,1,1,0, DIRECT);
 PID midPID(&InputMid, &OutputMid, &SetpointMid,1,1,1, DIRECT);
 
-// Deduced Reckoning 
-float deltaHeading, deltaX, deltaY;
-
 // Encoder
 // Two channels for both speed and direction 
 int rightEncoderOne = 6;
@@ -74,7 +73,8 @@ int rightEncoderTwo = 7;
 int leftEncoderOne = 8;
 int leftEncoderTwo = 9;
 
-
+// Deduced Reckoning 
+float deltaHeading, deltaX, deltaY;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup()
 {
@@ -90,21 +90,22 @@ void setup()
   pinMode(dir_right, OUTPUT);
   pinMode(dir_left, OUTPUT);
   
-  // Check for each ticks on wheels
-
-  
-  PololuWheelEncoders::init(rightEncoderOne,rightEncoderTwo,leftEncoderOne,leftEncoderTwo);
-  
   deltaHeading = PI/2;
+
+  // Check for each ticks on wheels
+  PololuWheelEncoders::init(rightEncoderOne,rightEncoderTwo,leftEncoderOne,leftEncoderTwo);
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
+
   leftPID.SetSampleTime(10);
   rightPID.SetSampleTime(10);
   midPID.SetSampleTime(10);
+
   SetpointLeft = 2000;
   SetpointRight = 2000;
   SetpointMid = 0;
+
   leftPID.SetOutputLimits(0, 3400);
   rightPID.SetOutputLimits(0, 3400);
   midPID.SetOutputLimits(-1000, 1000);
@@ -239,50 +240,6 @@ void loop()
   readSensor(sensorValue0, sensorValue1, sensorValue2, sensorValue3); // prints sensors' readings
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void configureMotorForTurn() {
-  //resetPololuTicks();
-  long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
-  long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-  if(leftPololuCount < 30000){
-    if(millis() - timing >= 10){
-      long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
-      long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-      long timez = millis()-timing;
-      //double speed1 =  ((leftPololuCount -prevouslefttick)/1000);
-
-      float leftTime = leftPololuCount - previousLeftTick;
-      float rightTime = rightPololuCount - previousRightTick;
-
-      float leftcm = DISTANCE_PER_TICK_CM * leftTime;
-      float rightcm = DISTANCE_PER_TICK_CM * rightTime;
-
-      leftTime = leftTime / (timez);
-      leftTime = leftTime * 1000;
-      rightTime = rightTime / (timez);
-      rightTime = rightTime * 1000;
-      
-
-      InputLeft = leftTime;
-      InputRight = rightTime;
-
-      
-      
-      
-      
-      rightPID.Compute();
-      leftPID.Compute();
-      previousLeftTick = leftPololuCount;
-      previousRightTick = rightPololuCount;
-      timing = millis();
-
-      runMotor(map(OutputRight,0,3400,150,255), map(OutputLeft,0,3400,150,255));
-    }
-  }
-  else{
-    halt();
-  }
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////
 void configureMotor() {
 
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
@@ -323,7 +280,7 @@ void configureMotor() {
       previousRightTick = rightPololuCount;
       timing = millis();
 
-      //runMotor(map(OutputRight,0,3400,50,150), map(OutputLeft,0,3400,50,150));
+  
       runMotor(map(OutputRight,0,3400,150,255), map(OutputLeft,0,3400,150,255));
     }
   }
@@ -506,6 +463,7 @@ void resetPololuTicks() {
   PololuWheelEncoders::getCountsAndResetM2();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 float getDistance() {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
@@ -552,7 +510,7 @@ void moveForward(float dist) {
   }
 
   
-
+  // BRAKE?
   digitalWrite(dir_left, HIGH); //Set motor direction, 1 low, 2 high
   digitalWrite(dir_right, HIGH);  //Set motor direction, 3 high, 4 low
   delay(40);
@@ -594,7 +552,6 @@ void turnRight(int angle) {
   digitalWrite(dir_left, HIGH);  //Set motor direction, 3 high, 4 low
   delay(40);
   halt();
-  //reverse(0.2);
   resetPololuTicks();
 }
 
@@ -630,22 +587,6 @@ void turnLeft(int angle) {
   delay(40);
   halt();
   resetPololuTicks();
-}
-
-// Reverse backwards
-void reverse(float dist) {
-  runMotor(100, 100); //Set both motors to run at 100% duty cycle (fast)
-  digitalWrite(dir_right, HIGH); //Set motor direction, 1 low, 2 high
-  digitalWrite(dir_left, HIGH);  //Set motor direction, 3 high, 4 low
-  delay(70);
-  
-  //resetTicksForAngleOrDistance();
-  
-  digitalWrite(dir_right, LOW); //Set motor direction, 1 low, 2 high
-  digitalWrite(dir_left, LOW);  //Set motor direction, 3 high, 4 low
-  delay(30);
-  halt();
-  //resetPololuTicks();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
