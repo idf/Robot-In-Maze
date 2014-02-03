@@ -660,7 +660,7 @@ void servoTurn(int angle) {
   else if(angle>=115 && angle<125){
     myServo.write(55.2);
   }
-  else if(angle>=125& angle<135){
+  else if(angle>=125 && angle<135){
     myServo.write(46);
   }
   else if(angle>=135 && angle<145){
