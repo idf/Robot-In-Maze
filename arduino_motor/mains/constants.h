@@ -17,7 +17,7 @@ const int PID_UPPER_LIMIT = 2249*4; // 3400
 const int PID_LOWER_LIMIT = PID_UPPER_LIMIT/2; // added by Danyang
 const int PID_SETPOINT = PID_UPPER_LIMIT*3/4; // 2000
 
-const int SAMPLE_TIME = 10; // 10ms 
+const int SAMPLE_TIME = 5; // 10ms original
 // [0, 3400]
 const double WHEELS_INTERVAL = 17.2; // mc
 // constants END

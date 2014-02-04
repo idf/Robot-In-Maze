@@ -35,9 +35,10 @@ void configureMotor(int isM1Forward, int isM2Forward)
       InputMid = deltaY / DISTANCE_PER_TICK_CM;
       InputLeft = leftTicks;
       InputRight = rightTicks;
-      // why you map ticks to speed? 
+      
       midPID.Compute();
-      SetpointRight = PID_SETPOINT + map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+      //SetpointRight = PID_SETPOINT + 0.5 * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+      //SetpointLeft = PID_SETPOINT -0.5 * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
 
