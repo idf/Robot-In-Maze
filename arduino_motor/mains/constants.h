@@ -8,7 +8,6 @@ so the is no problem with putting a definition in a header.
 const int MAX_SPEED_ANALOG = 255; // Built-in PWM
 const int MAX_SPEED = 400;
 const int MID_SPEED = 235;
-const int SPEED = MAX_SPEED;
 
 const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
 const int COUNTS_PER_REVOLUTION = 2249; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
@@ -38,10 +37,13 @@ Analog  A1  M2CS      Motor 2 current sense output
 */
 // Encoder: two channels for both speed and direction 
 // remaining least-significant-bit pins
-const int RIGHT_ENCODER_A = 0;
-const int RIGHT_ENCODER_B = 1;
-const int LEFT_ENCODER_A = 3;
-const int LEFT_ENCODER_B = 5;
+
+// 3 5 11 13
+const int M1_ENCODER_A = 3;
+const int M1_ENCODER_B = 5;
+const int M2_ENCODER_A = 11; 
+const int M2_ENCODER_B = 13; 
+
 
 // Digital Pins END
 

@@ -9,20 +9,24 @@ void configureMotor(int isM1Forward, int isM2Forward)
 {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
+  Serial.print("left count: ");
+  Serial.println(leftPololuCount);
+  Serial.print("right count: ");
+  Serial.println(rightPololuCount);
 
   if(leftPololuCount < 30000){
     if(millis() - timing >= 10){
       leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
       rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-      long timez = millis()-timing;
-      float leftTime = leftPololuCount -previousLeftTick;
-      float rightTime = rightPololuCount -previousRightTick;
+      long timez = millis() - timing;
+      float leftTime = leftPololuCount - previousLeftTick;
+      float rightTime = rightPololuCount - previousRightTick;
 
       float leftcm = DISTANCE_PER_TICK_CM * leftTime;
       float rightcm = DISTANCE_PER_TICK_CM * rightTime;
       float distanceToTravel = (leftcm + rightcm)/2;
       deltaHeading =  (leftcm-rightcm) / 17.2 + deltaHeading;
-      deltaX = (distanceToTravel * cos(deltaHeading) + deltaX); // + 0.2
+      deltaX = distanceToTravel * cos(deltaHeading) + deltaX; // + 0.2
       deltaY = distanceToTravel * sin(deltaHeading) + deltaY;
       leftTime = leftTime / (timez);
       leftTime = leftTime * 1000;
@@ -35,7 +39,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
       midPID.Compute();
       
-      SetpointRight = PID_SETPOINT + map(OutputMid,-1000,1000,-PID_SETPOINT,1400);
+      SetpointRight = PID_SETPOINT + map(OutputMid,-1000,1000,-PID_SETPOINT,+PID_SETPOINT);
+      
       rightPID.Compute();
       leftPID.Compute();
       previousLeftTick = leftPololuCount;
@@ -47,12 +52,17 @@ void configureMotor(int isM1Forward, int isM2Forward)
         isM1Forward = 1;
         isM2Forward = 1;
       }
-      int m1Speed = isM1Forward * map(OutputLeft,0,PID_UPPER_LIMIT,MID_SPEED,MAX_SPEED);
-      int m2Speed = isM2Forward * map(OutputRight,0,PID_UPPER_LIMIT,MID_SPEED,MAX_SPEED);
+      int m1Speed = isM1Forward * map(OutputLeft, 0, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
+      int m2Speed = isM2Forward * map(OutputRight, 0, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
+      Serial.print("m1: ");
+      Serial.println(m1Speed);
+      Serial.print("m2: ");
+      Serial.println(m2Speed);
+
       motorShield.setSpeeds(m1Speed, m2Speed);
     }
   }
-  else{
+  else {
     halt();
   }
 }

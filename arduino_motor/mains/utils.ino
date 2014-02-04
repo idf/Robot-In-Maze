@@ -28,4 +28,14 @@ void resetPololuTicks()
   PololuWheelEncoders::getCountsAndResetM2();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
+void printCounts()
+{
+  long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
+  long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
+  Serial.print("left count: ");
+  Serial.println(leftPololuCount);
+  Serial.println(PololuWheelEncoders::checkErrorM1());
+  Serial.print("right count: ");
+  Serial.println(rightPololuCount);
+  Serial.println(PololuWheelEncoders::checkErrorM2());
+}

@@ -13,7 +13,7 @@ void setup(void)
   motorShield.init();
 
   // Encoder
-  PololuWheelEncoders::init(RIGHT_ENCODER_A, RIGHT_ENCODER_B, LEFT_ENCODER_A, LEFT_ENCODER_B);
+  PololuWheelEncoders::init(M1_ENCODER_A, M1_ENCODER_B, M2_ENCODER_A, M2_ENCODER_B);
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
@@ -34,7 +34,9 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-  moveForward(5.0);
+  resetPololuTicks();
+  moveForward(100.0);
+  //motorShield.setSpeeds(100, 100);
   delay(1000);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
