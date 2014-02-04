@@ -11,8 +11,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
   printCounts();
 
-  if(leftPololuCount < 30000 && rightPololuCount < 30000){ // if not too many errors 
-    if(millis() - timing >= 10){ // Calculated every 10 ms (Sample time 10 ms)
+  if( abs(leftPololuCount - rightPololuCount)<30000){ // if not too many errors 
+    if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
       leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
       rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
       long timez = millis() - timing; // time passed by 
@@ -32,12 +32,12 @@ void configureMotor(int isM1Forward, int isM2Forward)
       leftTicks /= (timez/1000.0);
       rightTicks /= (timez/1000.0); // ms
 
-      InputMid = deltaX * 10000;
+      InputMid = deltaY / DISTANCE_PER_TICK_CM;
       InputLeft = leftTicks;
       InputRight = rightTicks;
       // why you map ticks to speed? 
       midPID.Compute();
-      // SetpointRight = PID_SETPOINT + map(OutputMid,-1000, 1000, -PID_SETPOINT, +PID_SETPOINT);
+      SetpointRight = PID_SETPOINT + map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
 

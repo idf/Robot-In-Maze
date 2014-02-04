@@ -17,9 +17,9 @@ void setup(void)
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
 
-  leftPID.SetSampleTime(10); // 10 ms
-  rightPID.SetSampleTime(10); 
-  midPID.SetSampleTime(10);
+  leftPID.SetSampleTime(SAMPLE_TIME); 
+  rightPID.SetSampleTime(SAMPLE_TIME); 
+  midPID.SetSampleTime(SAMPLE_TIME);
 
   SetpointLeft = PID_SETPOINT;
   SetpointRight = PID_SETPOINT;
@@ -29,13 +29,13 @@ void setup(void)
   leftPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
   rightPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
   midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
-}
 
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
   resetPololuTicks();
-  moveForward(50.0);
+  moveForward(200.0);
   //motorShield.setSpeeds(100, 100); printCounts()
   delay(1000);
 }
