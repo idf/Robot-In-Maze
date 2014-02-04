@@ -9,7 +9,6 @@
 void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
-  Serial.println("Dual VNH5019 Motor Shield");
   motorShield.init();
 
   // Encoder
@@ -18,16 +17,17 @@ void setup(void)
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
 
-  leftPID.SetSampleTime(10);
-  rightPID.SetSampleTime(10);
+  leftPID.SetSampleTime(10); // 10 ms
+  rightPID.SetSampleTime(10); 
   midPID.SetSampleTime(10);
 
   SetpointLeft = PID_SETPOINT;
   SetpointRight = PID_SETPOINT;
   SetpointMid = 0;
 
-  leftPID.SetOutputLimits(0, PID_UPPER_LIMIT);
-  rightPID.SetOutputLimits(0, PID_UPPER_LIMIT);
+  // for controlling the speed 
+  leftPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
+  rightPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
   midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
 }
 
@@ -35,8 +35,8 @@ void setup(void)
 void loop(void)
 {
   resetPololuTicks();
-  moveForward(100.0);
-  //motorShield.setSpeeds(100, 100);
+  moveForward(50.0);
+  //motorShield.setSpeeds(100, 100); printCounts()
   delay(1000);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////

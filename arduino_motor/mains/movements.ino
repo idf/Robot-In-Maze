@@ -9,40 +9,42 @@ void configureMotor(int isM1Forward, int isM2Forward)
 {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-  Serial.print("left count: ");
-  Serial.println(leftPololuCount);
-  Serial.print("right count: ");
-  Serial.println(rightPololuCount);
+  printCounts();
 
-  if(leftPololuCount < 30000){
-    if(millis() - timing >= 10){
+  if(leftPololuCount < 30000 && rightPololuCount < 30000){ // if not too many errors 
+    if(millis() - timing >= 10){ // Calculated every 10 ms (Sample time 10 ms)
       leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
       rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-      long timez = millis() - timing;
-      float leftTime = leftPololuCount - previousLeftTick;
-      float rightTime = rightPololuCount - previousRightTick;
+      long timez = millis() - timing; // time passed by 
+      float leftTicks = leftPololuCount - previousLeftTick;
+      float rightTicks = rightPololuCount - previousRightTick;
 
-      float leftcm = DISTANCE_PER_TICK_CM * leftTime;
-      float rightcm = DISTANCE_PER_TICK_CM * rightTime;
-      float distanceToTravel = (leftcm + rightcm)/2;
-      deltaHeading =  (leftcm-rightcm) / 17.2 + deltaHeading;
-      deltaX = distanceToTravel * cos(deltaHeading) + deltaX; // + 0.2
-      deltaY = distanceToTravel * sin(deltaHeading) + deltaY;
-      leftTime = leftTime / (timez);
-      leftTime = leftTime * 1000;
-      rightTime = rightTime / (timez);
-      rightTime = rightTime * 1000;
+      float leftcm = DISTANCE_PER_TICK_CM * leftTicks;
+      float rightcm = DISTANCE_PER_TICK_CM * rightTicks;
+      float distanceToTravel = (leftcm + rightcm)/2.0;
+
+      /* http://rossum.sourceforge.net/papers/DiffSteer/DiffSteer.html */
+      theta += (rightcm - leftcm) / WHEELS_INTERVAL; // deduced reckoning 
+      deltaX += distanceToTravel * cos(theta); 
+      deltaY += distanceToTravel * sin(theta);
+      
+      Serial.print("timez: "); Serial.println(timez);
+      leftTicks /= (timez/1000.0);
+      rightTicks /= (timez/1000.0); // ms
+
       InputMid = deltaX * 10000;
-
-      InputLeft = leftTime;
-      InputRight = rightTime;
-
+      InputLeft = leftTicks;
+      InputRight = rightTicks;
+      // why you map ticks to speed? 
       midPID.Compute();
-      
-      SetpointRight = PID_SETPOINT + map(OutputMid,-1000,1000,-PID_SETPOINT,+PID_SETPOINT);
-      
+      // SetpointRight = PID_SETPOINT + map(OutputMid,-1000, 1000, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
+
+      Serial.print("leftTicks: "); Serial.println(leftTicks);
+      Serial.print("rightTicks: "); Serial.println(rightTicks);
+      Serial.print("InputMid: "); Serial.println(InputMid);
+      Serial.print("SetpointRight: "); Serial.println(SetpointRight);
       previousLeftTick = leftPololuCount;
       previousRightTick = rightPololuCount;
       timing = millis();
@@ -52,12 +54,10 @@ void configureMotor(int isM1Forward, int isM2Forward)
         isM1Forward = 1;
         isM2Forward = 1;
       }
-      int m1Speed = isM1Forward * map(OutputLeft, 0, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
-      int m2Speed = isM2Forward * map(OutputRight, 0, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
-      Serial.print("m1: ");
-      Serial.println(m1Speed);
-      Serial.print("m2: ");
-      Serial.println(m2Speed);
+      int m1Speed = isM1Forward * map(OutputLeft, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
+      int m2Speed = isM2Forward * map(OutputRight, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
+      Serial.print("m1: "); Serial.println(m1Speed);
+      Serial.print("m2: "); Serial.println(m2Speed);
 
       motorShield.setSpeeds(m1Speed, m2Speed);
     }
@@ -72,6 +72,7 @@ void halt()
   motorShield.setSpeeds(0, 0);
   delay(100);
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void stopIfFault()
 { 
   if (motorShield.getM1Fault()) {
@@ -97,13 +98,10 @@ void moveForward(float dist)
 
   
   while (avgTicksForAngleOrDist < noOfTicksForDist) {
-    leftTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM1());
-    leftTicksForAngleOrDist = leftTicksForAngleOrDist - leftCount0;
+    leftTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM1()) - leftCount0;
+    rightTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM2()) - rightCount0;
     
-    rightTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM2());
-    rightTicksForAngleOrDist = rightTicksForAngleOrDist - rightCount0;
-    
-    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2;
+    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // reaching the target
 
     configureMotor(1, 1);
   }
