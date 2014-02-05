@@ -38,7 +38,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
       
       midPID.Compute();
       //SetpointRight = PID_SETPOINT + 0.5 * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
-      //SetpointLeft = PID_SETPOINT -0.5 * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+      const int COEFFICIENT; 
+      SetpointLeft += COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
 
