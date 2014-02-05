@@ -36,9 +36,11 @@ void configureMotor(int isM1Forward, int isM2Forward)
       rightTicks /= (timez/1000.0); // ms
 
       InputMid = deltaY / DISTANCE_PER_TICK_CM;
-      if(leftTicks<0 || rightTicks<0) continue;
-      InputLeft = leftTicks;
-      InputRight = rightTicks;
+      if(leftTicks>0 && rightTicks>0) {
+        InputLeft = leftTicks;
+        InputRight = rightTicks;
+      }
+
       
       midPID.Compute();
       const double COEFFICIENT = 0.125; 
