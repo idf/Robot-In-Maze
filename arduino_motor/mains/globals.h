@@ -5,8 +5,8 @@ M1 on LEFT
 M2 on RIGHT 
 */
 // Ticking
-float leftTicksForAngleOrDist = 0;
-float rightTicksForAngleOrDist = 0;
+double leftTicksForAngleOrDist = 0;
+double rightTicksForAngleOrDist = 0;
 
 long timing = 0;
 long previousLeftTick = 0;
@@ -18,12 +18,12 @@ double SetpointLeft, InputLeft, OutputLeft;
 double SetpointRight, InputRight, OutputRight;
 double SetpointMid, InputMid, OutputMid;
 
-PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft, 1, 1, 0, DIRECT);
-PID rightPID(&InputRight, &OutputRight, &SetpointRight, 1, 1, 0, DIRECT);
+PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft, 0.5, 1, 0, DIRECT);
+PID rightPID(&InputRight, &OutputRight, &SetpointRight, 0.5, 1, 0, DIRECT);
 PID midPID(&InputMid, &OutputMid, &SetpointMid, 1, 1, 1, DIRECT);
 
 // Deduced Reckoning 
-float theta, deltaX, deltaY;
+double theta, deltaX, deltaY;
 
 DualVNH5019MotorShield motorShield;
 #endif

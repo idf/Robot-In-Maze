@@ -7,17 +7,17 @@ int isM2Forward either 1 or -1
 */
 void configureMotor(int isM1Forward, int isM2Forward) 
 {
-  long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
-  long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
+  long leftPololuCount = PololuWheelEncoders::getCountsM1();                       
+  long rightPololuCount = PololuWheelEncoders::getCountsM2();
   printCounts();
 
   if( abs(leftPololuCount - rightPololuCount)<30000){ // if not too many errors 
     if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
-      leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
-      rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
+      leftPololuCount = PololuWheelEncoders::getCountsM1();                       
+      rightPololuCount = PololuWheelEncoders::getCountsM2();
       long timez = millis() - timing; // time passed by 
-      float leftTicks = leftPololuCount - previousLeftTick;
-      float rightTicks = rightPololuCount - previousRightTick;
+      double leftTicks = leftPololuCount - previousLeftTick;
+      double rightTicks = rightPololuCount - previousRightTick;
 
       float leftcm = DISTANCE_PER_TICK_CM * leftTicks;
       float rightcm = DISTANCE_PER_TICK_CM * rightTicks;
@@ -25,7 +25,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
       /* http://rossum.sourceforge.net/papers/DiffSteer/DiffSteer.html */
       theta += (rightcm - leftcm) / WHEELS_INTERVAL; // deduced reckoning 
-      deltaX += distanceToTravel * cos(theta); 
+      deltaX += distanceToTravel * cos(theta); // deltaX is cumulative
       deltaY += distanceToTravel * sin(theta);
       
       Serial.print("timez: "); Serial.println(timez);
@@ -37,9 +37,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
       InputRight = rightTicks;
       
       midPID.Compute();
-      //SetpointRight = PID_SETPOINT + 0.5 * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
-      const int COEFFICIENT; 
-      SetpointLeft += COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+      const float COEFFICIENT = 0.125; 
+      SetpointRight = PID_SETPOINT + COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
 
@@ -94,16 +93,17 @@ void moveForward(float dist)
   
   // ------ Distance to ticks formula ------- //
   float avgTicksForAngleOrDist = 0;
+
   
-  long leftCount0 = abs(PololuWheelEncoders::getCountsM1());
-  long rightCount0 = abs(PololuWheelEncoders::getCountsM2());
+  long leftCount0 = PololuWheelEncoders::getCountsM1();
+  long rightCount0 = PololuWheelEncoders::getCountsM2();
 
   
   while (avgTicksForAngleOrDist < noOfTicksForDist) {
-    leftTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM1()) - leftCount0;
-    rightTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM2()) - rightCount0;
-    
-    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // reaching the target
+    leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1() - leftCount0;
+    rightTicksForAngleOrDist = PololuWheelEncoders::getCountsM2() - rightCount0;
+
+    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2.0; // reaching the target
 
     configureMotor(1, 1);
   }

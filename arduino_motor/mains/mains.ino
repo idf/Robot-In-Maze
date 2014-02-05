@@ -29,13 +29,15 @@ void setup(void)
   leftPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
   rightPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
   midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
+  
+  resetPololuTicks();
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-  resetPololuTicks();
-  moveForward(200.0);
+  //resetPololuTicks();
+  moveForward(25.0);
   //motorShield.setSpeeds(100, 100); printCounts()
   delay(1000);
 }
