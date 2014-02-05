@@ -11,7 +11,10 @@ void configureMotor(int isM1Forward, int isM2Forward)
   long rightPololuCount = PololuWheelEncoders::getCountsM2();
   printCounts();
 
-  if( abs(leftPololuCount - rightPololuCount)<30000){ // if not too many errors 
+  if(abs(leftPololuCount - rightPololuCount)>30000){ // if not too many errors 
+    halt();
+  } 
+  else {
     if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
       leftPololuCount = PololuWheelEncoders::getCountsM1();                       
       rightPololuCount = PololuWheelEncoders::getCountsM2();
@@ -19,9 +22,9 @@ void configureMotor(int isM1Forward, int isM2Forward)
       double leftTicks = leftPololuCount - previousLeftTick;
       double rightTicks = rightPololuCount - previousRightTick;
 
-      float leftcm = DISTANCE_PER_TICK_CM * leftTicks;
-      float rightcm = DISTANCE_PER_TICK_CM * rightTicks;
-      float distanceToTravel = (leftcm + rightcm)/2.0;
+      double leftcm = DISTANCE_PER_TICK_CM * leftTicks;
+      double rightcm = DISTANCE_PER_TICK_CM * rightTicks;
+      double distanceToTravel = (leftcm + rightcm)/2.0;
 
       /* http://rossum.sourceforge.net/papers/DiffSteer/DiffSteer.html */
       theta += (rightcm - leftcm) / WHEELS_INTERVAL; // deduced reckoning 
@@ -33,11 +36,12 @@ void configureMotor(int isM1Forward, int isM2Forward)
       rightTicks /= (timez/1000.0); // ms
 
       InputMid = deltaY / DISTANCE_PER_TICK_CM;
+      if(leftTicks<0 || rightTicks<0) continue;
       InputLeft = leftTicks;
       InputRight = rightTicks;
       
       midPID.Compute();
-      const float COEFFICIENT = 0.125; 
+      const double COEFFICIENT = 0.125; 
       SetpointRight = PID_SETPOINT + COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
@@ -63,9 +67,6 @@ void configureMotor(int isM1Forward, int isM2Forward)
       motorShield.setSpeeds(m1Speed, m2Speed);
     }
   }
-  else {
-    halt();
-  }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void halt() 
@@ -87,16 +88,20 @@ void stopIfFault()
 /*
 depencies: distCentimeter, configureMotor
 */
-void moveForward(float dist) 
+/*
+max dist value = 274.6 cm for every call
+(32767/2249*6*PI=274.6)
+*/
+void moveForward(double dist) 
 {  
-  float noOfTicksForDist = distCentimeter(dist);
+  double noOfTicksForDist = distCentimeter(dist);
   
   // ------ Distance to ticks formula ------- //
-  float avgTicksForAngleOrDist = 0;
+  double avgTicksForAngleOrDist = 0;
 
   
-  long leftCount0 = PololuWheelEncoders::getCountsM1();
-  long rightCount0 = PololuWheelEncoders::getCountsM2();
+  int leftCount0 = PololuWheelEncoders::getCountsM1();
+  int rightCount0 = PololuWheelEncoders::getCountsM2();
 
   
   while (avgTicksForAngleOrDist < noOfTicksForDist) {

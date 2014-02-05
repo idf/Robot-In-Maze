@@ -11,7 +11,7 @@ const int MID_SPEED = 200;
 
 const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
 const int COUNTS_PER_REVOLUTION = 2249; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
-const float DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
+const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 
 const int PID_UPPER_LIMIT = 2249*4; // 3400
 const int PID_LOWER_LIMIT = PID_UPPER_LIMIT/2; // added by Danyang

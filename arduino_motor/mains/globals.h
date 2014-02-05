@@ -9,8 +9,8 @@ double leftTicksForAngleOrDist = 0;
 double rightTicksForAngleOrDist = 0;
 
 long timing = 0;
-long previousLeftTick = 0;
-long previousRightTick = 0;
+int previousLeftTick = 0;
+int previousRightTick = 0;
 
 // PID
 // variables upper case by documentation 
