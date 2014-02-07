@@ -6,16 +6,16 @@ so the is no problem with putting a definition in a header.
 */
 // constants START
 const int MAX_SPEED_ANALOG = 255; // Built-in PWM
-const int MAX_SPEED = 400; // 240 RPM?
-const int MID_SPEED = 200;
+const int MAX_SPEED = 200; // 180 RPM (confirmed)
+const int MID_SPEED = 100;
 
 const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
 const int COUNTS_PER_REVOLUTION = 2249; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
 const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 
-const int PID_UPPER_LIMIT = 2249*4; // 3400
-const int PID_LOWER_LIMIT = PID_UPPER_LIMIT/2; // added by Danyang
-const int PID_SETPOINT = PID_UPPER_LIMIT*3/4; // 2000
+const int PID_UPPER_LIMIT = 2249*3; // 3400
+const int PID_LOWER_LIMIT = PID_UPPER_LIMIT*(6.0/8); // added by Danyang
+const int PID_SETPOINT = PID_UPPER_LIMIT*(7.0/8); // 2000
 
 const int SAMPLE_TIME = 5; // 10ms original
 // [0, 3400]

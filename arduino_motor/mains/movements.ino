@@ -11,7 +11,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   long rightPololuCount = PololuWheelEncoders::getCountsM2();
   printCounts();
 
-  if(abs(leftPololuCount - rightPololuCount)>30000){ // if not too many errors 
+  if(abs(leftPololuCount - rightPololuCount) > 30000){ // if not too many errors 
     halt();
   } 
   else {
@@ -36,7 +36,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
       rightTicks /= (timez/1000.0); // ms
 
       InputMid = deltaY / DISTANCE_PER_TICK_CM;
-      if(leftTicks>0 && rightTicks>0) {
+      if(leftTicks>0 && rightTicks>0) { // avoid overflow
         InputLeft = leftTicks;
         InputRight = rightTicks;
       }
@@ -51,6 +51,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
       Serial.print("leftTicks: "); Serial.println(leftTicks);
       Serial.print("rightTicks: "); Serial.println(rightTicks);
       Serial.print("InputMid: "); Serial.println(InputMid);
+      Serial.print("SetpointLeft: "); Serial.println(SetpointLeft);
       Serial.print("SetpointRight: "); Serial.println(SetpointRight);
       previousLeftTick = leftPololuCount;
       previousRightTick = rightPololuCount;

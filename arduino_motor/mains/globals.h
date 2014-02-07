@@ -18,9 +18,14 @@ double SetpointLeft, InputLeft, OutputLeft;
 double SetpointRight, InputRight, OutputRight;
 double SetpointMid, InputMid, OutputMid;
 
-PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft, 0.5, 1, 0, DIRECT);
-PID rightPID(&InputRight, &OutputRight, &SetpointRight, 0.5, 1, 0, DIRECT);
+double kp=2, ki=1, kd=1;
+PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft, kp, ki, kd, DIRECT);
+PID rightPID(&InputRight, &OutputRight, &SetpointRight, kp, ki, kd, DIRECT); // 0.5 possible
 PID midPID(&InputMid, &OutputMid, &SetpointMid, 1, 1, 1, DIRECT);
+
+// TODO
+PID_ATune aTuneLeft(&InputLeft, &OutputLeft);
+PID_ATune aTuneRight(&InputRight, &OutputRight);
 
 // Deduced Reckoning 
 double theta, deltaX, deltaY;
