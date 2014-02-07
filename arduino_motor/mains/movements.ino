@@ -43,7 +43,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
       
       midPID.Compute();
-      const double COEFFICIENT = 0.125; 
+      const double COEFFICIENT = 1; 
       SetpointRight = PID_SETPOINT + COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
@@ -62,8 +62,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
         isM1Forward = 1;
         isM2Forward = 1;
       }
-      int m1Speed = isM1Forward * map(OutputLeft, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
-      int m2Speed = isM2Forward * map(OutputRight, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MID_SPEED, MAX_SPEED);
+      int m1Speed = isM1Forward * map(OutputLeft, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
+      int m2Speed = isM2Forward * map(OutputRight, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
       Serial.print("m1: "); Serial.println(m1Speed);
       Serial.print("m2: "); Serial.println(m2Speed);
 
