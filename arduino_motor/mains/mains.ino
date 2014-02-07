@@ -39,6 +39,7 @@ void loop(void)
 {
   //resetPololuTicks();
   moveForward(10);
+  turnRight(90);
   //motorShield.setSpeeds(100, 100); printCounts();
   delay(100);
 }

@@ -26,8 +26,8 @@ PID rightPID(&InputRight, &OutputRight, &SetpointRight, kp, ki, kd, DIRECT);
 PID midPID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);
 
 // TODO
-PID_ATune aTuneLeft(&InputLeft, &OutputLeft);
-PID_ATune aTuneRight(&InputRight, &OutputRight);
+//PID_ATune aTuneLeft(&InputLeft, &OutputLeft);
+//PID_ATune aTuneRight(&InputRight, &OutputRight);
 
 // Deduced Reckoning 
 double theta, deltaX, deltaY;

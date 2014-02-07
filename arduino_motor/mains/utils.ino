@@ -39,3 +39,77 @@ void printCounts()
   Serial.println(rightPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM2());
 }
+void printDeadReckoning()
+{
+  Serial.print("deltaX: "); Serial.println(deltaX);
+  Serial.print("deltaY: "); Serial.println(deltaY);
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+float turnAngle(int angle) {
+  float divisibleTicks;
+  if (angle <= 90) {
+    divisibleTicks = 126.7;  // 127.5
+  }
+  
+  else if (angle <= 180) {
+    divisibleTicks = 125.5;  // 64.5
+  }
+
+  else if (angle <= 270) {
+    divisibleTicks = 126.7;
+  } 
+  
+  else if (angle <= 450) {
+    divisibleTicks = 125.6;
+  }
+  
+  else if (angle <= 540) {
+    divisibleTicks = 125;
+  }
+  
+  else if (angle <= 630) {
+    divisibleTicks = 125;
+  }
+  else {
+    divisibleTicks = 125;
+  }
+  
+  float ticksForOneDegree = COUNTS_PER_REVOLUTION/divisibleTicks;
+  float angleToTurn = ticksForOneDegree * angle;
+  return angleToTurn;
+}
+
+float turnAngleR(int angle) {
+  float divisibleTicks;
+  if (angle <= 90) {
+    divisibleTicks = 127.5;  // 127.5
+  }
+  
+  else if (angle <= 180) {
+    divisibleTicks = 125.5;  // 64.5
+  }
+
+  else if (angle <= 270) {
+    divisibleTicks = 126.7;
+  } 
+  
+  else if (angle <= 450) {
+    divisibleTicks = 125.6;
+  }
+  
+  else if (angle <= 540) {
+    divisibleTicks = 125;
+  }
+  
+  else if (angle <= 630) {
+    divisibleTicks = 125;
+  }
+  else {
+    divisibleTicks = 125;
+  }
+  
+  float ticksForOneDegree = COUNTS_PER_REVOLUTION/divisibleTicks;
+  float angleToTurn = ticksForOneDegree * angle;
+  return angleToTurn;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////

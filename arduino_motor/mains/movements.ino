@@ -27,10 +27,16 @@ void configureMotor(int isM1Forward, int isM2Forward)
       double distanceToTravel = (leftcm + rightcm)/2.0;
 
       /* http://rossum.sourceforge.net/papers/DiffSteer/DiffSteer.html */
-      theta += (rightcm - leftcm) / WHEELS_INTERVAL; // deduced reckoning 
+      /*
+      Dead reckoning is only for feedback to speed; 
+      not yet used for navigation of positioning
+      */
+      theta += (rightcm*isM2Forward - leftcm*isM1Forward) / WHEELS_INTERVAL; // deduced reckoning 
+      // added 1 or -1 for turnning
       deltaX += distanceToTravel * cos(theta); // deltaX is cumulative
       deltaY += distanceToTravel * sin(theta);
       
+      printDeadReckoning();
       Serial.print("timez: "); Serial.println(timez);
       leftTicks /= (timez/1000.0);
       rightTicks /= (timez/1000.0); // ms
@@ -44,7 +50,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
       
       midPID.Compute();
       const double COEFFICIENT = 1; 
-      SetpointRight = PID_SETPOINT + COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+      SetpointRight = PID_SETPOINT * isM2Forward + COEFFICIENT * isM2Forward * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
 
@@ -122,4 +128,40 @@ void moveForward(double dist)
   halt();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+void turnRight(int angle) {
+  resetPololuTicks();
+  const int isLeftForward = 1;
+  const int isRightForward = -1;
+  SetpointLeft *= isLeftForward;
+  SetpointRight *= isRightForward;
+  //float noOfTicksForAngle = turnAngleR(angle);
+  float noOfTicksForAngle = WHEELS_INTERVAL/2*PI/180*angle/DISTANCE_PER_TICK_CM;
+  // ------ Angle to ticks formula ------- //
 
+  
+
+  
+  float avgTicksForAngleOrDist = 0;
+  long firstLeftCount = PololuWheelEncoders::getCountsM1();
+  long firstRightCount = PololuWheelEncoders::getCountsM2();
+  
+  while (avgTicksForAngleOrDist < noOfTicksForAngle) { //noOfTicksForAngle - change to 'angle' for other formula
+    leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    leftTicksForAngleOrDist = leftTicksForAngleOrDist - firstLeftCount;
+    
+    rightTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    rightTicksForAngleOrDist = rightTicksForAngleOrDist - firstRightCount; // right backward
+    
+    avgTicksForAngleOrDist = (isLeftForward * leftTicksForAngleOrDist + isRightForward * rightTicksForAngleOrDist) / 2; // turn right
+    configureMotor(isLeftForward, isRightForward);
+  }
+  
+  motorShield.setBrakes(MAX_SPEED, MAX_SPEED);
+  delay(40);
+  halt();
+  resetPololuTicks();
+  SetpointLeft *= isLeftForward;
+  SetpointRight *= isRightForward;
+  deltaY = 0;
+  deltaX = 0;
+}
