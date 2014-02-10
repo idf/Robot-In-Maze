@@ -39,11 +39,12 @@ void printCounts()
   Serial.println(rightPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM2());
 }
-void printDeadReckoning()
+void printDeadReckoning(double deltaX, double deltaY, double distanceToTravel)
 {
   Serial.print("deltaX: "); Serial.println(deltaX);
   Serial.print("deltaY: "); Serial.println(deltaY);
-}
+  Serial.print("distanceToTravel: "); Serial.println(distanceToTravel);
+};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 float turnAngle(int angle) {
   float divisibleTicks;

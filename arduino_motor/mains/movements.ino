@@ -2,14 +2,15 @@
 #include "globals.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-int isM1Forward either 1 or -1
-int isM2Forward either 1 or -1
+int isM1Forward either 1 or -1 or 0
+int isM2Forward either 1 or -1 or 0 
 */
 void configureMotor(int isM1Forward, int isM2Forward) 
 {
   long leftPololuCount = PololuWheelEncoders::getCountsM1();                       
   long rightPololuCount = PololuWheelEncoders::getCountsM2();
   printCounts();
+
 
   if(abs(leftPololuCount - rightPololuCount) > 30000){ // if not too many errors 
     halt();
@@ -19,9 +20,10 @@ void configureMotor(int isM1Forward, int isM2Forward)
       leftPololuCount = PololuWheelEncoders::getCountsM1();                       
       rightPololuCount = PololuWheelEncoders::getCountsM2();
       long timez = millis() - timing; // time passed by 
-      double leftTicks = leftPololuCount - previousLeftTick;
+      double leftTicks = leftPololuCount - previousLeftTick; // positive for forward, negative for backward
       double rightTicks = rightPololuCount - previousRightTick;
 
+      // distanceToTravel is incremental
       double leftcm = DISTANCE_PER_TICK_CM * leftTicks;
       double rightcm = DISTANCE_PER_TICK_CM * rightTicks;
       double distanceToTravel = (leftcm + rightcm)/2.0;
@@ -31,17 +33,22 @@ void configureMotor(int isM1Forward, int isM2Forward)
       Dead reckoning is only for feedback to speed; 
       not yet used for navigation of positioning
       */
-      theta += (rightcm*isM2Forward - leftcm*isM1Forward) / WHEELS_INTERVAL; // deduced reckoning 
+      //theta += (rightcm*isM2Forward - leftcm*isM1Forward) / WHEELS_INTERVAL; // deduced reckoning 
+      theta += (rightcm - leftcm) / WHEELS_INTERVAL; // deduced reckoning 
       // added 1 or -1 for turnning
       deltaX += distanceToTravel * cos(theta); // deltaX is cumulative
       deltaY += distanceToTravel * sin(theta);
       
-      printDeadReckoning();
+      printDeadReckoning(deltaX, deltaY, distanceToTravel);
       Serial.print("timez: "); Serial.println(timez);
       leftTicks /= (timez/1000.0);
       rightTicks /= (timez/1000.0); // ms
-
-      InputMid = deltaY / DISTANCE_PER_TICK_CM;
+      if(isM1Forward * isM2Forward < 0) { // Turning
+        InputMid = deltaX / DISTANCE_PER_TICK_CM;
+      }
+      else { // Straight Line 
+        InputMid = deltaY / DISTANCE_PER_TICK_CM;
+      }
       if(leftTicks>0 && rightTicks>0) { // avoid overflow
         InputLeft = leftTicks;
         InputRight = rightTicks;
@@ -63,11 +70,6 @@ void configureMotor(int isM1Forward, int isM2Forward)
       previousRightTick = rightPololuCount;
       timing = millis();
 
-
-      if((isM1Forward!=1 && isM1Forward!=-1) || (isM2Forward!=1 && isM2Forward!=-1)) {
-        isM1Forward = 1;
-        isM2Forward = 1;
-      }
       int m1Speed = isM1Forward * map(OutputLeft, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
       int m2Speed = isM2Forward * map(OutputRight, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
       Serial.print("m1: "); Serial.println(m1Speed);
@@ -103,6 +105,7 @@ max dist value = 274.6 cm for every call
 */
 void moveForward(double dist) 
 {  
+  theta = 0; // error theta
   double noOfTicksForDist = distCentimeter(dist);
   
   // ------ Distance to ticks formula ------- //
@@ -129,18 +132,15 @@ void moveForward(double dist)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void turnRight(int angle) {
-  resetPololuTicks();
+  resetPololuTicks(); theta = 0; // error theta
   const int isLeftForward = 1;
   const int isRightForward = -1;
   SetpointLeft *= isLeftForward;
   SetpointRight *= isRightForward;
   //float noOfTicksForAngle = turnAngleR(angle);
-  float noOfTicksForAngle = WHEELS_INTERVAL/2*PI/180*angle/DISTANCE_PER_TICK_CM;
+  float noOfTicksForAngle = (WHEELS_INTERVAL/2)*(PI/180)*(angle/DISTANCE_PER_TICK_CM);
   // ------ Angle to ticks formula ------- //
 
-  
-
-  
   float avgTicksForAngleOrDist = 0;
   long firstLeftCount = PololuWheelEncoders::getCountsM1();
   long firstRightCount = PololuWheelEncoders::getCountsM2();
@@ -153,15 +153,23 @@ void turnRight(int angle) {
     rightTicksForAngleOrDist = rightTicksForAngleOrDist - firstRightCount; // right backward
     
     avgTicksForAngleOrDist = (isLeftForward * leftTicksForAngleOrDist + isRightForward * rightTicksForAngleOrDist) / 2; // turn right
+    Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
     configureMotor(isLeftForward, isRightForward);
   }
   
   motorShield.setBrakes(MAX_SPEED, MAX_SPEED);
   delay(40);
   halt();
+  /*
+  retore motor configuration 
+  */
   resetPololuTicks();
   SetpointLeft *= isLeftForward;
   SetpointRight *= isRightForward;
+  /*
+  In position turning, deltaY and deltaX suppposed to be 0 
   deltaY = 0;
   deltaX = 0;
+  theta may need to be reset if there is no better solution 
+  */
 }
