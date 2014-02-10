@@ -52,7 +52,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
       
       midPID.Compute();
       const double COEFFICIENT = 1; 
-      SetpointRight = PID_SETPOINT * isM2Forward + COEFFICIENT * isM2Forward * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+      SetpointRight = PID_SETPOINT + COEFFICIENT * map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
       rightPID.Compute();
       leftPID.Compute();
 
@@ -130,8 +130,10 @@ void turnRight(int angle) {
   resetPololuTicks(); theta = 0; // error theta
   const int isLeftForward = 1;
   const int isRightForward = -1;
+  /* 
   SetpointLeft *= isLeftForward;
   SetpointRight *= isRightForward;
+  */
   //float noOfTicksForAngle = turnAngleR(angle);
   float noOfTicksForAngle = (WHEELS_INTERVAL/2)*(PI/180)*(angle/DISTANCE_PER_TICK_CM);
   // ------ Angle to ticks formula ------- //
@@ -159,8 +161,10 @@ void turnRight(int angle) {
   retore motor configuration 
   */
   resetPololuTicks();
+  /* 
   SetpointLeft *= isLeftForward;
   SetpointRight *= isRightForward;
+  */
   /*
   In position turning, deltaY and deltaX suppposed to be 0 
   deltaY = 0;
