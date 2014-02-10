@@ -147,10 +147,10 @@ void turnRight(int angle) {
   
   while (avgTicksForAngleOrDist < noOfTicksForAngle) { //noOfTicksForAngle - change to 'angle' for other formula
     leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
-    leftTicksForAngleOrDist = leftTicksForAngleOrDist - firstLeftCount;
+    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
     
     rightTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
-    rightTicksForAngleOrDist = rightTicksForAngleOrDist - firstRightCount; // right backward
+    rightTicksForAngleOrDist = abs(rightTicksForAngleOrDist - firstRightCount); // right backward
     
     avgTicksForAngleOrDist = (isLeftForward * leftTicksForAngleOrDist + isRightForward * rightTicksForAngleOrDist) / 2; // turn right
     Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
