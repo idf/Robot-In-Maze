@@ -20,8 +20,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
       leftPololuCount = PololuWheelEncoders::getCountsM1();                       
       rightPololuCount = PololuWheelEncoders::getCountsM2();
       long timez = millis() - timing; // time passed by 
-      double leftTicks = leftPololuCount - previousLeftTick; // positive for forward, negative for backward
-      double rightTicks = rightPololuCount - previousRightTick;
+      double leftTicks = abs(leftPololuCount - previousLeftTick); // positive for forward, negative for backward
+      double rightTicks = abs(rightPololuCount - previousRightTick);
 
       // distanceToTravel is incremental
       double leftcm = DISTANCE_PER_TICK_CM * leftTicks;
@@ -43,12 +43,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
       Serial.print("timez: "); Serial.println(timez);
       leftTicks /= (timez/1000.0);
       rightTicks /= (timez/1000.0); // ms
-      if(isM1Forward * isM2Forward < 0) { // Turning
-        InputMid = deltaX / DISTANCE_PER_TICK_CM;
-      }
-      else { // Straight Line 
-        InputMid = deltaY / DISTANCE_PER_TICK_CM;
-      }
+      InputMid = deltaY / DISTANCE_PER_TICK_CM;
       if(leftTicks>0 && rightTicks>0) { // avoid overflow
         InputLeft = leftTicks;
         InputRight = rightTicks;
@@ -152,7 +147,7 @@ void turnRight(int angle) {
     rightTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
     rightTicksForAngleOrDist = abs(rightTicksForAngleOrDist - firstRightCount); // right backward
     
-    avgTicksForAngleOrDist = (isLeftForward * leftTicksForAngleOrDist + isRightForward * rightTicksForAngleOrDist) / 2; // turn right
+    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
     configureMotor(isLeftForward, isRightForward);
   }
