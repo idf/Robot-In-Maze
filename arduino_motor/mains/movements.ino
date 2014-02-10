@@ -84,10 +84,10 @@ void halt()
 void stopIfFault()
 { 
   if (motorShield.getM1Fault()) {
-      Serial.println("M1 fault"); while(1);
+    Serial.println("M1 fault"); while(1);
   } 
   if (motorShield.getM2Fault()) {
-      Serial.println("M2 fault"); while(1);
+    Serial.println("M2 fault"); while(1);
   }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,27 +127,27 @@ void moveForward(double dist)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void turnRight(int angle) {
-  resetPololuTicks(); theta = 0; // error theta
+  resetPololuTicks(); theta = 0; // theta_error
   const int isLeftForward = 1;
   const int isRightForward = -1;
   /* 
   SetpointLeft *= isLeftForward;
   SetpointRight *= isRightForward;
   */
-  //float noOfTicksForAngle = turnAngleR(angle);
-  float noOfTicksForAngle = (WHEELS_INTERVAL/2)*(PI/180)*(angle/DISTANCE_PER_TICK_CM);
+  //double noOfTicksForAngle = turnAngleR(angle);
+  double noOfTicksForAngle = (WHEELS_INTERVAL/2)*(PI/180)*(angle/DISTANCE_PER_TICK_CM);
   // ------ Angle to ticks formula ------- //
 
-  float avgTicksForAngleOrDist = 0;
+  double avgTicksForAngleOrDist = 0;
   long firstLeftCount = PololuWheelEncoders::getCountsM1();
   long firstRightCount = PololuWheelEncoders::getCountsM2();
   
   while (avgTicksForAngleOrDist < noOfTicksForAngle) { //noOfTicksForAngle - change to 'angle' for other formula
-    leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
-    
-    rightTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
-    rightTicksForAngleOrDist = abs(rightTicksForAngleOrDist - firstRightCount); // right backward
+
+    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); // right backward
     
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);

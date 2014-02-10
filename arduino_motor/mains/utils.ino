@@ -32,11 +32,9 @@ void printCounts()
 {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-  Serial.print("left count: ");
-  Serial.println(leftPololuCount);
+  Serial.print("LEFT COUNT: "); Serial.println(leftPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM1());
-  Serial.print("right count: ");
-  Serial.println(rightPololuCount);
+  Serial.print("RIGHT COUNT: "); Serial.println(rightPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM2());
 }
 void printDeadReckoning(double deltaX, double deltaY, double distanceToTravel)
