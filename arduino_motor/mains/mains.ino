@@ -38,8 +38,8 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-  //moveForward(50);
-  turnRight(90);
+  moveForward(100); // possible moveForwad is affected by abs
+  //turnRight(90);
   //motorShield.setSpeeds(100, 100); printCounts();
   delay(1000);
 }

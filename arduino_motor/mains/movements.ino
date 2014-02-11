@@ -20,6 +20,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
       leftPololuCount = PololuWheelEncoders::getCountsM1();                       
       rightPololuCount = PololuWheelEncoders::getCountsM2();
       long timez = millis() - timing; // time passed by 
+      // incremental
       double leftTicks = abs(leftPololuCount - previousLeftTick); // positive for forward, negative for backward
       double rightTicks = abs(rightPololuCount - previousRightTick);
 
