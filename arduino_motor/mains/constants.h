@@ -13,10 +13,10 @@ const int TARGET_SPEED = 200;
 const int MIN_SPEED = 100;
 
 const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
-const int COUNTS_PER_REVOLUTION = 2249; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
+const int COUNTS_PER_REVOLUTION = 2249/2; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
 const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 
-const int PID_UPPER_LIMIT = 2249*3*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
+const int PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
 const int PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
 const int PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
 
@@ -46,8 +46,8 @@ Analog  A1  M2CS      Motor 2 current sense output
 // Encoder: two channels for both speed and direction 
 // remaining least-significant-bit pins
 
-const unsigned char INA1 = 5; // remapped to 5
-const unsigned char INB1 = 4;
+const unsigned char INA1 = 2; // remapped to 5
+const unsigned char INB1 = 5;
 const unsigned char EN1DIAG1 = 6;
 const unsigned char CS1 = A0;  // not used 
 const unsigned char INA2 = 7;
@@ -55,8 +55,8 @@ const unsigned char INB2 = 8;
 const unsigned char EN2DIAG2 = 12;
 const unsigned char CS2 = A1; // not used 
 
-const int M1_ENCODER_A = 2; // external interrupt pin 2, 3
-const int M1_ENCODER_B = 3; 
+const int M1_ENCODER_A = 3; // external interrupt pin 2, 3
+const int M1_ENCODER_B = 5; 
 const int M2_ENCODER_A = 11; 
 const int M2_ENCODER_B = 13; 
 

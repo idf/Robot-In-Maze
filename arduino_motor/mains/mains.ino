@@ -40,7 +40,9 @@ void loop(void)
   //moveForward(5); // possible moveForwad is affected by abs
   turnRight(90);
   //motorShield.setSpeeds(100, 100); printCounts();
+  //motorShield.setSpeeds(100, 0);
   delay(1000);
+  printCounts();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
