@@ -26,9 +26,11 @@ void setup(void)
   SetpointMid = 0;
 
   // for controlling the speed 
-  leftPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
-  rightPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
+  
+  leftPID.SetOutputLimits(PID_LOWER_LIMIT/2, PID_UPPER_LIMIT/2);
+  rightPID.SetOutputLimits(PID_LOWER_LIMIT/2, PID_UPPER_LIMIT/2);
   midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
+
   
   resetPololuTicks();
 
@@ -38,7 +40,7 @@ void loop(void)
 {
   //resetPololuTicks();
   //moveForward(5); // possible moveForwad is affected by abs
-  turnRight(360);
+  turnRight(90);
   //motorShield.setSpeeds(100, 100); printCounts();
   //motorShield.setSpeeds(100, 0);
   delay(1000);

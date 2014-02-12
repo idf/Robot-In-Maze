@@ -112,3 +112,20 @@ float turnAngleR(int angle) {
   return angleToTurn;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+void setScale(double scale) {
+  SetpointLeft *= scale;
+  SetpointRight *= scale;
+  SetpointMid *= scale; // always 0
+
+  PID_SETPOINT *= scale;
+  PID_UPPER_LIMIT *= scale;
+  PID_LOWER_LIMIT *= scale;
+
+  MAX_SPEED *= scale;
+  TARGET_SPEED *= scale;
+  MIN_SPEED *= scale;
+
+  leftPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
+  rightPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
+  midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
+}

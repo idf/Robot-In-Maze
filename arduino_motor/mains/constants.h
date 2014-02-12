@@ -8,17 +8,19 @@ so the is no problem with putting a definition in a header.
 const int MAX_SPEED_ANALOG = 255; // Built-in PWM
 
 const int DESIGNED_MAX_SPEED = 400;
-const int MAX_SPEED = 150; // 180 RPM (confirmed)
-const int TARGET_SPEED = 100; 
-const int MIN_SPEED = 50;
 
 const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
 const int COUNTS_PER_REVOLUTION = 2249/2; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
 const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 
-const int PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
-const int PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
-const int PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
+
+int MAX_SPEED = 300; // 180 RPM (confirmed)
+int TARGET_SPEED = 200; 
+int MIN_SPEED = 100;
+
+int PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
+int PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
+int PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
 
 const int SAMPLE_TIME = 10; // 10ms original
 // [0, 3400]

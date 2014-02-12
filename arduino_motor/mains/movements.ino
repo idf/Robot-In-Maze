@@ -7,7 +7,6 @@ int isM2Forward either 1 or -1 or 0
 */
 void configureMotor(int isM1Forward, int isM2Forward) 
 {
-
   long leftPololuCount;                     
   long rightPololuCount; 
   // printCounts();
@@ -58,21 +57,21 @@ void configureMotor(int isM1Forward, int isM2Forward)
   rightPID.Compute();
   leftPID.Compute();
 
-  /*
+  
   Serial.print("leftTicks: "); Serial.println(leftTicks);
   Serial.print("rightTicks: "); Serial.println(rightTicks);
   Serial.print("InputMid: "); Serial.println(InputMid);
   Serial.print("SetpointLeft: "); Serial.println(SetpointLeft);
   Serial.print("SetpointRight: "); Serial.println(SetpointRight);
-  */
+  
   previousLeftTick = leftPololuCount;
   previousRightTick = rightPololuCount;
   timing = millis();
 
   int m1Speed = isM1Forward * map(OutputLeft, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
   int m2Speed = isM2Forward * map(OutputRight, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
-  //Serial.print("m1: "); Serial.println(m1Speed);
-  //Serial.print("m2: "); Serial.println(m2Speed);
+  Serial.print("m1: "); Serial.println(m1Speed);
+  Serial.print("m2: "); Serial.println(m2Speed);
 
   motorShield.setSpeeds(m1Speed, m2Speed);
     }
@@ -123,7 +122,6 @@ void moveForward(double dist)
 
     configureMotor(1, 1);
   }
-
   
   motorShield.setBrakes(MAX_SPEED, MAX_SPEED);
   delay(40);
@@ -146,6 +144,7 @@ void turnRight(int angle) {
   long firstLeftCount = PololuWheelEncoders::getCountsM1();
   long firstRightCount = PololuWheelEncoders::getCountsM2();
   
+  setScale(0.5);
   while (noOfTicksForAngle - avgTicksForAngleOrDist > 7) { //noOfTicksForAngle - change to 'angle' for other formula
     double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
@@ -156,6 +155,7 @@ void turnRight(int angle) {
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     configureMotor(isLeftForward, isRightForward);
   }
+  setScale(1/0.5);
   // not affect the polling
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   
