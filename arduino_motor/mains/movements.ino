@@ -130,7 +130,8 @@ void moveForward(double dist)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void turnRight(int angle) {
-  resetPololuTicks(); theta = 0; // theta_error
+  resetPololuTicks(); 
+  theta = 0; // theta_error
   const int isLeftForward = 1;
   const int isRightForward = -1;
   /* 
