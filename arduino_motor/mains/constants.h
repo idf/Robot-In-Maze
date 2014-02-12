@@ -14,17 +14,17 @@ const int COUNTS_PER_REVOLUTION = 2249/2; // 48 CPR quadrature encoder on the mo
 const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
 
 
-int MAX_SPEED = 300; // 180 RPM (confirmed)
-int TARGET_SPEED = 200; 
-int MIN_SPEED = 100;
+double MAX_SPEED = 300; // 180 RPM (confirmed)
+double TARGET_SPEED = 200; 
+double MIN_SPEED = 100;
 
-int PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
-int PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
-int PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
+double PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
+double PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
+double PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
 
 const int SAMPLE_TIME = 10; // 10ms original
 // [0, 3400]
-const double WHEELS_INTERVAL = 17.2; // mc
+const double WHEELS_INTERVAL = 17.15; // cm // affects turning 
 // constants END
 
 // Digital Pins START
