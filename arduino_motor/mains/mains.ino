@@ -11,7 +11,6 @@ void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
-
   // Encoder
   PololuWheelEncoders::init(M1_ENCODER_A, M1_ENCODER_B, M2_ENCODER_A, M2_ENCODER_B);
   leftPID.SetMode(AUTOMATIC);
@@ -38,11 +37,14 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-  moveForward(100); // possible moveForwad is affected by abs
-  //turnRight(90);
+  //moveForward(5); // possible moveForwad is affected by abs
+  turnRight(360);
   //motorShield.setSpeeds(100, 100); printCounts();
+  //motorShield.setSpeeds(100, 0);
   delay(1000);
+  printCounts();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   
+

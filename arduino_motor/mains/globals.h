@@ -1,5 +1,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
+#include "constants.h"
 /* 
 M1 on LEFT
 M2 on RIGHT 
@@ -32,5 +33,8 @@ PID midPID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);
 // Deduced Reckoning 
 double theta, deltaX, deltaY;
 
-DualVNH5019MotorShield motorShield;
+
+// MotorShiled
+DualVNH5019MotorShield motorShield(INA1, INB1, EN1DIAG1, CS1, INA2, INB2, EN2DIAG2, CS2);
+
 #endif
