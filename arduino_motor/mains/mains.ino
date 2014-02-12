@@ -38,7 +38,7 @@ void loop(void)
 {
   //resetPololuTicks();
   //moveForward(5); // possible moveForwad is affected by abs
-  turnRight(90);
+  turnRight(360);
   //motorShield.setSpeeds(100, 100); printCounts();
   //motorShield.setSpeeds(100, 0);
   delay(1000);

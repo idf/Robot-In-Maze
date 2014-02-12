@@ -7,6 +7,7 @@ int isM2Forward either 1 or -1 or 0
 */
 void configureMotor(int isM1Forward, int isM2Forward) 
 {
+
   long leftPololuCount;                     
   long rightPololuCount; 
   // printCounts();
@@ -17,7 +18,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   } 
 
   else { */
-    //if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
+    if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
   leftPololuCount = PololuWheelEncoders::getCountsM1();                       
   rightPololuCount = PololuWheelEncoders::getCountsM2();
   long timez = millis() - timing; // time passed by 
@@ -74,7 +75,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   //Serial.print("m2: "); Serial.println(m2Speed);
 
   motorShield.setSpeeds(m1Speed, m2Speed);
-    //}
+    }
  // }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +146,7 @@ void turnRight(int angle) {
   long firstLeftCount = PololuWheelEncoders::getCountsM1();
   long firstRightCount = PololuWheelEncoders::getCountsM2();
   
-  while (avgTicksForAngleOrDist - noOfTicksForAngle > 20 || noOfTicksForAngle - avgTicksForAngleOrDist > 20) { //noOfTicksForAngle - change to 'angle' for other formula
+  while (noOfTicksForAngle - avgTicksForAngleOrDist > 7) { //noOfTicksForAngle - change to 'angle' for other formula
     double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
