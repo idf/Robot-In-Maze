@@ -15,14 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//library to be found on edventure
+
 
 
 
 // Reference the I2C Library
-#include <Wire.h>
+#include <Wire.h>  // built-in library 
 // Reference the HMC5883L Compass Library
-#include <HMC5883L.h>
+#include <HMC5883L.h> //library to be found on edventure
 
 // Store our compass as a variable.
 HMC5883L compass;
@@ -69,8 +69,8 @@ void loop()
   // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
   // Find yours here: http://www.magnetic-declination.com/
   // Mine is: 2� 37' W, which is 2.617 Degrees, or (which we need) 0.0456752665 radians, I will use 0.0457
-  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
-  float declinationAngle = 0.0457;
+  // float declinationAngle = 0.0457;
+  float declinationAngle = 0.003781546713
   heading += declinationAngle;
   
   // Correct for when signs are reversed.
