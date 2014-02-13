@@ -1,0 +1,18 @@
+class Config {
+public:
+  static const int MAX_SPEED_ANALOG = 255; // Built-in PWM
+  static const int DESIGNED_MAX_SPEED = 400;
+  static const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
+  static const int COUNTS_PER_REVOLUTION = 2249/2; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
+  static const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
+  static const int SAMPLE_TIME = 10; // 10ms original
+  static const double WHEELS_INTERVAL = 17.10; // cm // affects turning 
+  
+  static double MAX_SPEED = 300; // 180 RPM (confirmed)
+  static double TARGET_SPEED = 200; 
+  static double MIN_SPEED = 100;
+  static double PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
+  static double PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
+  static double PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
+
+};
