@@ -13,10 +13,12 @@ PololuWheelEncoder is using ISR(PCINT0_vect), interrupt Service Routine
 
 COMMUNICATION  
 Json format  http://docs.python.org/2/library/json.html  
+```
 {  
   "function": "function_name",  
   "parameter": parameter,  
 }  
+```
 example:  
 {  
   "function": "moveForward",  
