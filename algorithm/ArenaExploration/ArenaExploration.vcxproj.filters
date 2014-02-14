@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\model">
+      <UniqueIdentifier>{2776ff10-7271-4868-a684-faf274d609aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\logic">
+      <UniqueIdentifier>{3b56b6a0-d36b-4ff3-8ecb-ff43680c793e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\connection">
+      <UniqueIdentifier>{8d8c7fe0-c8cc-4ea3-a3f1-6e72fd694204}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Arena.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="robot.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="sensor.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="pathfinder.h">
+      <Filter>Header Files\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="arenaexplorer.h">
+      <Filter>Header Files\logic</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
