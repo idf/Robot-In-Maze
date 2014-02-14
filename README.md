@@ -18,7 +18,7 @@ Json format  http://docs.python.org/2/library/json.html
   "parameter": parameter,  
 }  
 example:  
-{
+{  
   "function": "moveForward",  
   "parameter": 10.00  
 }  
