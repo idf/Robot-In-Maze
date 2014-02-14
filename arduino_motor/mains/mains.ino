@@ -10,6 +10,7 @@
 #include "Config.h"
 #include "Serial.h"
 // TAB SIZE 2, whitespaces as tab
+
 // Serial
 SerialSender* serialSender = new SerialSender();
 ///////////////////////////////////////////////////////////////////////////////////////////////////
