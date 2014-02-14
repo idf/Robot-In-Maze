@@ -3,8 +3,8 @@
 #include <PololuWheelEncoders.h>
 #include <PID_v1.h> 
 #include <PID_AutoTune_v0.h>
-#include "constants.h"
 #include "globals.h"
+#include "Pin.h"
 #include "Config.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ void setup(void)
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
   // Encoder
-  PololuWheelEncoders::init(M1_ENCODER_A, M1_ENCODER_B, M2_ENCODER_A, M2_ENCODER_B); // 4 pins required
+  PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
