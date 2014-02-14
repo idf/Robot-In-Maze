@@ -10,3 +10,15 @@ Max PWM duty cycle: 400.
 
 PololuWheelEncoder is using ISR(PCINT0_vect), interrupt Service Routine  
 !important Avoid Serial printing in Polling
+
+COMMUNICATION  
+Json format  http://docs.python.org/2/library/json.html  
+{  
+  "function": "function_name",  
+  "parameter": parameter,  
+}  
+example:  
+{
+  "function": "moveForward",  
+  "parameter": 10.00  
+}  

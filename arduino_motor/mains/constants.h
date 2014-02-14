@@ -24,7 +24,7 @@ double PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED);
 
 const int SAMPLE_TIME = 10; // 10ms original
 // [0, 3400]
-const double WHEELS_INTERVAL = 17.10; // cm // affects turning 
+const double WHEELS_INTERVAL = 17.23; // cm // affects turning // 17.2 undershotting; 17.3 overshoting 
 // constants END
 
 // Digital Pins START
