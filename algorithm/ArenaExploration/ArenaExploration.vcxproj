@@ -70,6 +70,14 @@
     <ClInclude Include="robot.h" />
     <ClInclude Include="sensor.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="arena.cpp" />
+    <ClCompile Include="arenaexplorer.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="pathfinder.cpp" />
+    <ClCompile Include="robot.cpp" />
+    <ClCompile Include="sensor.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
