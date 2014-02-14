@@ -1,5 +1,6 @@
 #include "constants.h"
 #include "globals.h"
+#include "config/Config.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 int isM1Forward either 1 or -1 or 0
@@ -17,7 +18,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   } 
 
   else { */
-    if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
+  if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
   leftPololuCount = PololuWheelEncoders::getCountsM1();                       
   rightPololuCount = PololuWheelEncoders::getCountsM2();
   long timez = millis() - timing; // time passed by 
