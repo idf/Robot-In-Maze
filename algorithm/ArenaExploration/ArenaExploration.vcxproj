@@ -73,6 +73,7 @@
   <ItemGroup>
     <ClCompile Include="arena.cpp" />
     <ClCompile Include="arenaexplorer.cpp" />
+    <ClCompile Include="connector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pathfinder.cpp" />
     <ClCompile Include="robot.cpp" />

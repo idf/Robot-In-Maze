@@ -68,5 +68,8 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="connector.cpp">
+      <Filter>Source Files\connection</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

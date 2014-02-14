@@ -16,7 +16,7 @@ public:
 	inline int getPosX() { return _posX; }
 	inline int getPosY() { return _posY; }
 	inline int getDirection() { return _direction; }
-	inline std::vector<Sensor*> getSensors() { return _sensors };
+	inline std::vector<Sensor*> getSensors() { return _sensors; };
 
 	void rotateClockwise(int deg);
 	void moveForward(int dist);
