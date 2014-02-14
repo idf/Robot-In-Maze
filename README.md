@@ -22,3 +22,4 @@ example:
   "function": "moveForward",  
   "parameter": 10.00  
 }  
+list of functions: void moveForward(double dist); void turnRight(int angle); void turnLeft(int angle);  
