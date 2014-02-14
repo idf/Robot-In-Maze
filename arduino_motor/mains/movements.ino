@@ -1,6 +1,5 @@
 #include "constants.h"
 #include "globals.h"
-#include "config/Config.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 int isM1Forward either 1 or -1 or 0
@@ -18,7 +17,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   } 
 
   else { */
-  if(millis() - timing >= SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
+  if(millis() - timing >= Config::SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
   leftPololuCount = PololuWheelEncoders::getCountsM1();                       
   rightPololuCount = PololuWheelEncoders::getCountsM2();
   long timez = millis() - timing; // time passed by 
@@ -27,8 +26,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
   double rightTicks = abs(rightPololuCount - previousRightTick);
 
   // distanceToTravel is incremental
-  double leftcm = DISTANCE_PER_TICK_CM * leftTicks;
-  double rightcm = DISTANCE_PER_TICK_CM * rightTicks;
+  double leftcm = Config::DISTANCE_PER_TICK_CM * leftTicks;
+  double rightcm = Config::DISTANCE_PER_TICK_CM * rightTicks;
   double distanceToTravel = (leftcm + rightcm)/2.0;
 
   /* http://rossum.sourceforge.net/papers/DiffSteer/DiffSteer.html */
@@ -37,7 +36,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   not yet used for navigation of positioning
   */
   //theta += (rightcm*isM2Forward - leftcm*isM1Forward) / WHEELS_INTERVAL; // deduced reckoning 
-  theta += (rightcm - leftcm) / WHEELS_INTERVAL; // deduced reckoning 
+  theta += (rightcm - leftcm) / Config::WHEELS_INTERVAL; // deduced reckoning 
   // added 1 or -1 for turnning
   deltaX += distanceToTravel * cos(theta); // deltaX is cumulative
   deltaY += distanceToTravel * sin(theta);
@@ -46,7 +45,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   Serial.print("timez: "); Serial.println(timez);
   leftTicks /= (timez/1000.0);
   rightTicks /= (timez/1000.0); // ms
-  InputMid = deltaY / DISTANCE_PER_TICK_CM;
+  InputMid = deltaY / Config::DISTANCE_PER_TICK_CM;
   if(leftTicks>0 && rightTicks>0) { // avoid overflow
     InputLeft = leftTicks;
     InputRight = rightTicks;
@@ -54,7 +53,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
   
   midPID.Compute();
-  SetpointRight = PID_SETPOINT + map(OutputMid,-PID_SETPOINT/2, PID_SETPOINT/2, -PID_SETPOINT, +PID_SETPOINT);
+  SetpointRight = Config::PID_SETPOINT + map(OutputMid,-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2, -Config::PID_SETPOINT, +Config::PID_SETPOINT);
   rightPID.Compute();
   leftPID.Compute();
 
@@ -69,8 +68,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
   previousRightTick = rightPololuCount;
   timing = millis();
 
-  int m1Speed = isM1Forward * map(OutputLeft, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
-  int m2Speed = isM2Forward * map(OutputRight, PID_LOWER_LIMIT, PID_UPPER_LIMIT, MIN_SPEED, MAX_SPEED);
+  int m1Speed = isM1Forward * map(OutputLeft, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
+  int m2Speed = isM2Forward * map(OutputRight, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
   /*
   Serial.print("m1: "); Serial.println(m1Speed);
   Serial.print("m2: "); Serial.println(m2Speed);
@@ -125,7 +124,7 @@ void moveForward(double dist)
     configureMotor(1, 1);
   }
   
-  motorShield.setBrakes(MAX_SPEED, MAX_SPEED);
+  motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
   delay(40);
   //halt();
 }
@@ -140,7 +139,7 @@ void turnRight(int angle) {
   SetpointRight *= isRightForward;
   */
   //double noOfTicksForAngle = turnAngleR(angle);
-  double noOfTicksForAngle = (WHEELS_INTERVAL/2)*(PI/180)*(angle/DISTANCE_PER_TICK_CM);
+  double noOfTicksForAngle = (Config::WHEELS_INTERVAL/2)*(PI/180)*(angle/Config::DISTANCE_PER_TICK_CM);
   // ------ Angle to ticks formula ------- //
 
   double avgTicksForAngleOrDist = 0;
@@ -178,7 +177,7 @@ void turnRight(int angle) {
   // not affect the polling
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   
-  motorShield.setBrakes(MAX_SPEED, MAX_SPEED);
+  motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
   delay(40);
   //halt();
   /*

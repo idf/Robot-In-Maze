@@ -4,29 +4,6 @@
 In C++ const objects have internal linkage unless explicitly declared extern 
 so the is no problem with putting a definition in a header.
 */
-// constants START
-const int MAX_SPEED_ANALOG = 255; // Built-in PWM
-
-const int DESIGNED_MAX_SPEED = 400;
-
-const int WHEEL_DIAMETER = 6; // the motor shaft is mount the larger Pololu wheels (60mm)
-const int COUNTS_PER_REVOLUTION = 2249/2; // 48 CPR quadrature encoder on the motor shaft,  which provides 2249 counts per revolution (gear ratio: 47:1)
-const double DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION;
-
-
-double MAX_SPEED = 300; // 180 RPM (confirmed)
-double TARGET_SPEED = 200; 
-double MIN_SPEED = 100;
-
-double PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED); // 3400
-double PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED); // added by Danyang
-double PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED); // 2000
-
-const int SAMPLE_TIME = 10; // 10ms original
-// [0, 3400]
-const double WHEELS_INTERVAL = 17.23; // cm // affects turning // 17.2 undershotting; 17.3 overshoting 
-// constants END
-
 // Digital Pins START
 /* 
 Built-in digital pin:

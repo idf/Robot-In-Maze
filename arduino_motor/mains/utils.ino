@@ -17,7 +17,7 @@ float distCentimeter(float centimeter)
   } else {
     divisibleTicks = 18.7;
   }
-  float ticksForOneCentimeter = COUNTS_PER_REVOLUTION/divisibleTicks;
+  float ticksForOneCentimeter = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
   float dist = ticksForOneCentimeter * centimeter;
   return dist;
 }
@@ -73,7 +73,7 @@ float turnAngle(int angle) {
     divisibleTicks = 125;
   }
   
-  float ticksForOneDegree = COUNTS_PER_REVOLUTION/divisibleTicks;
+  float ticksForOneDegree = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
   float angleToTurn = ticksForOneDegree * angle;
   return angleToTurn;
 }
@@ -107,7 +107,7 @@ float turnAngleR(int angle) {
     divisibleTicks = 125;
   }
   
-  float ticksForOneDegree = COUNTS_PER_REVOLUTION/divisibleTicks;
+  float ticksForOneDegree = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
   float angleToTurn = ticksForOneDegree * angle;
   return angleToTurn;
 }
@@ -117,15 +117,15 @@ void setScale(double scale) {
   SetpointRight *= scale;
   SetpointMid *= scale; // always 0
 
-  PID_SETPOINT *= scale;
-  PID_UPPER_LIMIT *= scale;
-  PID_LOWER_LIMIT *= scale;
+  Config::PID_SETPOINT *= scale;
+  Config::PID_UPPER_LIMIT *= scale;
+  Config::PID_LOWER_LIMIT *= scale;
 
-  MAX_SPEED *= scale;
-  TARGET_SPEED *= scale;
-  MIN_SPEED *= scale;
+  Config::MAX_SPEED *= scale;
+  Config::TARGET_SPEED *= scale;
+  Config::MIN_SPEED *= scale;
 
-  leftPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
-  rightPID.SetOutputLimits(PID_LOWER_LIMIT, PID_UPPER_LIMIT);
-  midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
+  leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
+  rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
+  midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 }

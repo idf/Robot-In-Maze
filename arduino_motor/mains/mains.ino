@@ -5,7 +5,7 @@
 #include <PID_AutoTune_v0.h>
 #include "constants.h"
 #include "globals.h"
-#include "config/Config.h"
+#include "Config.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(void)
@@ -13,24 +13,24 @@ void setup(void)
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
   // Encoder
-  PololuWheelEncoders::init(M1_ENCODER_A, M1_ENCODER_B, M2_ENCODER_A, M2_ENCODER_B);
+  PololuWheelEncoders::init(M1_ENCODER_A, M1_ENCODER_B, M2_ENCODER_A, M2_ENCODER_B); // 4 pins required
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
 
-  leftPID.SetSampleTime(SAMPLE_TIME); 
-  rightPID.SetSampleTime(SAMPLE_TIME); 
-  midPID.SetSampleTime(SAMPLE_TIME);
+  leftPID.SetSampleTime(Config::SAMPLE_TIME); 
+  rightPID.SetSampleTime(Config::SAMPLE_TIME); 
+  midPID.SetSampleTime(Config::SAMPLE_TIME);
 
-  SetpointLeft = PID_SETPOINT;
-  SetpointRight = PID_SETPOINT;
+  SetpointLeft = Config::PID_SETPOINT;
+  SetpointRight = Config::PID_SETPOINT;
   SetpointMid = 0;
 
   // for controlling the speed 
   
-  leftPID.SetOutputLimits(PID_LOWER_LIMIT/2, PID_UPPER_LIMIT/2);
-  rightPID.SetOutputLimits(PID_LOWER_LIMIT/2, PID_UPPER_LIMIT/2);
-  midPID.SetOutputLimits(-PID_SETPOINT/2, PID_SETPOINT/2);
+  leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT/2, Config::PID_UPPER_LIMIT/2);
+  rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT/2, Config::PID_UPPER_LIMIT/2);
+  midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 
   
   resetPololuTicks();
