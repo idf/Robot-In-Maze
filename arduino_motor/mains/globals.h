@@ -1,6 +1,7 @@
-#include "Pin.h"
 #ifndef GLOBALS_H
 #define GLOBALS_H
+#include "Pin.h"
+#include "Serial.h"
 /* 
 M1 on LEFT
 M2 on RIGHT 
@@ -36,5 +37,6 @@ double theta, deltaX, deltaY;
 
 // MotorShiled
 DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1, Pin::INA2, Pin::INB2, Pin::EN2DIAG2, Pin::CS2);
+
 
 #endif

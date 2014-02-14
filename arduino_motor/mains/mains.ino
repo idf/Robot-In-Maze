@@ -3,10 +3,15 @@
 #include <PololuWheelEncoders.h>
 #include <PID_v1.h> 
 #include <PID_AutoTune_v0.h>
+#include <aJSON.h>
+
 #include "globals.h"
 #include "Pin.h"
 #include "Config.h"
+#include "Serial.h"
 // TAB SIZE 2, whitespaces as tab
+// Serial
+SerialSender* serialSender = new SerialSender();
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(void)
 {
@@ -46,8 +51,10 @@ void loop(void)
   turnRight(90);
   //motorShield.setSpeeds(100, 100); printCounts();
   //motorShield.setSpeeds(100, 0);
+  serialSender->send_action_complete("turnRight");
   delay(1000);
-  printCounts();
+  //printCounts();
+  
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
