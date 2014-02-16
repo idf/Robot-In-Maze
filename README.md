@@ -4,7 +4,7 @@ TO BE THE FASTEST.
 Swifter, stronger, and more precise.  
 
 Arduino Requirements
-==============
+--------------
 2 spaces as tab  
 
 PololuWheelEncoder is using ISR(PCINT0_vect), interrupt Service Routine  
@@ -16,7 +16,7 @@ method_name
 functionName  
 
 COMMUNICATION
-==============
+--------------
 Json format  http://docs.python.org/2/library/json.html  
 ```json
 {  
