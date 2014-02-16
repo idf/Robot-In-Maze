@@ -35,16 +35,16 @@ void configureMotor(int isM1Forward, int isM2Forward)
   not yet used for navigation of positioning
   */
   //theta += (rightcm*isM2Forward - leftcm*isM1Forward) / WHEELS_INTERVAL; // deduced reckoning 
-  theta += (rightcm - leftcm) / Config::WHEELS_INTERVAL; // deduced reckoning 
+  errorCumulator->theta += (rightcm - leftcm) / Config::WHEELS_INTERVAL; // deduced reckoning 
   // added 1 or -1 for turnning
-  deltaX += distanceToTravel * cos(theta); // deltaX is cumulative
-  deltaY += distanceToTravel * sin(theta);
-  
-  printDeadReckoning(deltaX, deltaY, distanceToTravel);
-  Serial.print("timez: "); Serial.println(timez);
+  errorCumulator->deltaX += distanceToTravel * cos(errorCumulator->theta); // deltaX is cumulative
+  errorCumulator->deltaY += distanceToTravel * sin(errorCumulator->theta);
+
+  errorCumulator->print_dead_reckoning();
+  Serial.print("timez: "); Serial.println(timez); // time interval affect polling performance
   leftTicks /= (timez/1000.0);
   rightTicks /= (timez/1000.0); // ms
-  InputMid = deltaY / Config::DISTANCE_PER_TICK_CM;
+  InputMid = errorCumulator->deltaY / Config::DISTANCE_PER_TICK_CM;
   if(leftTicks>0 && rightTicks>0) { // avoid overflow
     InputLeft = leftTicks;
     InputRight = rightTicks;
@@ -103,7 +103,6 @@ max dist value = 274.6 cm for every call
 */
 void moveForward(double dist) 
 {  
-  theta = 0; // error theta
   double noOfTicksForDist = distCentimeter(dist);
   
   // ------ Distance to ticks formula ------- //
@@ -132,13 +131,13 @@ void moveForward(double dist)
 // but in ErrorCumulator, it is +/-
 void turnRight(double angle) {
   resetPololuTicks(); 
-  theta = 0; // theta_error
+  errorCumulator->theta = 0; // theta_error
   const int isLeftForward = 1;
   const int isRightForward = -1;
 
   //double noOfTicksForAngle = turnAngleR(angle);
   double adjusted_angle = abs(errorCumulator->adjust_turning_angle(angle));
-  double noOfTicksForAngle = angle_to_ticks(adjusted_angle);
+  double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
   // ------ Angle to ticks formula ------- //
 
   double avgTicksForAngleOrDist = 0;
@@ -181,23 +180,8 @@ void turnRight(double angle) {
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   
 
-
-
   motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
   delay(40);
-  //halt();
-  /*
-  retore motor configuration 
-  */
   resetPololuTicks();
-  /* 
-  SetpointLeft *= isLeftForward;
-  SetpointRight *= isRightForward;
-  */
-  /*
-  In position turning, deltaY and deltaX suppposed to be 0 
-  deltaY = 0;
-  deltaX = 0;
-  theta may need to be reset if there is no better solution 
-  */
+  errorCumulator->theta = 0;
 }

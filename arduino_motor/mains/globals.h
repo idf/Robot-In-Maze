@@ -34,7 +34,7 @@ PID midPID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);
 //PID_ATune aTuneRight(&InputRight, &OutputRight);
 
 // Deduced Reckoning 
-double theta, deltaX, deltaY;
+//double theta, deltaX, deltaY;
 
 
 // MotorShiled

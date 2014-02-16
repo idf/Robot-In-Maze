@@ -38,12 +38,7 @@ void printCounts()
   Serial.print("RIGHT COUNT (getCountsM2): "); Serial.println(rightPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM2());
 }
-void printDeadReckoning(double deltaX, double deltaY, double distanceToTravel)
-{
-  Serial.print("deltaX: "); Serial.println(deltaX);
-  Serial.print("deltaY: "); Serial.println(deltaY);
-  Serial.print("distanceToTravel: "); Serial.println(distanceToTravel);
-};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 float turnAngle(int angle) {
@@ -133,9 +128,10 @@ void setScale(double scale) {
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+Replaced by const TICKS_PER_DEGREE
 double angle_to_ticks(double angle) {
  return (Config::WHEELS_INTERVAL/2)*(PI/180)*(angle/Config::DISTANCE_PER_TICK_CM);
 }
-double ticks_to_angle(double ticks) {
-  return ticks/angle_to_ticks(1);
-}
+*/
+
