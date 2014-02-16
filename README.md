@@ -13,15 +13,20 @@ COMMUNICATION
 Json format  http://docs.python.org/2/library/json.html  
 ```json
 {  
-  "function": "function_name",  
+  "function": function_code,  
   "parameter": parameter,  
 }  
 ```
 example:  
 ```json
 {  
-  "function": "moveForward",  
-  "parameter": 10.00  
+  "function": 0,  
+  "parameter": 5  
 }  
 ```
-List of functions: void moveForward(double dist); void turnRight(int angle); void turnLeft(int angle);  
+The example commands Arduino to moveForwad by 5 cm
+List of functions:  
+0: void moveForward(double dist);  
+1: void turnRight(int angle);  
+2: void turnLeft(int angle);   
+
