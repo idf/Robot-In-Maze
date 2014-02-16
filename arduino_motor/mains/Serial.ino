@@ -22,25 +22,28 @@ int SerialCommnder::get_command() {
 }
 
 bool SerialCommnder::exec_command(int function_code, double parameter) {
-  bool completed = false;
   if(function_code==0) {
     moveForward(parameter);
-    completed = true;
+    this->send_command_complete(function_code, 200);
+    return true;
   }
   else if(function_code==1) {
-    turnRight((int)parameter);
-    completed = true;
+    turnRight(parameter);
+    this->send_command_complete(function_code, 200);
+    return true;
   }
   else if(function_code==2) {
-    //turnLeft((int)parameter)
-    completed = true;
-  }
-
-  
-  if(completed) {
+    turnLeft(parameter);
     this->send_command_complete(function_code, 200);
+    return true;
   }
-  return completed;
+  else {
+    this->send_command_complete(function_code, 405); // Method not Allowed
+    return false;
+  }
+  // TODO
+  this->send_command_complete(function_code, 408); // Request Timeout
+  return false;
 }
 
 void SerialCommnder::send_command_complete(int function_code, int status_code) {

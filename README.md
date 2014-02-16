@@ -29,9 +29,18 @@ NOTICE: In python each json serial command at very end must end with
 '\n'
 some_serial_write_function(json.dumps(json_command)+'\n')
 ```
-The example commands Arduino to moveForwad by 5 cm
+The example commands Arduino to moveForwad by 5 cm.
 List of functions:  
 0: void moveForward(double dist);  
-1: void turnRight(int angle);  
-2: void turnLeft(int angle);   
+1: void turnRight(double angle);  
+2: void turnLeft(double angle);  
 
+Feedback:
+```json
+{  
+  "function": function_code,  
+  "parameter": status_code  
+}  
+```
+status_code is the HTTP status code as in http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html  
+The most common status code is 200 (i.e. OK).

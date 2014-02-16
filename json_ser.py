@@ -1,7 +1,7 @@
 # http://docs.python.org/2/library/json.html
 import json
 command = {
-  "function": "moveForward",
+  "function": 0,
   "parameter": 10.00
 }
 command_json = json.dumps(command)

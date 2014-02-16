@@ -2,7 +2,6 @@
 #define GLOBALS_H
 #include "Pin.h"
 #include "Serial.h"
-#include "HMC5883LCompass.h"
 #include "ErrorCumulator.h"
 /* 
 M1 on LEFT
@@ -41,6 +40,5 @@ PID midPID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);
 DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1, Pin::INA2, Pin::INB2, Pin::EN2DIAG2, Pin::CS2);
 
 SerialCommnder* serialCommnder = new SerialCommnder(); 
-HMC5883LCompass* compass = new HMC5883LCompass(); // to be deleted, in the ErrorCumulator already
 ErrorCumulator* errorCumulator = new ErrorCumulator();
 #endif

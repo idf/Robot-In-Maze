@@ -17,8 +17,10 @@ public:
   void record_turning_error_compass(double adjusted_target_angle);
 
   void print_dead_reckoning();
+
+  HMC5883LCompass* compass; // public for testing purpose
 private:
-  HMC5883LCompass* compass;
+  
   double compass_reading_0;
 };
 #endif
