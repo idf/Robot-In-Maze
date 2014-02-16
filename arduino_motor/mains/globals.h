@@ -42,5 +42,4 @@ DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1
 // Serial
 SerialSender* serialSender = new SerialSender(); // correct
 HMC5883LCompass* compass = new HMC5883LCompass();
-
 #endif
