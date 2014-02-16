@@ -11,10 +11,22 @@
 #include "ErrorCumulator.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+HMC5883LCompass testcompass;
+HMC5883L compass;
+
+
+
 void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
+  
+  //compass
+  testcompass = HMC5883LCompass();
+  testcompass.compassSetup();
+  
+  
+  
   // Encoder
   PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   leftPID.SetMode(AUTOMATIC);
@@ -41,12 +53,18 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-  moveForward(5); // possible moveForwad is affected by abs
-  turnRight(90);
-  turnLeft(90);
+  //moveForward(5); // possible moveForwad is affected by abs
+  //turnRight(90);
+  //turnLeft(90);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->compass->getHeading());
-  delay(1000);
+  
+  
+  float heading = testcompass.getHeading();
+  Serial.println(heading);
+  delay(100); //to slow down the serial print
+
+  //delay(1000);
   //printCounts();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////

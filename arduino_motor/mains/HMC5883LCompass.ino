@@ -25,7 +25,6 @@ void loop(){
 
 void HMC5883LCompass::compassSetup() {
   // Initilization 
-  Serial.begin(9600);
   Wire.begin();
   compass = HMC5883L(); //new instance of HMC5883L library
   //setupHMC5883L(); //setup the HMC5883L
