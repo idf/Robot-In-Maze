@@ -1,5 +1,6 @@
 #include "globals.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 float distCentimeter(float centimeter) 
 {
   float divisibleTicks;
@@ -20,6 +21,7 @@ float distCentimeter(float centimeter)
   float dist = ticksForOneCentimeter * centimeter;
   return dist;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void resetPololuTicks() 
 {
@@ -43,6 +45,7 @@ void printDeadReckoning(double deltaX, double deltaY, double distanceToTravel)
   Serial.print("distanceToTravel: "); Serial.println(distanceToTravel);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 float turnAngle(int angle) {
   float divisibleTicks;
   if (angle <= 90) {
@@ -110,6 +113,7 @@ float turnAngleR(int angle) {
   float angleToTurn = ticksForOneDegree * angle;
   return angleToTurn;
 }
+*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setScale(double scale) {
   SetpointLeft *= scale;

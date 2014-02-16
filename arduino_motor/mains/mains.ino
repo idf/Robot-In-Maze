@@ -8,13 +8,7 @@
 #include "globals.h"
 #include "Pin.h"
 #include "Config.h"
-#include "Serial.h"
-#include "HMC5883LCompass.h"
 // TAB SIZE 2, whitespaces as tab
-
-// Serial
-SerialSender* serialSender = new SerialSender(); // correct
-HMC5883LCompass* compass = new HMC5883LCompass();
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(void)
 {
@@ -48,15 +42,11 @@ void loop(void)
 {
   //resetPololuTicks();
   //moveForward(5); // possible moveForwad is affected by abs
-  double heading = compass->getHeading();
-  Serial.println(heading);
   turnRight(90);
-  //motorShield.setSpeeds(100, 100); printCounts();
-  //motorShield.setSpeeds(100, 0);
   serialSender->send_action_complete("turnRight");
+  Serial.println(compass->getHeading());
   delay(1000);
   //printCounts();
-  
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

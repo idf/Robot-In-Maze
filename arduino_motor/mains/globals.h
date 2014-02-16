@@ -2,6 +2,7 @@
 #define GLOBALS_H
 #include "Pin.h"
 #include "Serial.h"
+#include "HMC5883LCompass.h"
 /* 
 M1 on LEFT
 M2 on RIGHT 
@@ -38,5 +39,8 @@ double theta, deltaX, deltaY;
 // MotorShiled
 DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1, Pin::INA2, Pin::INB2, Pin::EN2DIAG2, Pin::CS2);
 
+// Serial
+SerialSender* serialSender = new SerialSender(); // correct
+HMC5883LCompass* compass = new HMC5883LCompass();
 
 #endif
