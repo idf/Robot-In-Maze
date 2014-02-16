@@ -36,7 +36,8 @@ float HMC5883LCompass::getHeading(){
   //Get the reading from the HMC5883L and calculate the heading
   MagnetometerScaled scaled = compass.ReadScaledAxis(); //scaled values from compass.
   float heading = atan2(scaled.YAxis, scaled.XAxis);
-
+  float declinationAngle = 0.00378;
+  heading += declinationAngle;
   
   // Correct for when signs are reversed.
   // take absolute values for coumulative angle
