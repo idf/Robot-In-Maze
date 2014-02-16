@@ -6,7 +6,7 @@ class HMC5883LCompass {
 private:
   HMC5883L compass;
 public:
-  HMC5883LCompass();
+  void compassSetup();
   float getHeading();
 };
 
