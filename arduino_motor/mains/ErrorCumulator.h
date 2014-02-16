@@ -14,13 +14,13 @@ public:
   ErrorCumulator();
   double adjust_turning_angle(double target_angle);
   void record_turning_error(double adjusted_target_angle, double angle_difference); // possible split turning right and left
-  void record_turning_error_compass(double adjusted_target_angle);
+  //void record_turning_error_compass(double adjusted_target_angle);
 
   void print_dead_reckoning();
 
-  HMC5883LCompass* compass; // public for testing purpose
+  //HMC5883LCompass* compass; // public for testing purpose
 private:
   
-  double compass_reading_0;
+  //double compass_reading_0;
 };
 #endif

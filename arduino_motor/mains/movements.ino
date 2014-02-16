@@ -158,7 +158,7 @@ void turnRight(double angle) {
   // Turning completed
 
   // minus sign indicating turning right
-  errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
+  errorCumulator->record_turning_error(isRightForward*adjusted_angle, noOfTicksForAngle - avgTicksForAngleOrDist); 
   // not affect the polling
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   
@@ -171,59 +171,4 @@ void turnRight(double angle) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // depends on whether turning right and turning left is symmetric
-void turnLeft(double angle) {
-  resetPololuTicks(); 
-  errorCumulator->theta = 0; // theta_error
-  const int isLeftForward = -1;
-  const int isRightForward = +1;
 
-  //double noOfTicksForAngle = turnAngleR(angle);
-  double adjusted_angle = abs(errorCumulator->adjust_turning_angle(angle));
-  double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
-  // ------ Angle to ticks formula ------- //
-
-  double avgTicksForAngleOrDist = 0;
-  long firstLeftCount = PololuWheelEncoders::getCountsM1();
-  long firstRightCount = PololuWheelEncoders::getCountsM2();
-  
-
-
-
-  while (noOfTicksForAngle - avgTicksForAngleOrDist > 200) { //noOfTicksForAngle - change to 'angle' for other formula
-  // the tolerance value affect the turning errors
-    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
-    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
-
-    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
-    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); // left backward
-    
-    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn left
-    configureMotor(isLeftForward, isRightForward);
-  }
-  // fading
-  setScale(0.4);
-  while (noOfTicksForAngle - avgTicksForAngleOrDist > 8) { //noOfTicksForAngle - change to 'angle' for other formula
-  // the tolerance value affect the turning errors
-    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
-    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
-
-    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
-    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); // left backward
-    
-    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn left
-    configureMotor(isLeftForward, isRightForward);
-  }
-  setScale(1/0.4);
-  // Turning completed
-
-  // minus sign indicating turning left
-  errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle);  // turning left, positive
-  // not affect the polling
-  Serial.print("Turning left: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
-  
-
-  motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
-  delay(40);
-  resetPololuTicks();
-  errorCumulator->theta = 0;
-}
