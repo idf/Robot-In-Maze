@@ -35,6 +35,7 @@ void ErrorCumulator::record_turning_error(double adjusted_target_angle, double a
 **/
 void ErrorCumulator::record_turning_error_compass(double adjusted_target_angle) {
   double actual_angle = this->compass->getHeading() - this->compass_reading_0;
+  actual_angle = -actual_angle; // the direction of compass reading angle is reversed 
   this->turning_error += (actual_angle - adjusted_target_angle);
 }
 
