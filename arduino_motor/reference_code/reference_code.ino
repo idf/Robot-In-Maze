@@ -419,7 +419,6 @@ long readSerial() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void executeCommand() {
   //resetPololuTicks();
-  float timeDelay, multiple;
   long serialData = readSerial();
   
   if(serialData==1){

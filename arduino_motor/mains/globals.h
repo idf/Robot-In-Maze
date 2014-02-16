@@ -40,6 +40,6 @@ double theta, deltaX, deltaY;
 DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1, Pin::INA2, Pin::INB2, Pin::EN2DIAG2, Pin::CS2);
 
 // Serial
-SerialSender* serialSender = new SerialSender(); // correct
+SerialCommnder* serialCommnder = new SerialCommnder(); // correct
 HMC5883LCompass* compass = new HMC5883LCompass();
 #endif

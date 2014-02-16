@@ -43,7 +43,7 @@ void loop(void)
   //resetPololuTicks();
   //moveForward(5); // possible moveForwad is affected by abs
   turnRight(90);
-  serialSender->send_action_complete("turnRight");
+  serialCommnder->send_command_complete(1, 200);
   Serial.println(compass->getHeading());
   delay(1000);
   //printCounts();
