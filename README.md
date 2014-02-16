@@ -27,6 +27,7 @@ example:
 NOTICE: each json serial command at very end must end with 
 ```python
 '\n'
+some_serial_write_function(json.dumps(json_command)+'\n')
 ```
 The example commands Arduino to moveForwad by 5 cm
 List of functions:  
