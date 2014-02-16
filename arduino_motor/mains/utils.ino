@@ -132,3 +132,10 @@ void setScale(double scale) {
   rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+double angle_to_ticks(double angle) {
+ return (Config::WHEELS_INTERVAL/2)*(PI/180)*(angle/Config::DISTANCE_PER_TICK_CM);
+}
+double ticks_to_angle(double ticks) {
+  return ticks/angle_to_ticks(1);
+}

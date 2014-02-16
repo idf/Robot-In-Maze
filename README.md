@@ -24,7 +24,7 @@ example:
   "parameter": 5  
 }  
 ```
-NOTICE: each json serial command at very end must end with 
+NOTICE: In python each json serial command at very end must end with 
 ```python
 '\n'
 some_serial_write_function(json.dumps(json_command)+'\n')

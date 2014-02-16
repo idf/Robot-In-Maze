@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "Pin.h"
 #include "Config.h"
+#include "ErrorCumulator.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(void)

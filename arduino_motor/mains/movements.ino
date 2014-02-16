@@ -128,17 +128,17 @@ void moveForward(double dist)
   //halt();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void turnRight(int angle) {
+// angle in this function is abs
+// but in ErrorCumulator, it is +/-
+void turnRight(double angle) {
   resetPololuTicks(); 
   theta = 0; // theta_error
   const int isLeftForward = 1;
   const int isRightForward = -1;
-  /* 
-  SetpointLeft *= isLeftForward;
-  SetpointRight *= isRightForward;
-  */
+
   //double noOfTicksForAngle = turnAngleR(angle);
-  double noOfTicksForAngle = (Config::WHEELS_INTERVAL/2)*(PI/180)*(angle/Config::DISTANCE_PER_TICK_CM);
+  double adjusted_angle = abs(errorCumulator->adjust_turning_angle(angle));
+  double noOfTicksForAngle = angle_to_ticks(adjusted_angle);
   // ------ Angle to ticks formula ------- //
 
   double avgTicksForAngleOrDist = 0;
@@ -159,8 +159,8 @@ void turnRight(int angle) {
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     configureMotor(isLeftForward, isRightForward);
   }
-  setScale(0.4);
   // fading
+  setScale(0.4);
   while (noOfTicksForAngle - avgTicksForAngleOrDist > 8) { //noOfTicksForAngle - change to 'angle' for other formula
   // the tolerance value affect the turning errors
     double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
@@ -173,9 +173,16 @@ void turnRight(int angle) {
     configureMotor(isLeftForward, isRightForward);
   }
   setScale(1/0.4);
+  // Turning completed
+
+  // minus sign indicating turning right
+  errorCumulator->record_turning_error_compass(-adjusted_angle); 
   // not affect the polling
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   
+
+
+
   motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
   delay(40);
   //halt();
