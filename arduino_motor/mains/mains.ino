@@ -17,6 +17,8 @@ void setup(void)
   motorShield.init();
   // Encoder
   PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
+  errorCumulator->compass->compassSetup();
+
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
   midPID.SetMode(AUTOMATIC);
@@ -45,7 +47,7 @@ void loop(void)
   turnRight(90);
   turnLeft(90);
   //serialCommnder->send_command_complete(1, 200);
-  //Serial.println(errorCumulator->compass->getHeading());
+  Serial.println(errorCumulator->compass->getHeading());
   delay(1000);
   //printCounts();
 }
