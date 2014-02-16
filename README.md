@@ -14,7 +14,7 @@ Json format  http://docs.python.org/2/library/json.html
 ```json
 {  
   "function": function_code,  
-  "parameter": parameter,  
+  "parameter": parameter  
 }  
 ```
 example:  
