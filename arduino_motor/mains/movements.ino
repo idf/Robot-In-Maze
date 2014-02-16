@@ -99,7 +99,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
   }
   // fading
-  setScale(0.4);
+  setScale(0.2);
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
     double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
@@ -111,10 +111,10 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     configureMotor(isLeftForward, isRightForward);
   }
-  setScale(1/0.4);
+  setScale(1/0.2);
   Serial.print("Ticks statistics: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(target_tick);
   motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
-
+  delay(100);
   return avgTicksForAngleOrDist;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
