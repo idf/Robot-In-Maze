@@ -74,24 +74,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
   Serial.print("m2: "); Serial.println(m2Speed);
   */
   motorShield.setSpeeds(m1Speed, m2Speed);
-    }
- // }
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////
-void halt() 
-{ 
-  motorShield.setSpeeds(0, 0);
-  delay(100);
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////
-void stopIfFault()
-{ 
-  if (motorShield.getM1Fault()) {
-    Serial.println("M1 fault"); while(1);
-  } 
-  if (motorShield.getM2Fault()) {
-    Serial.println("M2 fault"); while(1);
   }
+ // }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -114,8 +98,8 @@ void moveForward(double dist)
 
   
   while (avgTicksForAngleOrDist < noOfTicksForDist) {
-    leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1() - leftCount0;
-    rightTicksForAngleOrDist = PololuWheelEncoders::getCountsM2() - rightCount0;
+    leftTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM1() - leftCount0);
+    rightTicksForAngleOrDist = abs(PololuWheelEncoders::getCountsM2() - rightCount0);
 
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2.0; // reaching the target
 
@@ -124,7 +108,6 @@ void moveForward(double dist)
   
   motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
   delay(40);
-  //halt();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // angle in this function is abs
@@ -175,9 +158,68 @@ void turnRight(double angle) {
   // Turning completed
 
   // minus sign indicating turning right
-  errorCumulator->record_turning_error_compass(-adjusted_angle); 
+  errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
   // not affect the polling
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
+  
+
+  motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
+  delay(40);
+  resetPololuTicks();
+  errorCumulator->theta = 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// depends on whether turning right and turning left is symmetric
+void turnLeft(double angle) {
+  resetPololuTicks(); 
+  errorCumulator->theta = 0; // theta_error
+  const int isLeftForward = -1;
+  const int isRightForward = +1;
+
+  //double noOfTicksForAngle = turnAngleR(angle);
+  double adjusted_angle = abs(errorCumulator->adjust_turning_angle(angle));
+  double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
+  // ------ Angle to ticks formula ------- //
+
+  double avgTicksForAngleOrDist = 0;
+  long firstLeftCount = PololuWheelEncoders::getCountsM1();
+  long firstRightCount = PololuWheelEncoders::getCountsM2();
+  
+
+
+
+  while (noOfTicksForAngle - avgTicksForAngleOrDist > 200) { //noOfTicksForAngle - change to 'angle' for other formula
+  // the tolerance value affect the turning errors
+    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
+
+    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); // left backward
+    
+    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn left
+    configureMotor(isLeftForward, isRightForward);
+  }
+  // fading
+  setScale(0.4);
+  while (noOfTicksForAngle - avgTicksForAngleOrDist > 8) { //noOfTicksForAngle - change to 'angle' for other formula
+  // the tolerance value affect the turning errors
+    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
+
+    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); // left backward
+    
+    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn left
+    configureMotor(isLeftForward, isRightForward);
+  }
+  setScale(1/0.4);
+  // Turning completed
+
+  // minus sign indicating turning left
+  errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle);  // turning left, positive
+  // not affect the polling
+  Serial.print("Turning left: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   
 
   motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
