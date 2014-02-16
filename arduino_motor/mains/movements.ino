@@ -40,7 +40,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   errorCumulator->deltaX += distanceToTravel * cos(errorCumulator->theta); // deltaX is cumulative
   errorCumulator->deltaY += distanceToTravel * sin(errorCumulator->theta);
 
-  errorCumulator->print_dead_reckoning();
+  // errorCumulator->print_dead_reckoning();
   Serial.print("timez: "); Serial.println(timez); // time interval affect polling performance
   leftTicks /= (timez/1000.0);
   rightTicks /= (timez/1000.0); // ms
@@ -119,7 +119,8 @@ void turnRight(double angle) {
   const int isRightForward = -1;
 
   //double noOfTicksForAngle = turnAngleR(angle);
-  double adjusted_angle = abs(errorCumulator->adjust_turning_angle(angle));
+  double adjusted_angle = errorCumulator->adjust_turning_angle(isRightForward*angle);
+  adjusted_angle = abs(adjusted_angle);
   double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
   // ------ Angle to ticks formula ------- //
 
@@ -143,7 +144,7 @@ void turnRight(double angle) {
   }
   // fading
   setScale(0.4);
-  while (noOfTicksForAngle - avgTicksForAngleOrDist > 8) { //noOfTicksForAngle - change to 'angle' for other formula
+  while (noOfTicksForAngle - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
     double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
@@ -158,7 +159,7 @@ void turnRight(double angle) {
   // Turning completed
 
   // minus sign indicating turning right
-  errorCumulator->record_turning_error(isRightForward*adjusted_angle, noOfTicksForAngle - avgTicksForAngleOrDist); 
+  errorCumulator->record_turning_error(isRightForward*adjusted_angle, (avgTicksForAngleOrDist - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
   // not affect the polling
   Serial.print("Turning right: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(noOfTicksForAngle);
   

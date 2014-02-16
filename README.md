@@ -8,6 +8,7 @@ Arduino Requirements
 
 PololuWheelEncoder is using ISR(PCINT0_vect), interrupt Service Routine  
 !important Avoid Serial printing in Polling
+abs() in Arduino has adverse effect; thus do not use it on function's return value  
 
 COMMUNICATION  
 Json format  http://docs.python.org/2/library/json.html  

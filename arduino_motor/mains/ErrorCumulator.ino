@@ -12,6 +12,7 @@ ErrorCumulator::ErrorCumulator() {
 }
 double ErrorCumulator::adjust_turning_angle(double target_angle) {
   double adjusted_target_angle;
+  Serial.print("turning error: "); Serial.println(this->turning_error);
   adjusted_target_angle = target_angle - this->turning_error; // +/- guaranteed
   this->turning_error = 0;
   // this->compass_reading_0 = this->compass->getHeading();
