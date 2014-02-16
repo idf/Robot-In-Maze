@@ -42,7 +42,8 @@ void loop(void)
 {
   //resetPololuTicks();
   //moveForward(5); // possible moveForwad is affected by abs
-  turnRight(90);
+  //turnRight(90);
+  turnLeft(90);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->compass->getHeading());
   delay(1000);
