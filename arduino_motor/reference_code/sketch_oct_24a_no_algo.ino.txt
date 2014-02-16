@@ -1,0 +1,399 @@
+#include <PinChangeInt.h>
+
+#define dir_right       12                      // motor right pin
+#define dir_left        13                      // motor left pin
+#define pwm_left        11                       // PWM motor Left pin
+#define pwm_right       3                       // PWM motor Right pin
+#define encodPinLB      4                       // encoder  LEFT B
+#define encodPinLA      5                       // encoder  LEFT A
+#define encodPinRB      6                       // encoder RIGHT B
+#define encodPinRA      7                       // encoder RIGHT A
+
+#define LOOPTIME        10                     // PID loop time in ms
+
+
+#define long_sensor    40 //cm
+#define short_sensor   10 //10cm
+#define FORWARD        LOW
+#define BACKWARD       HIGH
+
+unsigned long lastMilli = 0;                    // loop timing
+//unsigned long lastMilliPrint = 0;               // loop timing
+int speed_req_L = 0;                            // speed (Set Point)
+int speed_act_L = 0;                              // speed (actual value)
+int speed_req_R = 0;                            // speed (Set Point)
+int speed_act_R = 0;
+int PWM_val_L = 0;                                // (25% = 64; 50% = 127; 75% = 191; 100% = 255)
+int PWM_val_R = 0;                                // (25% = 64; 50% = 127; 75% = 191; 100% = 255)
+int dir_L;
+int dir_R;
+
+volatile long count_L = 0;                        // rev counter Left  range from 0 to 4,294,967,295 : 
+volatile long count_R = 0;                        // rev counter Right
+float Kp =   6;                                // PID proportional control Gain
+//float Ki =   0.5;
+float Kd =   3;                                // PID Derivitave control gain
+
+double distLimit = 0;                               //distant control   cm
+double degreeLimit = 0;                                  //degree control  degree
+long olddis =0;                                       //old distance value, used to output distance
+boolean firstcheck = false;                        // refresh control
+char param;
+boolean start= false;
+
+void setup() {
+  Serial.begin(9600); //increased baud rate by b3n
+  pinMode(dir_right, OUTPUT);
+  pinMode(dir_left, OUTPUT);
+  pinMode(pwm_right, OUTPUT);
+  pinMode(pwm_left, OUTPUT);
+  pinMode(encodPinLB, INPUT);
+  pinMode(encodPinRB, INPUT);
+  pinMode(encodPinLA, INPUT);
+  pinMode(encodPinRA, INPUT);
+  
+  digitalWrite(encodPinLA, HIGH);                      // turn on pullup resistor
+  digitalWrite(encodPinLB, HIGH);
+  digitalWrite(encodPinRA, HIGH);                      // turn on pullup resistor
+  digitalWrite(encodPinRB, HIGH);
+  
+  PCintPort::attachInterrupt(4, rencoder_left, CHANGE);     // interrupt pin 4
+  PCintPort::attachInterrupt(6, rencoder_right, CHANGE);    // interrupt pin 6
+  PCintPort::attachInterrupt(5, rencoder_left, CHANGE);     // interrupt pin 5
+  PCintPort::attachInterrupt(7, rencoder_right, CHANGE);    // interrupt pin 7
+
+  digitalWrite(dir_right, FORWARD);
+  digitalWrite(dir_left, FORWARD);
+  delay(200);
+}
+
+void loop() {
+  start = true;
+  if(Serial.available()){                      // no input, return
+    delay(10);                  
+    param = Serial.read();  // get parameter byte
+    delay(10);
+    
+    if(param == 'x'){
+      start = true;    // start robot
+      }
+   }
+  
+   if(start){
+     if (param=='t'){
+       analogWrite(pwm_left, 0);                                         // send PWM to motor
+      analogWrite(pwm_right, 0);
+     }
+     else{
+     if(!degreeLimit){
+       //getParam();
+       
+///////////////// check sensors value
+      int sensor1, sensorLeft,sensorRight,sensorLS,sensorRS;
+      double s1=0;
+      double s2=0;
+      double s3=0;
+      double s4=0;
+      double s5=0;
+      
+      for(int i=0;i<5;i++){
+        sensor1 = analogRead(A0);   // convert to cm
+        sensorLeft = analogRead(A1); //convert to cm
+        sensorRight =analogRead(A2); //convert to cm
+        sensorLS = analogRead(A3);
+        sensorRS = analogRead(A4);
+        
+        s1 += 112.93*exp(-0.003*sensor1);
+        s2 += 88.826*exp(-0.006*sensorLeft);
+        s3 += 88.826*exp(-0.006*sensorRight);
+        s4 += 88.826*exp(-0.006*sensorLS)-8;
+        s5 += 88.826*exp(-0.006*sensorRS)-7;
+      }
+      s1 /=5; s2 /=5; s3 /=5; s4 /=5; s5 /=5;
+//////////////////// ////
+
+      speed_req_L= 160;
+      speed_req_R= 161;
+      
+        if (s2>=10 && s3>=10 && s1>=12){ // forward
+         /* if(s5>5&& s4<5){      // side sensor
+            speed_req_L =200;
+            speed_req_R= 180;
+          }
+          if(s4>5&& s5<5){     //side sensor
+            speed_req_L =180;
+            speed_req_R= 200;
+          }*/
+          param = 'f' ;
+          
+          dir_R = FORWARD;
+          dir_L = FORWARD;
+        }
+        else //if((s2<15 && s3<15) || s1<15) ///front blocked
+        {
+           if (s4<5 && s5>5){ // right turn
+             param = 'r' ;
+             degreeLimit=90;
+             dir_R = BACKWARD;
+             dir_L = FORWARD;
+
+          }
+          else if(s4>5 && s5<5){ // left turn
+             param = 'l' ;
+             degreeLimit=90;
+             dir_L = BACKWARD;
+             dir_R = FORWARD;
+             //speed_req_L= 200;
+          }
+         else{       //all blocked or side sensors are not blocked, randomly turn.
+             if (random(2)>1){
+               param = 'l' ;
+               degreeLimit=90;
+               dir_L = BACKWARD;
+               dir_R = FORWARD;
+             }
+             else
+             {
+               param = 'r' ;
+               degreeLimit=90;
+               dir_R = BACKWARD;
+               dir_L = FORWARD;
+             }
+          }
+        }
+     
+      }
+        if(param=='f'||param=='b') distanceControl();
+        else if(param=='l'||param=='r') turncontrol();
+
+  if (speed_req_L){
+    if((millis()-lastMilli) >= LOOPTIME){                                    // enter tmed loop
+      lastMilli = millis();
+      getMotorData_L();                                                         
+      getMotorData_R();
+
+      //PWM_val_L =255;
+      //PWM_val_R =255;
+      PWM_val_L= updatePid(PWM_val_L, speed_req_L, speed_act_L);                // compute PWM value
+      PWM_val_R= updatePid(PWM_val_R, speed_req_R, speed_act_R);                // compute PWM value
+    }
+
+  }
+  //PWM_val_L= 250;
+  analogWrite(pwm_left, PWM_val_L);                                         // send PWM to motor
+  analogWrite(pwm_right, PWM_val_R);
+  
+     }
+   }
+}
+
+void getMotorData_L()  {                                                        // calculate speed
+static long countAnt = 0;                                                       // last count
+  speed_act_L = ((count_L - countAnt)*(127.5*(1000/LOOPTIME)))/(48*47);          // 48 pulses X 46.85 gear ratio = 2249 counts per output shaft rev:    60
+  countAnt = count_L;                  
+}
+
+void getMotorData_R()  {                                                        // calculate speed
+static long countAnt = 0;                                                       // last count
+  speed_act_R = ((count_R - countAnt)*(127.5*(1000/LOOPTIME)))/(48*47);          // 48 pulses X 46.85 gear ratio = 2249 counts per output shaft rev
+  countAnt = count_R;                  
+}
+
+int updatePid(int command, int targetValue, int currentValue) {             // compute PWM value
+  float pidTerm = 0;                                                            // PID correction
+  int error=0;                                  
+  static int last_error=0;                            
+  error = abs(targetValue) - abs(currentValue);
+  pidTerm = (Kp * error) + (Kd * (error - last_error));                            
+  last_error = error;
+  return constrain(command + int(pidTerm), 0, 255);
+}
+
+void rencoder_left()  { 
+  count_L ++;
+}
+void rencoder_right()  { 
+  count_R ++;
+}
+
+void distanceControl(){
+  static long startDist;
+  digitalWrite(dir_right, dir_R);
+  digitalWrite(dir_left, dir_L);
+  if (!distLimit) return;                                  //  limit reach or no limit
+  if(firstcheck){
+    firstcheck= false; 
+    startDist= 0.5*(count_L+count_R);
+    olddis = 0.5*(count_L+count_R);								
+  }
+  double distance = abs(0.5*(count_L+count_R)- startDist)/119.36;   /// convert to cm: 2249/18.84cm =119.363
+  if(distance>=distLimit){
+    stopmotor();
+    firstcheck= true; 
+    Serial.println(0); 							  // finish ack
+  }
+}
+
+void turncontrol(){
+  digitalWrite(dir_right, dir_R);
+  digitalWrite(dir_left, dir_L);
+  if(!degreeLimit)return;  // no limit
+  static long startDegree;
+  if(firstcheck){
+   startDegree = 0.5*(count_L+count_R);
+   firstcheck = false;
+  }
+  double degree = abs(0.5*(count_L+count_R)-startDegree)/18.3;        // convert to degree: 51.836cm----2.74 rev----6187.86 counts   6187.86/360 = 17.19
+  
+  if(degree>=degreeLimit){
+    stopmotor();
+    firstcheck= true;
+    olddis = 0.5*(count_L+count_R);
+    Serial.println(0); 							// finish ack
+  }
+
+}
+
+void updateSensor(){
+  int sensor1, sensorLeft,sensorRight,sensorLS,sensorRS;
+  double s1=0;
+  double s2=0;
+  double s3=0;
+  double s4=0;
+  double s5=0;
+  
+  for(int i=0;i<5;i++){
+    sensor1 = analogRead(A0);   // convert to cm
+    sensorLeft = analogRead(A1); //convert to cm
+    sensorRight =analogRead(A2); //convert to cm
+    sensorLS = analogRead(A3);
+    sensorRS = analogRead(A4);
+    
+    s1 += 112.93*exp(-0.003*sensor1);
+    s2 += 88.826*exp(-0.006*sensorLeft);
+    s3 += 88.826*exp(-0.006*sensorRight);
+    s4 += 88.826*exp(-0.006*sensorLS)-8;
+    s5 += 88.826*exp(-0.006*sensorRS)-7;
+  }
+  Serial.print(s1/5);
+  Serial.print(",");
+  Serial.print(s2/5);
+  Serial.print(",");
+  Serial.print(s3/5);
+  Serial.print(",");
+  Serial.print(s4/5);
+  Serial.print(",");
+  Serial.println(s5/5);
+}
+
+long updateDis(){
+  long newvalue, value;
+  newvalue = 0.5*(count_L+count_R);
+  value = (newvalue - olddis)/119.36; 
+  olddis = newvalue;
+  return value;
+}
+void stopmotor(){
+
+  if(dir_L==FORWARD) dir_L = BACKWARD;
+  else dir_L = FORWARD;
+  if(dir_R==FORWARD) dir_R = BACKWARD;
+  else dir_R = FORWARD;
+  digitalWrite(dir_left, dir_L);
+  digitalWrite(dir_right, dir_R);
+  analogWrite(pwm_left, 255);                                         // send PWM to motor
+  analogWrite(pwm_right, 255);
+  delay(30);
+  speed_req_L =0;
+  speed_req_R =0;    
+  PWM_val_L=0;                                       
+  PWM_val_R=0;
+  distLimit = 0;
+  degreeLimit = 0;
+  //olddis = 0.5*(count_L+count_R); 
+}
+//  f: forward  r: turn right  l: turn left   b: backward
+/*void getParam(){
+  int num = 0;
+  int cmd = 0;
+  
+  if(!Serial.available()) return;                      // no input, return
+  delay(10);                  
+  param = Serial.read();  // get parameter byte
+  delay(10);
+  
+  if(param == 'x'){
+    start = true;    // start robot
+    return;
+  }
+  if(!start) return;                                // not start yet!
+  
+  // get limit value if there is
+  while (Serial.available())                         // convert char to int;
+  {
+    num = Serial.read();
+    cmd =cmd *10 +num -48;
+  }
+  //Serial.println(cmd);
+  Serial.flush();
+  firstcheck= true;
+  switch (param)
+  {
+    case 'f':     // forward 
+          speed_req_L =160;
+          speed_req_R =161;
+          //digitalWrite(dir_right, FORWARD);
+          //digitalWrite(dir_left, FORWARD);
+          dir_L= FORWARD;
+          dir_R= FORWARD;
+          distLimit =cmd;
+      break;
+            
+    case 'b':    //backward
+          speed_req_L =160;
+          speed_req_R =161;
+          //digitalWrite(dir_right, BACKWARD);
+          //digitalWrite(dir_left, BACKWARD);
+          dir_L= BACKWARD;
+          dir_R= BACKWARD;
+          distLimit =cmd;
+      break;
+      
+    case 'l':  // turn left-b3n increased speed
+          speed_req_L =120;
+          speed_req_R =120;
+          //digitalWrite(dir_right, FORWARD);
+          //digitalWrite(dir_left, BACKWARD);
+          dir_L= BACKWARD;
+          dir_R= FORWARD; 
+          degreeLimit = 90;   
+          if(cmd)degreeLimit = cmd;       
+      break;
+      
+    case 'r':   // turn right-b3n increased speed
+          speed_req_L =120;
+          speed_req_R =120;
+          //digitalWrite(dir_right, BACKWARD);
+          //digitalWrite(dir_left, FORWARD);
+          dir_L= FORWARD;
+          dir_R= BACKWARD;
+          degreeLimit = 90;   
+          if(cmd)degreeLimit = cmd;   
+      break;
+
+    case 's':   // output sensors value
+          updateSensor();
+      break;
+      
+    case 'd':  //update distance and reset start point;
+          Serial.println(updateDis());    
+      break;
+      
+    case 't':// stop 
+          stopmotor();
+      break;
+      
+    case 'x': break; // start robot
+    default: Serial.println("Invalid cmd!");
+    }
+}*/
