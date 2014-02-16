@@ -24,6 +24,10 @@ example:
   "parameter": 5  
 }  
 ```
+NOTICE: each json serial command at very end must end with 
+```python
+'\n'
+```
 The example commands Arduino to moveForwad by 5 cm
 List of functions:  
 0: void moveForward(double dist);  
