@@ -27,7 +27,7 @@ public:
   */
   //static double const _PI = 3.14159265359;
   static const unsigned char INA1 = 2; // remapped to 5
-  static const unsigned char INB1 = 5;
+  static const unsigned char INB1 = 4;
   static const unsigned char EN1DIAG1 = 6;
   static const unsigned char CS1 = A0;  // not used 
   static const unsigned char INA2 = 7;
