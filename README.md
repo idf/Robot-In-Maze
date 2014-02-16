@@ -3,7 +3,8 @@ ntu.sce.mdp.15
 TO BE THE FASTEST.  
 Swifter, stronger, and more precise.  
 
-Arduino Requirements  
+Arduino Requirements
+==============
 2 spaces as tab  
 
 PololuWheelEncoder is using ISR(PCINT0_vect), interrupt Service Routine  
@@ -14,7 +15,8 @@ NAMING CONVENTION
 method_name  
 functionName  
 
-COMMUNICATION  
+COMMUNICATION
+==============
 Json format  http://docs.python.org/2/library/json.html  
 ```json
 {  
