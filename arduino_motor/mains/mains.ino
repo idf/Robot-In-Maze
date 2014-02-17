@@ -39,6 +39,7 @@ void setup(void)
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
     
   resetPololuTicks();
+  serialCommnder->send_ready_signal();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
@@ -50,7 +51,7 @@ void loop(void)
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->compass->getHeading());
   serialCommnder->receive_exec_command();
-  delay(100); //to slow down the serial print
+  delay(1000); //to slow down the serial print
 
   //delay(1000);
 }

@@ -40,7 +40,7 @@ NOTICE: In python each json serial command at very end must end with
 ```python
 '\n'
 ```
-
+NOTICE: incoming serial buffer size of Arduino is limited, thus only 7 concurrent machine code command is allowed  
 Feedback:  
 Json format  http://docs.python.org/2/library/json.html  
 ```json

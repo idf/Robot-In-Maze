@@ -7,11 +7,12 @@ public:
   SerialCommnder();
   bool receive_exec_command();
   void send_command_complete(int function_code, int status_code);
-
+  void send_ready_signal();
   int get_command();
 
 private:
   int command;
+  bool is_started;
   bool exec_command(int function_code, double parameter);
 };
 #endif
