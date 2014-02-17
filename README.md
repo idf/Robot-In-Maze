@@ -17,32 +17,30 @@ functionName
 
 COMMUNICATION
 --------------
-Json format  http://docs.python.org/2/library/json.html  
-```json
-{  
-  "function": function_code,  
-  "parameter": parameter  
-}  
+Command to be executed is using 7-digit machine code since it saves memory on Arduino;
+```python
+machine_code = "xxxxxxx"
 ```
+machine_code[0:2] constructs 2-digit function codes  
+machine_code[2:7] constructs parameter with 2 decimal number  
 example:  
-```json
-{  
-  "function": 0,  
-  "parameter": 5  
-}  
+```python
+"0012312"
 ```
+This code is translated into function code 00 with parameter 123.12  
+The example commands Arduino to moveForwad by 5 cm.
+List of function codes:  
+00: void moveForward(double dist);  
+01: void turnRight(double angle);  
+02: void turnLeft(double angle);  
+
 NOTICE: In python each json serial command at very end must end with 
 ```python
 '\n'
-some_serial_write_function(json.dumps(json_command)+'\n')
 ```
-The example commands Arduino to moveForwad by 5 cm.
-List of functions:  
-0: void moveForward(double dist);  
-1: void turnRight(double angle);  
-2: void turnLeft(double angle);  
 
 Feedback:
+Json format  http://docs.python.org/2/library/json.html  
 ```json
 {  
   "function": function_code,  
