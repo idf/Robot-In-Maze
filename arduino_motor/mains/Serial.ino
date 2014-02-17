@@ -1,5 +1,6 @@
 #include "Serial.h"
 #include <aJSON.h>
+
 SerialCommnder::SerialCommnder() {
 
 }
@@ -23,12 +24,12 @@ int SerialCommnder::get_command() {
 
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
-    moveForward(parameter);
+    //moveForward(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==1) {
-    turnRight(parameter);
+    //turnRight(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }
@@ -47,13 +48,21 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 }
 
 void SerialCommnder::send_command_complete(int function_code, int status_code) {
+  /*
   aJsonObject* root = aJson.createObject();  
-
+  (avoid huge memory consumption)
   aJson.addItemToObject(root, "function", aJson.createItem(function_code));
   aJson.addItemToObject(root, "status", aJson.createItem(status_code));
 
+  aJson.addNumberToObject(root, "function", function_code);
+  aJson.addNumberToObject(root, "status", status_code);
+
   char* output = aJson.print(root);
-  Serial.println(output);
-  // destructors are called
+  delete output;
+  delete root;
+  */
+  Serial.print(F("{\"function\":")); Serial.print(function_code);
+  Serial.print(F(",\"status\":")); Serial.print(status_code); Serial.println(F("}"));
+
 }
 
