@@ -7,9 +7,10 @@ SerialCommnder::SerialCommnder() {
 bool SerialCommnder::receive_exec_command() {
   if(Serial.available()>0) {
     String command_string =  Serial.readStringUntil('\n');
-    
 
-    
+    if(command_string.length()!=7)
+      return false;
+      
     int function_code;
     function_code = 10*(command_string[0]-'0');
     function_code += (command_string[1]-'0');
@@ -21,7 +22,7 @@ bool SerialCommnder::receive_exec_command() {
     parameter += 1/10.0*(command_string[5]-'0');
     parameter += 1/100.0*(command_string[6]-'0');
 
-    Serial.print("debug, command received: "); Serial.print(function_code); Serial.println(parameter);
+    // Serial.print("debug, command received: "); Serial.print(function_code); Serial.println(parameter);
 
     return this->exec_command(function_code, parameter);
   }
@@ -34,17 +35,17 @@ int SerialCommnder::get_command() {
 
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
-    //moveForward(parameter);
+    moveForward(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==1) {
-    //turnRight(parameter);
+    turnRight(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==2) {
-    //turnLeft(parameter);
+    turnLeft(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }

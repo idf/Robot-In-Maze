@@ -41,7 +41,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   errorCumulator->deltaY += distanceToTravel * sin(errorCumulator->theta);
 
   // errorCumulator->print_dead_reckoning();
-  Serial.print("timez: "); Serial.println(timez); // time interval affect polling performance
+  //Serial.print("timez: "); Serial.println(timez); // time interval affect polling performance
   leftTicks /= (timez/1000.0);
   rightTicks /= (timez/1000.0); // ms
   InputMid = errorCumulator->deltaY / Config::DISTANCE_PER_TICK_CM;
