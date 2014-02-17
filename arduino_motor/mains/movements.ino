@@ -112,7 +112,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
   }
   setScale(1/0.2);
-  Serial.print("Ticks statistics: "); Serial.print(avgTicksForAngleOrDist); Serial.print(" / "); Serial.println(target_tick);
+  Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
   delay(100);
   return avgTicksForAngleOrDist;

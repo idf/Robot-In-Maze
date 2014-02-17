@@ -47,10 +47,9 @@ void loop(void)
   //moveForward(5); // possible moveForwad is affected by abs
   //turnRight(90);
   //turnLeft(90);
-  Serial.println("looping");
-  serialCommnder->send_command_complete(1, 200);
+  //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->compass->getHeading());
-  
+  serialCommnder->receive_exec_command();
   delay(100); //to slow down the serial print
 
   //delay(1000);

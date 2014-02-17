@@ -1,6 +1,6 @@
 #ifndef SerialSenderReceiver_H
 #define SerialSenderReceiver_H
-#include <aJSON.h> // https://github.com/interactive-matter/aJson
+// #include <aJSON.h> // https://github.com/interactive-matter/aJson
 class SerialCommnder 
 {
 public:
