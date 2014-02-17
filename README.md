@@ -19,21 +19,23 @@ COMMUNICATION
 --------------
 Command to be executed is using 7-digit machine code since it saves memory on Arduino;
 ```python
+# in python
 machine_code = "xxxxxxx"
-```
-machine_code[0:2] constructs 2-digit function codes  
-machine_code[2:7] constructs parameter with 2 decimal number  
+machine_code[0:2] # constructs 2-digit function codes  
+machine_code[2:7] # constructs parameter with 2 decimal number
+```  
 example:  
 ```python
 "0012312"
 ```
 This code is translated into function code 00 with parameter 123.12  
-The example commands Arduino to moveForwad by 5 cm.
+The example commands Arduino to moveForwad by 123.12 cm.  
 List of function codes:  
+```
 00: void moveForward(double dist);  
 01: void turnRight(double angle);  
 02: void turnLeft(double angle);  
-
+```
 NOTICE: In python each json serial command at very end must end with 
 ```python
 '\n'
