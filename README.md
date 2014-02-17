@@ -49,5 +49,12 @@ Json format  http://docs.python.org/2/library/json.html
   "parameter": status_code  
 }  
 ```
+example:
+```json
+{  
+  "function": 0,  
+  "parameter": 200  
+}  
+```
 status_code is the HTTP status code as in http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html  
 The most common status code is 200 (i.e. OK).
