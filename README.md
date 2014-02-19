@@ -57,4 +57,8 @@ example:
 }  
 ```
 status_code is the HTTP status code as in http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html  
-The most common status code is 200 (i.e. OK).
+The most common status code is 200 (i.e. OK).  
+```json
+{"function": 99, "status": 200 }  
+```
+99 denotes the Arduino is ready to do serial communication  

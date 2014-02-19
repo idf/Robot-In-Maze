@@ -42,5 +42,5 @@ DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1
 
 SerialCommnder* serialCommnder = new SerialCommnder(); 
 ErrorCumulator* errorCumulator = new ErrorCumulator();
-ServoIR* servo_ir = new ServoIR(9, A0);
+ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);
 #endif

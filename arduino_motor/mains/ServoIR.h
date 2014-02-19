@@ -5,21 +5,33 @@
 #include <SharpIR.h> // get from dropbox
 
 #define ARRAY_SIZE 36
+/*
+  Robot Forward
+  
+  y
+
+  |     
+  |   /
+  |  /
+  | / theta
+ _|/_______________x
+ O|
+
+*/
 class ServoIR
 {
 public:
+  int distArray[ARRAY_SIZE];
+
   ServoIR(unsigned char servoPin, unsigned char irPin);
   void init();
+
   void servoScan();
   void servoScan(int starting_angle, int turning_angle);
-
   void print_dist_array();
+  void servo_point_read(int angle);
 
-  int distArray[ARRAY_SIZE];
 private:
-  void servo_write_adjusted(int angle);
-
-
   unsigned char servoPin;
   unsigned char irPin;
   Servo* servo; 
@@ -27,6 +39,7 @@ private:
 
   void reset_array();
   double read_accurate_distance();
+  void servo_write_adjusted(int angle);
 };
 
 #endif
