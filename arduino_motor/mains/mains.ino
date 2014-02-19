@@ -51,9 +51,9 @@ void loop(void)
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->compass->getHeading());
   //serialCommnder->receive_exec_command();
-  servo_ir->servoScan();
+  servo_ir->servoScan(60, 120);
   servo_ir->print_dist_array();
-  delay(10000); //to slow down the serial print
+  delay(5000); //to slow down the serial print
 
   //delay(1000);
 }
