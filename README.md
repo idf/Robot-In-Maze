@@ -17,12 +17,13 @@ functionName
 
 Library Dependencies:  
 --------------
-*Servo.h   
-*SharpIR.h  
-*DualVNH5019MotorShield.h  
-*PololuWheelEncoders.h (and all its dependent libraries as in https://github.com/pololu/libpololu-avr/tree/master/src)  
-*PID_v1.h
-*HMC5883L.h  
+* Servo.h   
+* SharpIR.h  
+* DualVNH5019MotorShield.h  
+* PololuWheelEncoders.h (and all its dependent libraries as in [this repo](https://github.com/pololu/libpololu-avr/tree/master/src))  
+* PID_v1.h
+* HMC5883L.h  
+
 All available in /arduino_motor/libraries
 Communication
 --------------
@@ -50,8 +51,9 @@ NOTICE: In python each json serial command at very end must end with
 '\n'
 ```
 NOTICE: incoming serial buffer size of Arduino is limited, thus only 7 concurrent machine code command is allowed  
-Feedback:  
-Json format  http://docs.python.org/2/library/json.html  
+Feedback  
+--------------
+Json format ([Python Reference] (http://docs.python.org/2/library/json.html))  
 ```json
 {  
   "function": function_code,  
@@ -65,7 +67,7 @@ example:
   "status": 200  
 }  
 ```
-status_code is the HTTP status code as in http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html  
+status_code is the HTTP status code as in [this] (http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).  
 The most common status code is 200 (i.e. OK).  
 ```json
 {"function": 99, "status": 200 }  
