@@ -1,3 +1,4 @@
+#include "Config.h"
 int const Config::MAX_SPEED_ANALOG = 255;
 int const Config::DESIGNED_MAX_SPEED = 400;
 int const Config::WHEEL_DIAMETER = 6;

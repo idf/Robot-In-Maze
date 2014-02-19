@@ -15,7 +15,16 @@ NAMING CONVENTION
 method_name  
 functionName  
 
-COMMUNICATION
+Library Dependencies:  
+--------------
+*Servo.h   
+*SharpIR.h  
+*DualVNH5019MotorShield.h  
+*PololuWheelEncoders.h (and all its dependent libraries as in https://github.com/pololu/libpololu-avr/tree/master/src)  
+*PID_v1.h
+*HMC5883L.h  
+All available in /arduino_motor/libraries
+Communication
 --------------
 Command to be executed is using 7-digit machine code since it saves memory on Arduino;
 ```python

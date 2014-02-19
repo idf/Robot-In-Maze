@@ -21,7 +21,7 @@ void loop(){
 */
 #include <Wire.h>
 #include <HMC5883L.h>
-#include <HMC5883LCompass.h>
+#include "HMC5883LCompass.h"
 
 void HMC5883LCompass::compassSetup() {
   // Initilization 
