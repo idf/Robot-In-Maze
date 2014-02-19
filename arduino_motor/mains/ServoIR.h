@@ -6,6 +6,8 @@
 
 #define ARRAY_SIZE 36
 /*
+  Rotation angle in sensor's coordinates (Front Sensor)
+
   Robot Forward
   
   y
@@ -18,6 +20,12 @@
  O|
 
 */
+
+ /*
+ Long distance sensor range: 30cm to 150cm
+ Short distance range: 20cm to 80 cm
+ */
+
 class ServoIR
 {
 public:

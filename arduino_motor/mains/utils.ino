@@ -1,6 +1,5 @@
 #include "globals.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
 float distCentimeter(float centimeter) 
 {
   float divisibleTicks;
@@ -21,7 +20,6 @@ float distCentimeter(float centimeter)
   float dist = ticksForOneCentimeter * centimeter;
   return dist;
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void resetPololuTicks() 
 {
@@ -33,9 +31,9 @@ void printCounts()
 {
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
-  Serial.print("LEFT COUNT (getCountsM1): "); Serial.println(leftPololuCount);
+  Serial.print(F("LEFT COUNT (getCountsM1): ")); Serial.println(leftPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM1());
-  Serial.print("RIGHT COUNT (getCountsM2): "); Serial.println(rightPololuCount);
+  Serial.print(F("RIGHT COUNT (getCountsM2): ")); Serial.println(rightPololuCount);
   Serial.println(PololuWheelEncoders::checkErrorM2());
 }
 
