@@ -17,6 +17,7 @@ public:
 
 	void init();
 	bool isExploredFully();
+	GRIDTYPE getRealGridType(int posX, int posY);
 private:
 	GRIDTYPE _grid[ARENA_X_SIZE][ARENA_Y_SIZE];
 };
