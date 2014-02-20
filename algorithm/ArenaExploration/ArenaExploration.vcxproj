@@ -66,6 +66,7 @@
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="arenaexplorer.h" />
+    <ClInclude Include="connector.h" />
     <ClInclude Include="pathfinder.h" />
     <ClInclude Include="robot.h" />
     <ClInclude Include="sensor.h" />

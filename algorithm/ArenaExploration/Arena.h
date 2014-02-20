@@ -16,6 +16,7 @@ public:
 	inline void setGridType(int posX, int posY, GRIDTYPE gridType) { _grid[posX][posY] = gridType; }
 
 	void init();
+	bool isExploredFully();
 private:
 	GRIDTYPE _grid[ARENA_X_SIZE][ARENA_Y_SIZE];
 };

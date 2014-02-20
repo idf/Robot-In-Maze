@@ -10,7 +10,7 @@ class ArenaExplorer
 public:
 	ArenaExplorer();
 	~ArenaExplorer();
-
+	void ArenaExplorer::explore(Robot* robot, Arena* arena);
 };
 
 #endif

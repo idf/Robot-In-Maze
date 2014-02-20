@@ -48,6 +48,9 @@
     <ClInclude Include="arenaexplorer.h">
       <Filter>Header Files\logic</Filter>
     </ClInclude>
+    <ClInclude Include="connector.h">
+      <Filter>Header Files\connection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arena.cpp">

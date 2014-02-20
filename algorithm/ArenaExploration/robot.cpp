@@ -1,5 +1,6 @@
 #include "robot.h"	
 #include "sensor.h"
+#include "Arena.h"
 
 Robot::Robot(int x, int y, int direction): _posX(x), _posY(y), _direction(direction)
 {
@@ -38,4 +39,14 @@ void Robot::moveForward(int dist)
 float Robot::getDataFromSensor(int sensorIndex)
 {
 	return getSensors()[sensorIndex]->getSensorReading();
+}
+
+void Robot::senseEnvironment(Arena* arena)
+{
+
+}
+
+void Robot::exploreNextStep(Arena* arena)
+{
+
 }

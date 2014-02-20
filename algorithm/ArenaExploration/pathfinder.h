@@ -10,7 +10,7 @@ class PathFinder
 public:
 	PathFinder();
 	~PathFinder();
-	void FindPathBetween(int startX, int startY, int endX, int endY, Arena* arena);
+	void findPathBetween(int startX, int startY, int endX, int endY, Arena* arena);
 private:
 	
 };

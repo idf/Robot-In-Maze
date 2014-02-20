@@ -16,3 +16,18 @@ void Arena::init()
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 			setGridType(i, j, UNEXPLORED);
 }
+
+
+// to be updated to cater to unexplorable area;
+bool Arena::isExploredFully()
+{
+	for(int i = 0; i < ARENA_X_SIZE; ++i)
+	{
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			if (this->getGridType(i, j) == UNEXPLORED)
+				return false;
+		}
+	}
+	return true;
+}
