@@ -20,6 +20,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -65,7 +66,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
-    <ClInclude Include="arenaexplorer.h" />
     <ClInclude Include="connector.h" />
     <ClInclude Include="pathfinder.h" />
     <ClInclude Include="robot.h" />
@@ -73,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arena.cpp" />
-    <ClCompile Include="arenaexplorer.cpp" />
     <ClCompile Include="connector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pathfinder.cpp" />

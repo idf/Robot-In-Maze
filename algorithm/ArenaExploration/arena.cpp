@@ -14,7 +14,10 @@ void Arena::init()
 {
 	for(int i = 0; i < ARENA_X_SIZE; ++i)
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
 			setGridType(i, j, UNEXPLORED);
+			setIsOnPath(i, j, false);
+		}
 }
 
 

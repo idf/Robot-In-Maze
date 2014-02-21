@@ -13,7 +13,6 @@ public:
 	inline float getYLocationOffset() { return _sensorYLocationOffset; }
 	inline SENSORTYPE getSensorType() { return _type; }
 
-	float getSensorReading();
 private:
 	float _sensorXLocationOffset;
 	float _sensorYLocationOffset;

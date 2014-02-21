@@ -45,9 +45,6 @@
     <ClInclude Include="pathfinder.h">
       <Filter>Header Files\logic</Filter>
     </ClInclude>
-    <ClInclude Include="arenaexplorer.h">
-      <Filter>Header Files\logic</Filter>
-    </ClInclude>
     <ClInclude Include="connector.h">
       <Filter>Header Files\connection</Filter>
     </ClInclude>
@@ -63,9 +60,6 @@
       <Filter>Source Files\model</Filter>
     </ClCompile>
     <ClCompile Include="pathfinder.cpp">
-      <Filter>Source Files\logic</Filter>
-    </ClCompile>
-    <ClCompile Include="arenaexplorer.cpp">
       <Filter>Source Files\logic</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">

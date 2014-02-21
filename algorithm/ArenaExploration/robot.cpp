@@ -1,6 +1,9 @@
 #include "robot.h"	
 #include "sensor.h"
 #include "Arena.h"
+#include "connector.h"
+
+#include <map>
 
 using namespace std;
 
@@ -22,7 +25,9 @@ Robot::~Robot(){}
 void Robot::rotateClockwise(int deg)
 {
 #ifdef HARDWARE
-	// hardware control
+	Connector* conn = new Connector();
+	if (!conn->sendRotation())
+		return;
 #endif
 	_direction = (_direction + deg) % 360;
 }
@@ -31,6 +36,9 @@ void Robot::moveForward(int dist)
 {
 #ifdef HARDWARE
 	// hardware control
+	Connector* conn = new Connector();
+	if (!conn->sendMovement())
+		return;
 #endif
 	// update location
 	switch(_direction)
@@ -46,38 +54,22 @@ void Robot::moveForward(int dist)
 	}
 }
 
-float Robot::getDataFromSensor(int sensorIndex)
+map<Sensor*, float> Robot::getDataFromSensor()
 {
-	return getSensors()[sensorIndex]->getSensorReading();
+	Connector* conn = new Connector();
+	conn->ge
+
+	for (vector<Sensor*>::const_iterator iter = _sensors.begin(); iter != _sensors.end(); ++iter)
+	{
+		
+	}
 }
 
 // collect sensor information and update the arena information
 void Robot::senseEnvironment(Arena* arena)
 {
 #ifdef HARDWARE
-	vector<Sensor*> sensors = this->getSensors();
-	for (vector<Sensor*>::const_iterator iter = sensors.begin(); iter != sensors.end(); ++iter)
-	{
-		Sensor* current = *iter;
-		float sensorReading = 0;
-		sensorReading = current->getSensorReading();  // return distance or angle
-		switch (current->getSensorType())
-		{
-			// distance sensor, falling through case
-			case Sensor::IR:
-			case Sensor::US:
-				if (sensorReading > 0)
-				{
-
-				}
-				break;
-			// Digital compass
-			case Sensor::MC:
-				// left empty
-				// judge against the current direction
-				break;
-		}
-	}
+	// sensor data
 #else
 	// simulation, don't need sensor data
 	// manually set map explored

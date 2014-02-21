@@ -21,7 +21,7 @@ public:
 
 	void rotateClockwise(int deg);
 	void moveForward(int dist);
-	float getDataFromSensor(int sensorIndex);
+	std::map<Sensor*, float> getDataFromSensor();
 
 	void senseEnvironment(Arena* arena);
 	void exploreNextStep(Arena* arena);
