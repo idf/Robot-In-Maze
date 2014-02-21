@@ -40,7 +40,7 @@ public:
   static const unsigned char M2_ENCODER_A = 11; 
   static const unsigned char M2_ENCODER_B = 13; 
 
-  static const unsigned char SERVO = 9;
+  static const unsigned char SERVO = 9; // TODO change
   static const unsigned char FRONT_IR = A0;
 };
 #endif

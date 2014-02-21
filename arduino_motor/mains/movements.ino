@@ -41,13 +41,13 @@ void configureMotor(int isM1Forward, int isM2Forward)
   errorCumulator->deltaY += distanceToTravel * sin(errorCumulator->theta);
 
   // errorCumulator->print_dead_reckoning();
-  //Serial.print("timez: "); Serial.println(timez); // time interval affect polling performance
+  // Serial.print("timez: "); Serial.println(timez); // time interval affect polling performance
   leftTicks /= (timez/1000.0);
   rightTicks /= (timez/1000.0); // ms
-  InputMid = errorCumulator->deltaY / Config::DISTANCE_PER_TICK_CM;
-  if(leftTicks>0 && rightTicks>0) { // avoid overflow
+  if(leftPololuCount*previousLeftTick>0 && rightPololuCount*previousRightTick>0) { // avoid overflow
     InputLeft = leftTicks;
     InputRight = rightTicks;
+    InputMid = errorCumulator->deltaY / Config::DISTANCE_PER_TICK_CM;
   }
 
   
@@ -56,22 +56,25 @@ void configureMotor(int isM1Forward, int isM2Forward)
   rightPID.Compute();
   leftPID.Compute();
 
-  /*
-  Serial.print("leftTicks: "); Serial.println(leftTicks);
-  Serial.print("rightTicks: "); Serial.println(rightTicks);
-  Serial.print("InputMid: "); Serial.println(InputMid);
-  Serial.print("SetpointLeft: "); Serial.println(SetpointLeft);
-  Serial.print("SetpointRight: "); Serial.println(SetpointRight);
-  */
+  
+
+  
   previousLeftTick = leftPololuCount;
   previousRightTick = rightPololuCount;
   timing = millis();
 
   int m1Speed = isM1Forward * map(OutputLeft, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
   int m2Speed = isM2Forward * map(OutputRight, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
+
   /*
-  Serial.print("m1: "); Serial.println(m1Speed);
-  Serial.print("m2: "); Serial.println(m2Speed);
+  Serial.print(F("leftTicks: ")); Serial.println(leftTicks);
+  Serial.print(F("rightTicks: ")); Serial.println(rightTicks);
+  Serial.print(F("InputMid: ")); Serial.println(InputMid);
+  Serial.print(F("SetpointLeft: ")); Serial.println(SetpointLeft);
+  Serial.print(F("SetpointRight: ")); Serial.println(SetpointRight);
+  
+  Serial.print(F("m1: ")); Serial.println(m1Speed);
+  Serial.print(F("m2: ")); Serial.println(m2Speed);
   */
   motorShield.setSpeeds(m1Speed, m2Speed);
   }
@@ -83,18 +86,19 @@ This function receive the target_tick as target and run the motor to reach the g
 @return: real tick reached
 */
 double reachTickTarget(int isLeftForward, int isRightForward, double target_tick) {
+  resetPololuTicks(); // since we only cares about the difference, the starting point better set to 0 to avoid overflow
   double avgTicksForAngleOrDist = 0;
   long firstLeftCount = PololuWheelEncoders::getCountsM1();
   long firstRightCount = PololuWheelEncoders::getCountsM2();
   
   while (target_tick - avgTicksForAngleOrDist > 200) { //target_tick - change to 'angle' for other formula
   // the tolerance value affect the turning errors
-    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    long leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
-    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    long rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
     rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
-    
+
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2;
     configureMotor(isLeftForward, isRightForward);
   }
@@ -102,19 +106,21 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   setScale(0.2);
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
-    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    long leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
-    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    long rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
     rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
     
+
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     configureMotor(isLeftForward, isRightForward);
   }
   setScale(1/0.2);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
-  motorShield.setBrakes(Config::MAX_SPEED, Config::MAX_SPEED);
+  motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
   delay(100);
+  resetPololuTicks();
   return avgTicksForAngleOrDist;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,16 +135,15 @@ void moveForward(double dist)
 {  
   const int isLeftForward = 1;
   const int isRightForward = 1;
+
   double noOfTicksForDist = distCentimeter(dist);
   double realNoOfTicksForDist = reachTickTarget(isLeftForward, isRightForward, noOfTicksForDist);
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // angle in this function is abs
 // but in ErrorCumulator, it is +/-
 //double noOfTicksForAngle = turnAngleR(angle);
-void turnRight(double angle) {
-  resetPololuTicks(); 
+void turnRight(double angle) { 
   errorCumulator->theta = 0; // theta_error
   const int isLeftForward = 1;
   const int isRightForward = -1;
@@ -146,17 +151,17 @@ void turnRight(double angle) {
   double adjusted_angle = errorCumulator->adjust_turning_angle(isRightForward*angle);
   adjusted_angle = abs(adjusted_angle);
   double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
+
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
 
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  resetPololuTicks();
   errorCumulator->theta = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // depends on whether turning right and turning left is symmetric
+// NOT SYMMETRIC w.r.t. deltaY
 void turnLeft(double angle) {
-  resetPololuTicks(); 
   errorCumulator->theta = 0; // theta_error
   const int isLeftForward = -1;
   const int isRightForward = 1;
@@ -167,7 +172,6 @@ void turnLeft(double angle) {
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
   
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  resetPololuTicks();
   errorCumulator->theta = 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////

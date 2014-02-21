@@ -23,7 +23,7 @@
 
  /*
  Long distance sensor range: 30cm to 150cm
- Short distance range: 20cm to 80 cm
+ Short distance range: 10cm to 80 cm
  */
 
 class ServoIR

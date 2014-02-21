@@ -45,3 +45,9 @@ void ErrorCumulator::print_dead_reckoning() {
   Serial.print("deltaY: "); Serial.println(this->deltaY);
   Serial.print("theta: "); Serial.println(this->theta);
 }
+
+void ErrorCumulator::reset_dead_reckoning() {
+  this->deltaX = 0;
+  this->deltaY = 0;
+  this->theta = 0;
+}
