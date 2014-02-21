@@ -17,7 +17,7 @@ public:
 	void findPathBetween(int startX, int startY, int endX, int endY, Arena* arena);
 	void selectNextDestination(Arena* arena);
 private:
-	int _startX, _startY, _endX, _endY;
+	int _endX, _endY;
 };
 
 #endif

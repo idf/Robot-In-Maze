@@ -1,10 +1,12 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include <iostream>
-#include <vector>
 #include "sensor.h"
 #include "Arena.h"
+
+#include <iostream>
+#include <vector>
+#include <map>
 
 #define ROBOT_RADIUS 20
 
@@ -21,7 +23,7 @@ public:
 
 	void rotateClockwise(int deg);
 	void moveForward(int dist);
-	std::map<Sensor*, float> getDataFromSensor();
+	std::map<Sensor*, float>* getDataFromSensor();
 
 	void senseEnvironment(Arena* arena);
 	void exploreNextStep(Arena* arena);

@@ -13,7 +13,7 @@ public:
 	// sending data
 	bool sendMovement();
 	bool sendRotation();
-	map<int, float> requestForSensorInformation();
+	map<int, float>* requestForSensorInformation();
 	bool sendLocation();
 
 	// receiving data
