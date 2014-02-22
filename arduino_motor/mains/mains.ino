@@ -16,7 +16,7 @@ void setup(void)
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
   PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
-  errorCumulator->compass->compassSetup();
+  errorCumulator->init();
   //servo_ir->init();
 
   leftPID.SetMode(AUTOMATIC);
@@ -44,21 +44,24 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-
-
+  moveForward(20);
+  moveForward(20);
+  moveForward(20);
   //errorCumulator->reset_dead_reckoning();
-  //turnLeft(90);
   turnLeft(90);
+  //errorCumulator->reset_dead_reckoning();
+  
+
   //errorCumulator->reset_dead_reckoning();
  
   
-  // errorCumulator->print_dead_reckoning();
+  errorCumulator->print_dead_reckoning();
   //turnRight(90);
   // moveForward(80);
   //turnLeft(90);
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
-  //Serial.println(errorCumulator->compass->getHeading());
+  //Serial.println(errorCumulator->get_compass_read);
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();

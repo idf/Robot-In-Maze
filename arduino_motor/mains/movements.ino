@@ -103,7 +103,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
   }
   // fading
-  setScale(0.2);
+  setScale(0.25); // small, increase accuracy, too small, cannot move (torque)
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
     long leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
@@ -116,7 +116,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     configureMotor(isLeftForward, isRightForward);
   }
-  setScale(1/0.2);
+  setScale(1/0.25);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
   delay(100);
@@ -133,6 +133,7 @@ max dist value = 274.6 cm for every call
 */
 void moveForward(double dist) 
 {  
+  errorCumulator->change_to_forward_mode();
   const int isLeftForward = 1;
   const int isRightForward = 1;
 
@@ -144,7 +145,7 @@ void moveForward(double dist)
 // but in ErrorCumulator, it is +/-
 //double noOfTicksForAngle = turnAngleR(angle);
 void turnRight(double angle) { 
-  errorCumulator->theta = 0; // theta_error
+  errorCumulator->change_to_right_mode();
   const int isLeftForward = 1;
   const int isRightForward = -1;
 
@@ -155,14 +156,14 @@ void turnRight(double angle) {
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
 
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  errorCumulator->theta = 0;
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // depends on whether turning right and turning left is symmetric
 // NOT SYMMETRIC w.r.t. deltaY
 void turnLeft(double angle) {
-  errorCumulator->theta = 0; // theta_error
+  errorCumulator->change_to_left_mode();
   const int isLeftForward = -1;
   const int isRightForward = 1;
 
@@ -172,6 +173,6 @@ void turnLeft(double angle) {
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
   
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  errorCumulator->theta = 0;
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
