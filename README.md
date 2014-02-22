@@ -22,7 +22,8 @@ Library Dependencies:
 * DualVNH5019MotorShield.h  
 * PololuWheelEncoders.h (and all its dependent libraries as in [this repo](https://github.com/pololu/libpololu-avr/tree/master/src))  
 * PID_v1.h
-* HMC5883L.h  
+* HMC5883L.h 
+* PinChangeInt.h  
 
 All available in /arduino_motor/libraries
 Communication

@@ -1,0 +1,4 @@
+
+put the 3 folderS in
+C:\Users\acer\Documents\Arduino\libraries
+close all arduino terminals and restart it again.
