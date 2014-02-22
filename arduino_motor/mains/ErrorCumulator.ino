@@ -29,15 +29,15 @@ double ErrorCumulator::adjust_turning_angle(double target_angle) {
 }
 /**
 @param: adjusted_target_angle, to know the turning direction 
-@param: angle_difference, real value - actual value, the +/- has meaning
+@param: abs_angle_difference, real value - actual value, the +/- has meaning
 @deprecated
 **/
-void ErrorCumulator::record_turning_error(double adjusted_target_angle, double angle_difference) { 
+void ErrorCumulator::record_turning_error(double adjusted_target_angle, double abs_angle_difference) { 
   if(adjusted_target_angle>=0) { // turning left
-    this->turning_error += angle_difference;
+    this->turning_error += abs_angle_difference;
   }
-  else {
-    this->turning_error -= angle_difference;
+  else { // turning right
+    this->turning_error -= abs_angle_difference;
   }
 }
 /**
