@@ -48,32 +48,21 @@ void loop(void)
 {
   //resetPololuTicks();
 
-  /*
-  moveForward(5); 
-  moveForward(20);
-  errorCumulator->print_dead_reckoning();
+
+  moveForward(10);
   printCounts();
-  moveForward(20);
-  errorCumulator->print_dead_reckoning();
-  printCounts();
-  moveForward(20);
-  errorCumulator->print_dead_reckoning();
-  printCounts();
-  //errorCumulator->reset_dead_reckoning();
-  */
-  turnLeft(90);
- 
+  Serial.println(SetpointRight);
+ // turnLeft(90);
+ // printCounts();
+  delay(1000);
+
   
-  errorCumulator->print_dead_reckoning();
-
-  printCounts();
-
   //turnRight(90);
   // moveForward(80);
   //turnLeft(90);
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
-  //Serial.println(errorCumulator->get_compass_read);
+  // Serial.println(errorCumulator->get_compass_read());
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();

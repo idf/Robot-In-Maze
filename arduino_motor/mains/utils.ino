@@ -38,8 +38,8 @@ void printCounts()
   long rightPololuCount = rightCnt;//abs(PololuWheelEncoders::getCountsM2());
   Serial.print(F("LEFT COUNT (getCountsM1): ")); Serial.println(leftPololuCount);
   Serial.print(F("RIGHT COUNT (getCountsM2): ")); Serial.println(rightPololuCount);
-  Serial.print(F("previousLeftTick: ")); Serial.println(previousLeftTick);
-  Serial.print(F("previousRightTick: ")); Serial.println(previousRightTick);
+  // Serial.print(F("previousLeftTick: ")); Serial.println(previousLeftTick);
+  // Serial.print(F("previousRightTick: ")); Serial.println(previousRightTick);
 
 
   //Serial.println(PololuWheelEncoders::checkErrorM1());

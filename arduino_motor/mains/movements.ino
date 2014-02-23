@@ -16,7 +16,6 @@ void configureMotor(int isM1Forward, int isM2Forward)
 {
   long leftPololuCount;                     
   long rightPololuCount; 
-  printCounts();
 
   //pin change
   PCintPort::attachInterrupt(3, leftCounter, CHANGE);
@@ -49,9 +48,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   Dead reckoning is only for feedback to speed; 
   not yet used for navigation of positioning
   */
-  //theta += (rightcm*isM2Forward - leftcm*isM1Forward) / WHEELS_INTERVAL; // deduced reckoning 
   errorCumulator->theta += (rightcm - leftcm) / Config::WHEELS_INTERVAL; // deduced reckoning 
-  // added 1 or -1 for turnning
   errorCumulator->deltaX += distanceToTravel * cos(errorCumulator->theta); // deltaX is cumulative
   errorCumulator->deltaY += distanceToTravel * sin(errorCumulator->theta);
 
@@ -81,6 +78,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   int m1Speed = isM1Forward * map(OutputLeft, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
   int m2Speed = isM2Forward * map(OutputRight, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
 
+  // if(isM1Forward*isM2Forward>0) delay(200); // replace print // move to reachTarget
   /*
   Serial.print(F("leftTicks: ")); Serial.println(leftTicks);
   Serial.print(F("rightTicks: ")); Serial.println(rightTicks);
@@ -109,7 +107,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   long firstLeftCount = leftCnt;//leftCnt();
   long firstRightCount = rightCnt;//rightCnt();
   
-  while (target_tick - avgTicksForAngleOrDist > 200) { //target_tick - change to 'angle' for other formula
+  while (target_tick - avgTicksForAngleOrDist > 200) { //target_tick - change to 'angle' for other formula // 200 is tested
   // the tolerance value affect the turning errors
 
     double leftTicksForAngleOrDist = leftCnt;
@@ -120,9 +118,13 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
 
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2;
     configureMotor(isLeftForward, isRightForward);
+
+    /* IMPORTANT */
+    delay(200); // long distance problem
   }
   // fading
   setScale(0.25); // small, increase accuracy, too small, cannot move (torque)
+  //Serial.println(F("fading"));
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
 
@@ -193,6 +195,7 @@ void turnLeft(double angle) {
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
   
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
+  //errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -85,30 +85,21 @@ void ErrorCumulator::change_to_forward_mode() {
 }
 
 void ErrorCumulator::change_to_right_mode() {
-  if(this->current_mode==RIGHT) 
-    return ;
-  else if(this->current_mode==FORWORD) {
-    this->turning_error = this->theta; // theta +/- consistent // = rather than +=
-    this->reset_dead_reckoning();
-  } 
-  else if(this->current_mode==LEFT) {
-    // do nothing 
-  }
-
-  // end of change
-  this->current_mode = RIGHT;
+  this->change_to_turning_mode(RIGHT);
 }
 
 void ErrorCumulator::change_to_left_mode() {
-  if(this->current_mode==LEFT) 
-    return ;
-  else if (this->current_mode==FORWORD) {
-    this->turning_error += this->theta; // theta +/- consistent
-    this->reset_dead_reckoning();
+  this->change_to_turning_mode(LEFT);
+}
+
+void ErrorCumulator::change_to_turning_mode(int mode) {
+  if(this->current_mode==mode) {
+
   }
-  else if(this->current_mode==RIGHT) {
-    // do nothing 
+  else if (this->current_mode==FORWORD) {
+    this->turning_error = this->theta; // theta +/- consistent
   }
   // end of change 
-  this->current_mode = LEFT;
+  this->reset_dead_reckoning();
+  this->current_mode = mode;
 }

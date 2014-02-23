@@ -36,11 +36,11 @@ private:
   double compass_reading_0;
 
   int current_mode; // 00, 01, 02
-
-  /*
+  void change_to_turning_mode(int mode);
+  
   double forward_deltaX;
   double forward_deltaY;
   double forward_theta;
-  */
+  
 };
 #endif

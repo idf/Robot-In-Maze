@@ -22,12 +22,17 @@ double SetpointLeft, InputLeft, OutputLeft;
 double SetpointRight, InputRight, OutputRight;
 double SetpointMid, InputMid, OutputMid;
 
-const double kp=0.5, ki=1, kd=0;
-//const double kp=1, ki=1, kd=0;
+
+
+const double kp=0.25, ki=0.25, kd=0;
+const double kp2=0.25, ki2=0.25, kd2=0;
+
 const double kp_mid=1, ki_mid=0.05, kd_mid=0.25;
 
 PID leftPID(&InputLeft, &OutputLeft, &SetpointLeft, kp, ki, kd, DIRECT);
-PID rightPID(&InputRight, &OutputRight, &SetpointRight, kp, ki, kd, DIRECT); 
+
+PID rightPID(&InputRight, &OutputRight, &SetpointRight, kp2, ki2, kd2, DIRECT); 
+
 PID midPID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);
 
 // TODO

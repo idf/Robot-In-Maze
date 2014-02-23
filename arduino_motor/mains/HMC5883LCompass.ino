@@ -40,7 +40,7 @@ float HMC5883LCompass::getHeading(){
   float heading = atan2(scaled.YAxis, scaled.XAxis);
   float declinationAngle = 0.00378;
   heading += declinationAngle;
-  heading = heading-2*heading;
+  heading = -heading;
   
   // Correct for when signs are reversed.
   // take absolute values for coumulative angle
