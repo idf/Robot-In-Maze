@@ -23,20 +23,27 @@ float distCentimeter(float centimeter)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void resetPololuTicks() 
 {
-  PololuWheelEncoders::getCountsAndResetM1();
-  PololuWheelEncoders::getCountsAndResetM2();
+  //PololuWheelEncoders::getCountsAndResetM1();
+  //PololuWheelEncoders::getCountsAndResetM2();
+  leftCnt = 0;
+  rightCnt = 0;
   previousLeftTick = 0;
   previousRightTick = 0;
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void printCounts()
 {
-  long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
-  long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
+  long leftPololuCount = leftCnt;//abs(PololuWheelEncoders::getCountsM1());                       
+  long rightPololuCount = rightCnt;//abs(PololuWheelEncoders::getCountsM2());
   Serial.print(F("LEFT COUNT (getCountsM1): ")); Serial.println(leftPololuCount);
   Serial.print(F("RIGHT COUNT (getCountsM2): ")); Serial.println(rightPololuCount);
   Serial.print(F("previousLeftTick: ")); Serial.println(previousLeftTick);
   Serial.print(F("previousRightTick: ")); Serial.println(previousRightTick);
+
+
+  //Serial.println(PololuWheelEncoders::checkErrorM1());
+  //Serial.println(PololuWheelEncoders::checkErrorM2());
 
 }
 

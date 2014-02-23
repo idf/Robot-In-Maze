@@ -1,6 +1,6 @@
 // use mains instead of main since main is the keyword
 #include <DualVNH5019MotorShield.h>
-#include <PololuWheelEncoders.h>
+//#include <PololuWheelEncoders.h>
 #include <PID_v1.h> 
 // #include <PID_AutoTune_v0.h>
 
@@ -8,16 +8,20 @@
 #include "Pin.h"
 #include "Config.h"
 #include "ErrorCumulator.h"
-
+//#include "PinChangeInt.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
-  PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
-  errorCumulator->init();
+
+  //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
+  errorCumulator->compass->compassSetup();
   //servo_ir->init();
+  errorCumulator->init();
+
+
 
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
@@ -44,7 +48,9 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
+
   /*
+  moveForward(5); 
   moveForward(20);
   errorCumulator->print_dead_reckoning();
   printCounts();
@@ -57,14 +63,12 @@ void loop(void)
   //errorCumulator->reset_dead_reckoning();
   */
   turnLeft(90);
-  //errorCumulator->reset_dead_reckoning();
-  
-
-  //errorCumulator->reset_dead_reckoning();
  
   
   errorCumulator->print_dead_reckoning();
+
   printCounts();
+
   //turnRight(90);
   // moveForward(80);
   //turnLeft(90);
@@ -74,9 +78,10 @@ void loop(void)
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
-  delay(1000); //to slow down the serial print
+  //delay(5000); //to slow down the serial print
 
-  //delay(1000);
+
+  delay(1000);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,6 @@
 #include "ServoIR.h"
 #include <Arduino.h>
-#include <Servo.h> // get from dropbox
+#include <Servo.h> // get from dropb
 #include <SharpIR.h> // get from dropbox
 #define ADJUST_ANGLE -8 // left rotation is positive // -8 is due forward // -19 perfect 20 cm
 

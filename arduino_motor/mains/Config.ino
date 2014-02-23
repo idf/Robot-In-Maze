@@ -2,8 +2,10 @@
 int const Config::MAX_SPEED_ANALOG = 255;
 int const Config::DESIGNED_MAX_SPEED = 400;
 int const Config::WHEEL_DIAMETER = 6;
-int const Config::COUNTS_PER_REVOLUTION = 2249/2;
+
+int const Config::COUNTS_PER_REVOLUTION = 2249/2; // only one output connected to arduino for each encoder
 double const Config::DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION; //0.016762077012005334
+
 int const Config::SAMPLE_TIME = 10;
 double const Config::WHEELS_INTERVAL = 17.18; // turn left, slightly overturn
 
