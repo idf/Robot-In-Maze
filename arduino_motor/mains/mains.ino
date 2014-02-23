@@ -15,9 +15,11 @@ void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
+
   //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   errorCumulator->compass->compassSetup();
   //servo_ir->init();
+  errorCumulator->init();
 
 
 
@@ -46,16 +48,37 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
+<<<<<<< HEAD
   moveForward(5); // possible moveForwad is affected by abs
   
+=======
+  moveForward(20);
+  moveForward(20);
+  moveForward(20);
+  //errorCumulator->reset_dead_reckoning();
+  turnLeft(90);
+  //errorCumulator->reset_dead_reckoning();
+  
+
+  //errorCumulator->reset_dead_reckoning();
+ 
+  
+  errorCumulator->print_dead_reckoning();
+>>>>>>> eb5bf971ad7404226041a0e7322a3f551864071b
   //turnRight(90);
+  // moveForward(80);
   //turnLeft(90);
+  //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
-  //Serial.println(errorCumulator->compass->getHeading());
+  //Serial.println(errorCumulator->get_compass_read);
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
+<<<<<<< HEAD
   //delay(5000); //to slow down the serial print
+=======
+  delay(1000); //to slow down the serial print
+>>>>>>> eb5bf971ad7404226041a0e7322a3f551864071b
 
   delay(1000);
 }
