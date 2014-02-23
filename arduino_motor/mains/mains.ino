@@ -44,10 +44,18 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
+  /*
   moveForward(20);
+  errorCumulator->print_dead_reckoning();
+  printCounts();
   moveForward(20);
+  errorCumulator->print_dead_reckoning();
+  printCounts();
   moveForward(20);
+  errorCumulator->print_dead_reckoning();
+  printCounts();
   //errorCumulator->reset_dead_reckoning();
+  */
   turnLeft(90);
   //errorCumulator->reset_dead_reckoning();
   
@@ -56,6 +64,7 @@ void loop(void)
  
   
   errorCumulator->print_dead_reckoning();
+  printCounts();
   //turnRight(90);
   // moveForward(80);
   //turnLeft(90);

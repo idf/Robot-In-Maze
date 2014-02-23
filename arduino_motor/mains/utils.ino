@@ -25,6 +25,8 @@ void resetPololuTicks()
 {
   PololuWheelEncoders::getCountsAndResetM1();
   PololuWheelEncoders::getCountsAndResetM2();
+  previousLeftTick = 0;
+  previousRightTick = 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void printCounts()
@@ -32,9 +34,10 @@ void printCounts()
   long leftPololuCount = abs(PololuWheelEncoders::getCountsM1());                       
   long rightPololuCount = abs(PololuWheelEncoders::getCountsM2());
   Serial.print(F("LEFT COUNT (getCountsM1): ")); Serial.println(leftPololuCount);
-  Serial.println(PololuWheelEncoders::checkErrorM1());
   Serial.print(F("RIGHT COUNT (getCountsM2): ")); Serial.println(rightPololuCount);
-  Serial.println(PololuWheelEncoders::checkErrorM2());
+  Serial.print(F("previousLeftTick: ")); Serial.println(previousLeftTick);
+  Serial.print(F("previousRightTick: ")); Serial.println(previousRightTick);
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
