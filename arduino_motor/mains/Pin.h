@@ -23,6 +23,8 @@ public:
 
   Analog  A0  M1CS      Motor 1 current sense output
   Analog  A1  M2CS      Motor 2 current sense output
+  Analog  A4  Arduino A4 (SDA) -> HMC5883L SDA
+  Analog  A5  Arduino A5 (SCL) -> HMC5883L SCL
 
   */
   //static double const _PI = 3.14159265359;
@@ -36,11 +38,11 @@ public:
   static const unsigned char CS2 = A1; // not used 
 
   static const unsigned char M1_ENCODER_A = 3; // external interrupt pin 2, 3
-  static const unsigned char M1_ENCODER_B = 5; 
-  static const unsigned char M2_ENCODER_A = 11; 
-  static const unsigned char M2_ENCODER_B = 13; 
+  //static const unsigned char M1_ENCODER_B = 5; 
+  static const unsigned char M2_ENCODER_A = 5; 
+  //static const unsigned char M2_ENCODER_B = 13; 
 
-  static const unsigned char SERVO = 9;
+  //static const unsigned char SERVO = ;
   static const unsigned char FRONT_IR = A0;
 };
 #endif

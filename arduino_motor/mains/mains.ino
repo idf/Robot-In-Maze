@@ -1,6 +1,6 @@
 // use mains instead of main since main is the keyword
 #include <DualVNH5019MotorShield.h>
-#include <PololuWheelEncoders.h>
+//#include <PololuWheelEncoders.h>
 #include <PID_v1.h> 
 // #include <PID_AutoTune_v0.h>
 
@@ -8,16 +8,18 @@
 #include "Pin.h"
 #include "Config.h"
 #include "ErrorCumulator.h"
-
+//#include "PinChangeInt.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
-  PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
+  //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   errorCumulator->compass->compassSetup();
-  servo_ir->init();
+  //servo_ir->init();
+
+
 
   leftPID.SetMode(AUTOMATIC);
   rightPID.SetMode(AUTOMATIC);
@@ -44,17 +46,18 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-  //moveForward(5); // possible moveForwad is affected by abs
+  moveForward(5); // possible moveForwad is affected by abs
+  
   //turnRight(90);
   //turnLeft(90);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->compass->getHeading());
   //serialCommnder->receive_exec_command();
-  servo_ir->servoScan(60, 120);
-  servo_ir->print_dist_array();
-  delay(5000); //to slow down the serial print
+  //servo_ir->servoScan(60, 120);
+  //servo_ir->print_dist_array();
+  //delay(5000); //to slow down the serial print
 
-  //delay(1000);
+  delay(1000);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

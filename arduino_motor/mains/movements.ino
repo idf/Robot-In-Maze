@@ -1,14 +1,27 @@
+//import library, comment pololugetcounts
+
+
 #include "globals.h"
+#include "PinChangeInt.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 int isM1Forward either 1 or -1 or 0
 int isM2Forward either 1 or -1 or 0 
 */
+
+static  double leftCnt = 0;
+static  double rightCnt = 0;
+
 void configureMotor(int isM1Forward, int isM2Forward) 
 {
   long leftPololuCount;                     
   long rightPololuCount; 
-  // printCounts();
+  printCounts();
+
+  //pin change
+  PCintPort::attachInterrupt(3, leftCounter, CHANGE);
+  PCintPort::attachInterrupt(5, rightCounter,CHANGE);
+
 
   /*
   if(abs(leftPololuCount - rightPololuCount) > 30000){ // if not too many errors 
@@ -17,8 +30,10 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
   else { */
   if(millis() - timing >= Config::SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
-  leftPololuCount = PololuWheelEncoders::getCountsM1();                       
-  rightPololuCount = PololuWheelEncoders::getCountsM2();
+  //leftPololuCount = leftCnt();                       
+  //rightPololuCount = rightCnt();
+  leftPololuCount = leftCnt;
+  rightPololuCount = rightCnt;
   long timez = millis() - timing; // time passed by 
   // incremental
   double leftTicks = abs(leftPololuCount - previousLeftTick); // positive for forward, negative for backward
@@ -82,17 +97,20 @@ void configureMotor(int isM1Forward, int isM2Forward)
 This function receive the target_tick as target and run the motor to reach the goal
 @return: real tick reached
 */
+
+
+
 double reachTickTarget(int isLeftForward, int isRightForward, double target_tick) {
   double avgTicksForAngleOrDist = 0;
-  long firstLeftCount = PololuWheelEncoders::getCountsM1();
-  long firstRightCount = PololuWheelEncoders::getCountsM2();
+  long firstLeftCount = leftCnt;//leftCnt();
+  long firstRightCount = rightCnt;//rightCnt();
   
   while (target_tick - avgTicksForAngleOrDist > 200) { //target_tick - change to 'angle' for other formula
   // the tolerance value affect the turning errors
-    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    double leftTicksForAngleOrDist = leftCnt;
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
-    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    double rightlTicksForAngleOrDist = rightCnt;
     rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
     
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2;
@@ -102,10 +120,10 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   setScale(0.2);
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
-    double leftTicksForAngleOrDist = PololuWheelEncoders::getCountsM1();
+    double leftTicksForAngleOrDist = leftCnt;
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
-    double rightlTicksForAngleOrDist = PololuWheelEncoders::getCountsM2();
+    double rightlTicksForAngleOrDist = rightCnt;
     rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
     
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
@@ -117,6 +135,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   delay(100);
   return avgTicksForAngleOrDist;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 depencies: distCentimeter, configureMotor
@@ -171,3 +190,18 @@ void turnLeft(double angle) {
   errorCumulator->theta = 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+//ISR for interrupts
+void leftCounter()
+{
+  leftCnt = leftCnt+1;
+
+}
+
+void rightCounter()
+{
+  rightCnt=rightCnt+1;
+  //if(rightCnt == 19) rightCnt+=1;
+  
+
+}
