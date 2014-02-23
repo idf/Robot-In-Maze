@@ -14,6 +14,9 @@ ErrorCumulator::ErrorCumulator() {
   this->current_mode = FORWORD;
 
   //TODO
+  this->forward_deltaX = 0;
+  this->forward_deltaY = 0;
+  this->forward_theta = 0;
 
 }
 void ErrorCumulator::init() {
@@ -79,7 +82,11 @@ void ErrorCumulator::change_to_forward_mode() {
   }
   // end of change 
   this->reset_dead_reckoning();
-  this->theta = this->turning_error; // = rather than +=
+  this->deltaX = this->forward_deltaX;
+  this->deltaY = this->forward_deltaY;
+  this->theta = this->forward_theta;
+  
+  // this->theta = this->turning_error; // = rather than +=
 
   this->current_mode=FORWORD;
 }
@@ -97,7 +104,11 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
 
   }
   else if (this->current_mode==FORWORD) {
-    this->turning_error = this->theta; // theta +/- consistent
+    this->forward_deltaX = this->deltaX ;
+    this->forward_deltaY = this->deltaY;
+    this->forward_theta = this->theta ;
+    
+    // this->turning_error += this->theta; // theta +/- consistent
   }
   // end of change 
   this->reset_dead_reckoning();

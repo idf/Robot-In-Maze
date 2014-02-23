@@ -120,7 +120,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
 
     /* IMPORTANT */
-    delay(200); // long distance problem
+    if(isLeftForward*isRightForward>0) delay(200); // long distance problem
   }
   // fading
   setScale(0.25); // small, increase accuracy, too small, cannot move (torque)
@@ -141,7 +141,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   setScale(1/0.25);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
-  delay(100);
+  delay(500);
   return avgTicksForAngleOrDist;
 }
 

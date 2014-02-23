@@ -51,9 +51,9 @@ void loop(void)
 
   moveForward(10);
   printCounts();
-  Serial.println(SetpointRight);
- // turnLeft(90);
- // printCounts();
+
+  turnLeft(90);
+  printCounts();
   delay(1000);
 
   
