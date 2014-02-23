@@ -11,7 +11,7 @@ double const Config::WHEELS_INTERVAL = 17.18; // turn left, slightly overturn
 
 double Config::MAX_SPEED = 300;
 double Config::TARGET_SPEED = 200;
-double Config::MIN_SPEED = 100;
+double Config::MIN_SPEED = 150;
 double Config::PID_UPPER_LIMIT = COUNTS_PER_REVOLUTION*6*(double(MAX_SPEED)/DESIGNED_MAX_SPEED);
 double Config::PID_LOWER_LIMIT = PID_UPPER_LIMIT*(double(MIN_SPEED)/DESIGNED_MAX_SPEED);
 double Config::PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX_SPEED);

@@ -107,7 +107,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   long firstLeftCount = leftCnt;//leftCnt();
   long firstRightCount = rightCnt;//rightCnt();
   
-  while (target_tick - avgTicksForAngleOrDist > 200) { //target_tick - change to 'angle' for other formula // 200 is tested
+  while (target_tick - avgTicksForAngleOrDist > Config::MIN_SPEED*2) { //target_tick - change to 'angle' for other formula // 200 is tested
   // the tolerance value affect the turning errors
 
     double leftTicksForAngleOrDist = leftCnt;
@@ -120,7 +120,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
 
     /* IMPORTANT */
-    if(isLeftForward*isRightForward>0) delay(200); // long distance problem
+    if(isLeftForward*isRightForward>0) delay(Config::MIN_SPEED*1); // long distance problem
   }
   // fading
   setScale(0.25); // small, increase accuracy, too small, cannot move (torque)
@@ -141,7 +141,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   setScale(1/0.25);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
-  delay(500);
+  delay(200);
   return avgTicksForAngleOrDist;
 }
 
