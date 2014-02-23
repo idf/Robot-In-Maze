@@ -17,7 +17,6 @@ void setup(void)
   motorShield.init();
 
   //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
-  errorCumulator->compass->compassSetup();
   //servo_ir->init();
   errorCumulator->init();
 
