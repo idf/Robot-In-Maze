@@ -20,7 +20,7 @@ void rightCounter()
 
 }
 
-4. dibble any function from poluloencoder library
+4. disable any function from poluloencoder library
 
 (polulo encoder library can be deleted from library)
 
@@ -30,10 +30,10 @@ digital pin 5  right encoder
 digital pin 11 ultrasound PWM
 digital pin 13 ultrasound trigger(the same ultrasonic sensor with pin 11)
 
-Analog pin A0 IR
-Analog pin A1 IR
-Analog pin A2 IR
-Analog pin A3 IR
+Analog pin A0 IR1
+Analog pin A1 IR2
+Analog pin A2 IR3
+Analog pin A3 IR4
 Analog pin A4 for compass SDA
 Analog pin A5 for compass SCL
 
