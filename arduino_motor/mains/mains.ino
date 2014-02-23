@@ -48,23 +48,18 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-<<<<<<< HEAD
+
   moveForward(5); // possible moveForwad is affected by abs
-  
-=======
+
   moveForward(20);
   moveForward(20);
   moveForward(20);
   //errorCumulator->reset_dead_reckoning();
   turnLeft(90);
-  //errorCumulator->reset_dead_reckoning();
-  
-
-  //errorCumulator->reset_dead_reckoning();
  
   
   errorCumulator->print_dead_reckoning();
->>>>>>> eb5bf971ad7404226041a0e7322a3f551864071b
+
   //turnRight(90);
   // moveForward(80);
   //turnLeft(90);
@@ -74,11 +69,8 @@ void loop(void)
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
-<<<<<<< HEAD
   //delay(5000); //to slow down the serial print
-=======
-  delay(1000); //to slow down the serial print
->>>>>>> eb5bf971ad7404226041a0e7322a3f551864071b
+
 
   delay(1000);
 }
