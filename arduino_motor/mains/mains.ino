@@ -54,9 +54,8 @@ void loop(void)
 
   //delay(1000);
 
-  
   //turnRight(90);
-  // moveForward(80);
+  //moveForward(80);
   //turnLeft(90);
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
