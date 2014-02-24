@@ -49,10 +49,10 @@ void loop(void)
   //resetPololuTicks();
 
 
-  moveForward(80);
-  printCounts();
+  //moveForward(80);
+  //printCounts();
 
-  delay(1000);
+  //delay(1000);
 
   
   //turnRight(90);
@@ -60,7 +60,7 @@ void loop(void)
   //turnLeft(90);
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
-  // Serial.println(errorCumulator->get_compass_read());
+  Serial.println(errorCumulator->get_compass_read());
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
