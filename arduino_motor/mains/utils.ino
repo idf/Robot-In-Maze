@@ -4,7 +4,7 @@ float distCentimeter(float centimeter)
 {
   float divisibleTicks;
   if (centimeter <= 10) {
-    divisibleTicks = 19.3; 
+    divisibleTicks = 18.5; 
   } else if (centimeter <= 20) {
     divisibleTicks = 18.65;
   } else if (centimeter <= 35) {

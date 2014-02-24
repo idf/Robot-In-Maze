@@ -49,11 +49,10 @@ void loop(void)
   //resetPololuTicks();
 
 
-  moveForward(80);
+  moveForward(10);
   printCounts();
-
-  delay(1000);
-
+//  turnLeft(90);
+  //printCounts();
   
   //turnRight(90);
   // moveForward(80);
