@@ -48,9 +48,11 @@ void loop(void)
 {
   //resetPololuTicks();
 
-
-  //moveForward(80);
+  moveForward(10);
+  printCounts();
+//  turnLeft(90);
   //printCounts();
+
 
   //delay(1000);
 
