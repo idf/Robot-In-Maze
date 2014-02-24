@@ -9,9 +9,12 @@ Communication
 ==============
 Sending:
 ```json
-Move forward: { "action" : "move" }
-Turn Right: { "action" : "right"}
-Turn Left: { "action" : "left" }
+Move forward: { "action" : "move",
+				"value" : "*distance*"}
+Turn Right: { "action" : "right",
+			  "value" : "*degree*"}
+Turn Left: { "action" : "left",
+			 "value" : "*degree*"}
 Request for sensor data : { "action" : "sensor" }
 ```
 Receiving:

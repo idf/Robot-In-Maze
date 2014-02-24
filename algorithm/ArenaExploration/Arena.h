@@ -23,7 +23,7 @@ public:
 	inline GRIDTYPE getGridType(int posX, int posY) { return _grid[posX][posY].type; }
 	inline void setGridType(int posX, int posY, GRIDTYPE gridType) { _grid[posX][posY].type = gridType; }
 
-	inline bool getIsOnPath(int posX, int posY) { return _grid[posX][posY].type; }
+	inline bool getIsOnPath(int posX, int posY) { return _grid[posX][posY].isOnPath; }
 	inline void setIsOnPath(int posX, int posY, bool value) { _grid[posX][posY].isOnPath = value; }
 
 	void init();

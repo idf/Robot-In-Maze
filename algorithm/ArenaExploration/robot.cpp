@@ -10,10 +10,10 @@ using namespace std;
 Robot::Robot(int x, int y, int direction): _posX(x), _posY(y), _direction(direction)
 {
 	// initialize sensor configuration
-	Sensor* IRFront1 = new Sensor(1, 0, 0, Sensor::IR);
-	Sensor* IRFront2 = new Sensor(-1, 0, 0, Sensor::IR);
-	Sensor* IRLeft = new Sensor(0, 1, 90, Sensor::IR);
-	Sensor* IRRight = new Sensor(0, 1, 270, Sensor::IR);
+	Sensor* IRFront1 = new Sensor(1, 1, 0, 0, Sensor::IR);
+	Sensor* IRFront2 = new Sensor(2, -1, 0, 0, Sensor::IR);
+	Sensor* IRLeft = new Sensor(3, 0, 1, 90, Sensor::IR);
+	Sensor* IRRight = new Sensor(4, 0, 1, 270, Sensor::IR);
 	getSensors().push_back(IRFront1);
 	getSensors().push_back(IRFront2);
 	getSensors().push_back(IRLeft);
@@ -122,7 +122,7 @@ void Robot::senseEnvironment(Arena* arena)
 		arena->setGridType(getPosX()+2, getPosY(), arena->getRealGridType(getPosX()+2, getPosY()));
 		arena->setGridType(getPosX()+2, getPosY()+1, arena->getRealGridType(getPosX()+2, getPosY()+1));
 		// left
-		arena->setGridType(getPosX()+1, getPosY()-1, arena->getRealGridType(getPosX()+1, getPosY()-));
+		arena->setGridType(getPosX()+1, getPosY()-1, arena->getRealGridType(getPosX()+1, getPosY()-1));
 		// right
 		arena->setGridType(getPosX()+1, getPosY()+2, arena->getRealGridType(getPosX()+1, getPosY()+2));
 		break;

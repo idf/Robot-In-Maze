@@ -20,6 +20,11 @@ void Arena::init()
 		}
 }
 
+GRIDTYPE Arena::getRealGridType(int posX, int posY)
+{
+	return UNEXPLORED;
+}
+
 
 // to be updated to cater to unexplorable area;
 bool Arena::isExploredFully()

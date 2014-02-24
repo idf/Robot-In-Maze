@@ -14,6 +14,7 @@ namespace ArenaSimulator
         [STAThread]
         static void Main()
         {
+            using (var obj = new RobotWrapper()) { }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

@@ -2,7 +2,6 @@
 #include "robot.h"
 #include "sensor.h"
 
-#include "arenaexplorer.h"
 #include "pathfinder.h"
 
 int main(int argc, char* argv[])

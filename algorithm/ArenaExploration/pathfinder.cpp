@@ -2,8 +2,6 @@
 
 PathFinder::PathFinder()
 {
-	_startX = 0;
-	_startY = 0;
 	_endX = 18;
 	_endY = 13;
 }
@@ -19,7 +17,7 @@ void PathFinder::explore(Robot* robot, Arena* arena)
 	}
 
 	PathFinder* pathfinder = new PathFinder();
-	pathfinder->findPathBetween(robot->getPosX, robot->getPosY, 0, 0, arena);
+	pathfinder->findPathBetween(robot->getPosX(), robot->getPosY(), 0, 0, arena);
 }
 
 void PathFinder::findPathBetween(int startX, int startY, int endX, int endY, Arena* arena)
@@ -31,7 +29,7 @@ void PathFinder::findPathBetween(int startX, int startY, int endX, int endY, Are
 
 void PathFinder::selectNextDestination(Arena* arena)
 {
-	for (int i = ARENA_X_SIZE - 1; i >=0; -i)
+	for (int i = ARENA_X_SIZE-1; i >=0; -i)
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
 			if (arena->getGridType(i, j) == UNEXPLORED)
