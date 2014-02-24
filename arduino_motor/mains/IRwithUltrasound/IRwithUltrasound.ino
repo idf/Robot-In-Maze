@@ -19,8 +19,8 @@ Ultrasound ultrasound(11,13);
 
 //Sensors
 SharpIR sharpLong(A0, 25, 93, l);//front
-SharpIR sharp1(A1, 25, 93, s); //right front
-SharpIR sharp2(A2, 25, 93, s);//left front
+SharpIR sharp1(A1, 25, 93, s); //left front
+SharpIR sharp2(A2, 25, 93, s);//right front
 SharpIR sharp3(A3, 25, 93, s);//left side
 
 // ir: the pin where your sensor is attached
@@ -50,13 +50,13 @@ void loop()
   Serial.print("Mean distance long: ");  // returns it to the serial monitor
   Serial.println(dis);
   
-  //int dis1=sharp1.distance();  // this returns the distance to the object you're measuring
-  //Serial.print("Mean distance right front: ");  // returns it to the serial monitor
-  //Serial.println(dis1);
+  int dis1=sharp1.distance();  // this returns the distance to the object you're measuring
+  Serial.print("Mean distance left front: ");  // returns it to the serial monitor
+  Serial.println(dis1);
   
-  //int dis2=sharp2.distance();  // this returns the distance to the object you're measuring
-  //Serial.print("Mean distance left front : ");  // returns it to the serial monitor
-  //Serial.println(dis2);
+  int dis2=sharp2.distance();  // this returns the distance to the object you're measuring
+  Serial.print("Mean distance right front : ");  // returns it to the serial monitor
+  Serial.println(dis2);
   
   //int dis3=sharp3.distance();  // this returns the distance to the object you're measuring
   //Serial.print("Mean distance left side: ");  // returns it to the serial monitor
@@ -66,7 +66,7 @@ void loop()
   
   
   
-  delay(500);
+  delay(1000);
  
 }                      
  
