@@ -9,13 +9,13 @@ Communication
 ==============
 Sending:
 ```json
-Move forward: { "action" : "move",
-				"value" : "*distance*"}
-Turn Right: { "action" : "right",
-			  "value" : "*degree*"}
-Turn Left: { "action" : "left",
-			 "value" : "*degree*"}
-Request for sensor data : { "action" : "sensor" }
+Move forward: { "function" : "forward",
+				"parameter" : "*distance*"}
+Turn Right: { "function" : "right",
+			  "parameter" : "*degree*"}
+Turn Left: { "function" : "left",
+			 "parameter" : "*degree*"}
+Request for sensor data : { "function" : "sensor" }
 ```
 Receiving:
 ```json
