@@ -8,6 +8,7 @@ private:
 public:
   void compassSetup();
   float getHeading();
+  void printAxis();
 };
 
 #endif

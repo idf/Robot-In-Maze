@@ -51,3 +51,34 @@ float HMC5883LCompass::getHeading(){
 
   return heading * RAD_TO_DEG; //radians to degrees
 }
+
+void HMC5883LCompass::printAxis(){
+  
+ 
+  MagnetometerRaw raw = compass.ReadRawAxis();
+ 
+  
+if (raw.XAxis < minx)
+{
+    minx=raw.XAxis;
+}
+if (raw.YAxis < miny)
+{
+    miny=raw.YAxis;
+}
+if (raw.XAxis > maxx)
+{
+     maxx=raw.XAxis;/* code */
+}
+if (raw.YAxis > maxy)
+{
+     maxy=raw.YAxis;
+}
+  Serial.print(F("minx "));Serial.println(minx);
+  Serial.print(F("max "));Serial.println(maxx);
+  Serial.print(F("miny "));Serial.println(miny);
+  Serial.print(F("maxy "));Serial.println(maxy);
+
+  
+
+}

@@ -10,6 +10,14 @@
 //#include "PinChangeInt.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  int minx = 0;
+  int maxx = 0;
+  int miny = 0;
+  int maxy = 0;
+
+
+
 void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
@@ -49,13 +57,13 @@ void loop(void)
   //resetPololuTicks();
   //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
-  sideEye->test_readings();
-  Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
+  //sideEye->test_readings();
+  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
   //moveForward(10);
   //printCounts();
-  //  turnLeft(90);
+  //turnLeft(90);
   //printCounts();
-
+  errorCumulator->compass->printAxis();
 
   //delay(1000);
 
