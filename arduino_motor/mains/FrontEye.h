@@ -15,6 +15,8 @@ public:
 private: 
   int get_ulra_reading();
   int get_ir_reading();
+  bool is_within_range(SharpIR* sensor);
+  bool is_within_range(Ultrasound* sensor);
   Ultrasound* ultrasound;
   SharpIR* sharpLong;//front
 };

@@ -10,7 +10,10 @@ void FrontEye::init() {
 
 int FrontEye::get_reading() {
   int dis = this->get_ulra_reading();
-  dis = (dis+5)/10*10;
+  if(this->is_within_range(this->ultrasound)) 
+    dis = (dis+5)/10*10;
+  else 
+    dis = -1;
   return dis;
 }
 
@@ -32,4 +35,24 @@ int FrontEye::get_ulra_reading() {
 int FrontEye::get_ir_reading() {
   const int IR_OFFSET = 1;
   return this->sharpLong->distance()-IR_OFFSET;
+}
+
+bool FrontEye::is_within_range(SharpIR* sensor) {
+  for(int i=0; i<5; i++) {
+    int distance = sensor->distance();
+    if(distance>120 || distance<5) // TODO
+      return false;
+    delay(20);
+  }
+  return true;
+}
+
+bool FrontEye::is_within_range(Ultrasound* sensor) {
+  for(int i=0; i<5; i++) {
+    int distance = sensor->dist();
+    if(distance>120 || distance<30) // TODO
+      return false;
+    delay(20);
+  }
+  return true;
 }
