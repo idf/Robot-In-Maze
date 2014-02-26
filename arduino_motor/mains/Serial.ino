@@ -102,7 +102,9 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     return true;
   }
   else if(function_code==10) { // TODO sensor request
-
+    getSensorReadings();
+    this->send_command_complete(function_code, 200);
+    return true;
   }
   else {
     this->send_command_complete(function_code, 405); // Method not Allowed

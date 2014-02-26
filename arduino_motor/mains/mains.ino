@@ -76,7 +76,7 @@ void loop(void)
   //Serial.println(errorCumulator->get_compass_read());
   //serialCommnder->receive_exec_command();
   //serialCommnder->send_sensor_readings(100, 30, 30);
-
+  getSensorReadings();
 
   delay(1000);
 }

@@ -47,6 +47,7 @@ List of function codes currently available:
 00: void moveForward(double dist);  
 01: void turnRight(double angle);  
 02: void turnLeft(double angle);  
+10: void getSensorReadings(); // ad-hoc request for sensor readings (ad-hoc).
 ```
 NOTICE: In python each json serial command at very end must end with 
 ```python
