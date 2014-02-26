@@ -18,7 +18,8 @@ void setup(void)
   //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   //servo_ir->init();
   errorCumulator->init();
-  frontEye->init();
+  frontEye->init(); 
+  sideEye->init();
 
 
   leftPID.SetMode(AUTOMATIC);
@@ -46,8 +47,10 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-  frontEye->test_readings();
-  Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
+  //frontEye->test_readings();
+  //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
+  sideEye->test_readings();
+  Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
   //moveForward(10);
   //printCounts();
   //  turnLeft(90);

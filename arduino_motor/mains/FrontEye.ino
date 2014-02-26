@@ -2,7 +2,7 @@
 //public
 FrontEye::FrontEye() {
   this->ultrasound = new Ultrasound(11, 13);
-  this->sharpLong = new SharpIR(A0, 25, 93, LONG);
+  this->sharpLong = new SharpIR(A0, 250, 95, LONG);
 }
 void FrontEye::init() {
   this->ultrasound->init();

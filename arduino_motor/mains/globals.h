@@ -4,6 +4,7 @@
 #include "Serial.h"
 #include "ErrorCumulator.h"
 #include "FrontEye.h"
+#include "SideEye.h"
 //#include "ServoIR.h"
 /* 
 M1 on LEFT
@@ -49,6 +50,7 @@ DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1
 
 SerialCommnder* serialCommnder = new SerialCommnder(); 
 ErrorCumulator* errorCumulator = new ErrorCumulator();
-FrontEye * frontEye = new FrontEye();
+FrontEye* frontEye = new FrontEye();
+SideEye* sideEye = new SideEye();
 //ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);
 #endif

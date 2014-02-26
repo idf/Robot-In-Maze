@@ -1,8 +1,8 @@
 Accurate Range
 ============
-15cm  - 30 cm
-
-
+Short IR Sensor  
+Managable Range  
+10cm  - 40 cm  
 
 Code
 ============
