@@ -7,7 +7,7 @@
 
 class FrontEye{
 public:
-  FrontEye();
+  FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin);
   void init();
   int get_reading();
   

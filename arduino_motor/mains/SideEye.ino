@@ -17,9 +17,12 @@ int SideEye::get_reading_left() {
 }
 
 void SideEye::test_readings() {
-  int dis1 = this->sharp_right->distance();  // this returns the distance to the object you're measuring
-  Serial.print("Right SharpIR distance: ");  // returns it to the serial monitor
-  Serial.println(dis1);
+  int dis = this->sharp_right->distance();  // this returns the distance to the object you're measuring
+  Serial.print(F("Right SharpIR distance: "));  Serial.println(dis);
+  dis = this->sharp_left->distance();
+  Serial.print(F("Left SharpIR distance: ")); Serial.println(dis);
+  Serial.print(F("Get Right Reading: ")); Serial.println(this->get_reading_right());
+  Serial.print(F("Get Left Reading: ")); Serial.println(this->get_reading_left());
 }
 
 // private
@@ -34,9 +37,10 @@ bool SideEye::is_within_range(SharpIR* sensor) {
 }
 
 int SideEye::get_reading(SharpIR* sensor) {
-  int dis = sensor->distance();
+  const int OFFSET = 0;
+  int dis = sensor->distance() - OFFSET;
   if (this->is_within_range(sensor)) {
-    dis = (dis+5)/10*10;
+    dis = (dis+5)/10*10; 
   }
   else {
     dis = -1;
