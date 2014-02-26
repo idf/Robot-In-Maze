@@ -28,6 +28,7 @@ Library Dependencies:
 All available in /arduino_motor/libraries
 Communication
 --------------
+###Machine Code
 Command to be executed is using 7-digit machine code since it saves memory on Arduino;
 ```python
 # in Python
@@ -52,9 +53,8 @@ NOTICE: In python each json serial command at very end must end with
 '\n'
 ```
 NOTICE: incoming serial buffer size of Arduino is limited, thus only 7 concurrent machine code command is allowed  
-Feedback  
---------------
-Json format ([Python Reference] (http://docs.python.org/2/library/json.html))  
+###Feedback  
+Json format ([Python Reference](http://docs.python.org/2/library/json.html))  
 ```json
 {  
   "function": function_code,  
@@ -63,14 +63,29 @@ Json format ([Python Reference] (http://docs.python.org/2/library/json.html))
 ```
 example:
 ```json
-{  
-  "function": 0,  
-  "status": 200  
-}  
+{"function": 0, "status": 200}  
 ```
-status_code is the HTTP status code as in [this] (http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).  
+status_code is the HTTP status code as in [this](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).  
 The most common status code is 200 (i.e. OK).  
 ```json
-{"function": 99, "status": 200 }  
+{"function": 99, "status": 200}  
 ```
 99 denotes the Arduino is ready to do serial communication  
+###Sensor Readings  
+```json
+{  
+  "sensor": sensor_code,  
+  "value": return_value  
+}  
+```
+example:  
+```json
+{"sensor": 0, "value": 40}  
+```
+This example indicates obstacle 40cm in the front. The 40cm is from periphery of the robot  
+List of sensor codes currently available:  
+```
+0: front sensor;  
+1: left sensor;  
+2: right sensor;  
+```
