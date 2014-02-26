@@ -47,6 +47,7 @@ void loop(void)
 {
   //resetPololuTicks();
   frontEye->test_readings();
+  Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //moveForward(10);
   //printCounts();
   //  turnLeft(90);

@@ -13,7 +13,8 @@ public:
   
   void test_readings();
 private: 
-
+  int get_ulra_reading();
+  int get_ir_reading();
   Ultrasound* ultrasound;
   SharpIR* sharpLong;//front
 };
