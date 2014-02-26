@@ -142,4 +142,7 @@ double angle_to_ticks(double angle) {
  return (Config::WHEELS_INTERVAL/2)*(PI/180)*(angle/Config::DISTANCE_PER_TICK_CM);
 }
 */
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void getSensorReadings() {
+  serialCommnder->send_sensor_readings(frontEye->get_reading(), sideEye->get_reading_left(), sideEye->get_reading_right());
+}
