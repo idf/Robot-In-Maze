@@ -114,3 +114,4 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
   this->reset_dead_reckoning();
   this->current_mode = mode;
 }
+

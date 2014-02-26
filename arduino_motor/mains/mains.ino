@@ -1,13 +1,12 @@
 // use mains instead of main since main is the keyword
 #include <DualVNH5019MotorShield.h>
 //#include <PololuWheelEncoders.h>
-#include <PID_v1.h> 
+#include <PID_v1.h>  
+#include <Ultrasound.h>
 // #include <PID_AutoTune_v0.h>
 
 #include "globals.h"
-#include "Pin.h"
 #include "Config.h"
-#include "ErrorCumulator.h"
 //#include "PinChangeInt.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +18,7 @@ void setup(void)
   //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   //servo_ir->init();
   errorCumulator->init();
-
+  frontEye->init();
 
 
   leftPID.SetMode(AUTOMATIC);
@@ -39,7 +38,7 @@ void setup(void)
   leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT/2, Config::PID_UPPER_LIMIT/2);
   rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT/2, Config::PID_UPPER_LIMIT/2);
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
-    
+
   resetPololuTicks();
   serialCommnder->send_ready_signal();
 }
@@ -47,10 +46,10 @@ void setup(void)
 void loop(void)
 {
   //resetPololuTicks();
-
-  moveForward(10);
-  printCounts();
-//  turnLeft(90);
+  frontEye->test_readings();
+  //moveForward(10);
+  //printCounts();
+  //  turnLeft(90);
   //printCounts();
 
 
@@ -61,7 +60,7 @@ void loop(void)
   //turnLeft(90);
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
-  Serial.println(errorCumulator->get_compass_read());
+  //Serial.println(errorCumulator->get_compass_read());
   //serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
@@ -72,5 +71,5 @@ void loop(void)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-  
+
 

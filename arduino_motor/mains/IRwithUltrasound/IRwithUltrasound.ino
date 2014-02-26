@@ -6,9 +6,10 @@
 // #       TTL mode
 #include <SharpIR.h>
 #include <Ultrasound.h>
-#define ir A0
-#define s 1080
-#define l 20150
+#include <Servo.h>
+
+#define SHORT 1080
+#define LONG 20150
 
 
 
@@ -18,10 +19,10 @@
 Ultrasound ultrasound(11,13);
 
 //Sensors
-SharpIR sharpLong(A0, 25, 93, l);//front
-SharpIR sharp1(A1, 25, 93, s); //left front
-SharpIR sharp2(A2, 25, 93, s);//right front
-SharpIR sharp3(A3, 25, 93, s);//left side
+SharpIR sharpLong(A0, 25, 93, LONG);//front
+SharpIR sharp1(A1, 25, 93, SHORT); //left front
+SharpIR sharp2(A2, 25, 93, SHORT);//right front
+SharpIR sharp3(A3, 25, 93, SHORT);//left side
 
 // ir: the pin where your sensor is attached
 // 25: the number of readings the library will make before calculating a mean distance
@@ -61,9 +62,6 @@ void loop()
   //int dis3=sharp3.distance();  // this returns the distance to the object you're measuring
   //Serial.print("Mean distance left side: ");  // returns it to the serial monitor
   //Serial.println(dis3);
-  
-  
-  
   
   
   delay(1000);
