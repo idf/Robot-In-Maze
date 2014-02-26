@@ -1,7 +1,7 @@
 import serial
 import threading
 import json
-
+from utils.decorators import Deprecated
 
 #-----------------for arduino connection
 ser = serial.Serial("/dev/ttyACM0", 9600)
@@ -12,6 +12,8 @@ global robot_status
 robot_status = False
 #-------------------Arduino
 data = ser.readline()
+
+@Deprecated
 def robot_read():
     global data, robot_status
     while True:
@@ -31,27 +33,26 @@ def robot_read():
         robot_status = True
 
 
+@Deprecated
 def robot_write():
     if robot_status == True:
-        ser.write(robot_function)
+        ser.write(convert_to_machine_code(1, 90.00))
 
 
-
+@Deprecated
 def convert_to_machine_code(function_code, parameter):
-    global robot_function
     """
     function_code is int
-    paramter is double
+    parameter is double
     """
     function_code_string = '000000'+str(function_code)
     function_code_string = function_code_string[-2:]
-    paramter_string = '000000'+str(int(parameter*100))
-    parameter_string = paramter_string[-5:]
-    robot_function = function_code_string+parameter_string
+    parameter_string = '000000'+str(int(parameter*100))
+    parameter_string = parameter_string[-5:]
     return function_code_string+parameter_string
 
 
-convert_to_machine_code(1, 90.00)
+
 
 
 #converting = threading.Thread(target = convert_to_machine_code(1, 90.00))
