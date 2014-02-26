@@ -59,7 +59,6 @@ void loop(void)
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
-  sideEye->test_readings();
   //moveForward(10);
   //printCounts();
   //turnLeft(90);
