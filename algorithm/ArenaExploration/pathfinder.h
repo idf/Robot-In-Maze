@@ -11,13 +11,15 @@
 class PathFinder
 {
 public:
-	PathFinder();
+	PathFinder(Robot* robot, Arena* arena);
 	~PathFinder();
-	void explore(Robot* robot, Arena* arena);
-	void findPathBetween(int startX, int startY, int endX, int endY, Arena* arena);
-	void selectNextDestination(Arena* arena);
+	void explore();
+	void findPathBetween(int startX, int startY, int endX, int endY);
+	void selectNextDestination();
 private:
 	int _endX, _endY;
+	Robot* _robot;
+	Arena* _arena;
 };
 
 #endif

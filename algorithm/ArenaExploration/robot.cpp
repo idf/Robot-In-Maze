@@ -133,6 +133,7 @@ void Robot::senseEnvironment(Arena* arena)
 
 // calculate the next move based on information and past path
 // algorithm: AStar
+// function: manhattan distance
 void Robot::exploreNextStep(Arena* arena)
 {
 	

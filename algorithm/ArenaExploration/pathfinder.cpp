@@ -1,38 +1,50 @@
 #include "pathfinder.h"
 
-PathFinder::PathFinder()
+PathFinder::PathFinder(Robot* robot, Arena* arena)
 {
+	_robot = robot;
+	_arena = arena;
 	_endX = 18;
 	_endY = 13;
 }
 
-void PathFinder::explore(Robot* robot, Arena* arena)
-{
-	findPathBetween(0, 0, _endX, _endY, arena);
 
-	while (!arena->isExploredFully())
+// highest level exploration
+
+void PathFinder::explore()
+{
+	findPathBetween(0, 0, _endX, _endY);
+
+	while (!_arena->isExploredFully())
 	{
-		selectNextDestination(arena);
-		findPathBetween(robot->getPosX(), robot->getPosY(), _endX, _endY, arena);
+		selectNextDestination();
+		findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
 	}
-
-	PathFinder* pathfinder = new PathFinder();
-	pathfinder->findPathBetween(robot->getPosX(), robot->getPosY(), 0, 0, arena);
+	findPathBetween(_robot->getPosX(), _robot->getPosY(), 0, 0);
 }
 
-void PathFinder::findPathBetween(int startX, int startY, int endX, int endY, Arena* arena)
+// mid level exploration
+// it will control robot to run
+void PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
+	// check termination condition: goal or unreachable
+	if (_robot->getPosX() == endX && _robot->getPosY() == endY)
+		return;
+	if (_arena->getGridType(endX, endY) == OBSTACLE)
+		return;
+
 	// robot sense
-	
+	_robot->senseEnvironment(_arena);
 	// robot move
+	_robot->exploreNextStep(_arena);
 }
 
-void PathFinder::selectNextDestination(Arena* arena)
+void PathFinder::selectNextDestination()
 {
 	for (int i = ARENA_X_SIZE-1; i >=0; -i)
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
-			if (arena->getGridType(i, j) == UNEXPLORED)
+			if (_arena->getGridType(i, j) == UNEXPLORED)
 			{
 				_endX = i;
 				_endY = j;
