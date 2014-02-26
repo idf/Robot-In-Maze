@@ -49,8 +49,8 @@ void loop(void)
   //resetPololuTicks();
   //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
-  sideEye->test_readings();
-  Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
+  //sideEye->test_readings();
+  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
   //moveForward(10);
   //printCounts();
   //  turnLeft(90);
@@ -65,7 +65,7 @@ void loop(void)
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
-  //serialCommnder->receive_exec_command();
+  serialCommnder->receive_exec_command();
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
   //delay(5000); //to slow down the serial print

@@ -31,7 +31,7 @@ bool SerialCommnder::receive_exec_command() {
     parameter = comamnd_int%100000;
     parameter /= 100;
     // Serial.flush();
-    // Serial.print("debug, command received: "); Serial.print(function_code); Serial.println(parameter);
+    Serial.print(F("debug, command received: ")); Serial.print(function_code); Serial.println(parameter);
     return this->exec_command(function_code, parameter);
   }
   return false;
