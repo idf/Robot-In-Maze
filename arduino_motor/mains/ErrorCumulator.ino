@@ -70,6 +70,7 @@ float ErrorCumulator::get_compass_read() {
 }
 
 
+
 // Mode Change 
 void ErrorCumulator::change_to_forward_mode() {
   if(this->current_mode==FORWORD)

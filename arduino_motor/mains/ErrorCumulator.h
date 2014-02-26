@@ -25,16 +25,17 @@ public:
   void print_dead_reckoning();
   void reset_dead_reckoning();
   float get_compass_read();
+  
 
   // turning and forward mode switching 
   void change_to_forward_mode();
   void change_to_right_mode();
   void change_to_left_mode();
-  
+  HMC5883LCompass* compass;
 private:
-  HMC5883LCompass* compass; // public for testing purpose
+  //HMC5883LCompass* compass; // public for testing purpose
   double compass_reading_0;
-
+  
   int current_mode; // 00, 01, 02
   void change_to_turning_mode(int mode);
   
