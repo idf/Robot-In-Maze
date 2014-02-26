@@ -37,11 +37,13 @@ private:
   double compass_reading_0;
   
   int current_mode; // 00, 01, 02
-  void change_to_turning_mode(int mode);
   
   double forward_deltaX;
   double forward_deltaY;
   double forward_theta;
+
+  void change_to_turning_mode(int mode);
+  float get_diff_angle(float alpha_t, float alpha_0);
   
 };
 #endif

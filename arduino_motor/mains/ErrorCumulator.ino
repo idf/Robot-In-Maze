@@ -47,7 +47,7 @@ void ErrorCumulator::record_turning_error(double adjusted_target_angle, double a
 
 **/
 void ErrorCumulator::record_turning_error_compass(double adjusted_target_angle) {
-  double actual_angle = this->compass->getHeading() - this->compass_reading_0;
+  double actual_angle = this->get_diff_angle(this->compass->getHeading(), this->compass_reading_0);
   // actual_angle = -actual_angle; // the direction of compass reading angle is reversed 
   this->turning_error += (actual_angle - adjusted_target_angle);
 }
@@ -100,6 +100,8 @@ void ErrorCumulator::change_to_left_mode() {
   this->change_to_turning_mode(LEFT);
 }
 
+
+// private
 void ErrorCumulator::change_to_turning_mode(int mode) {
   if(this->current_mode==mode) {
 
@@ -116,3 +118,28 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
   this->current_mode = mode;
 }
 
+/**
+return the angle difference within 180 degrees give two angle in the range [-180, +180]
+orthodox coordiates
+@param: alpha_t, \in [-180, +180]
+@param: alpha_0, \in [-180, +180]
+**/
+float ErrorCumulator::get_diff_angle(float alpha_t, float alpha_0) {
+  if(alpha_0>=0 && alpha_t>=0) 
+    return alpha_t - alpha_0;
+  else if (alpha_0<0 && alpha_t>=0) {
+    float delta = alpha_t - alpha_0;
+    if(delta>=180) 
+      delta -= 360;
+    return delta;
+  }
+  else if(alpha_0>=0 && alpha_t<0) {
+    float delta = alpha_t - alpha_0;
+    if(delta<-180) 
+      delta += 360;
+    return delta;
+  }
+  else  // alphas both negative 
+    return alpha_t - alpha_0;
+  
+}
