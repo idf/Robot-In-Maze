@@ -1,8 +1,8 @@
 #include "FrontEye.h"
 //public
-FrontEye::FrontEye() {
-  this->ultrasound = new Ultrasound(11, 13);
-  this->sharpLong = new SharpIR(A0, 250, 95, LONG);
+FrontEye::FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin) {
+  this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
+  this->sharpLong = new SharpIR(ir_pin, 250, 95, LONG);
 }
 void FrontEye::init() {
   this->ultrasound->init();

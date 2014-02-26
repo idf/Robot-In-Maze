@@ -44,7 +44,11 @@ public:
 
 
   //static const unsigned char SERVO = 9; // TODO change
-
+  static const unsigned char ULTRA_1 = 11;
+  static const unsigned char ULTRA_2 = 13;
   static const unsigned char FRONT_IR = A0;
+
+  static const unsigned char LEFT_IR = A1;
+  static const unsigned char RIGHT_IR = A2;
 };
 #endif
