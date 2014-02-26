@@ -90,8 +90,8 @@ Example
 ```
 List of sensor codes currently available:  
 ```
-0: front sensor;  
-1: left sensor;  
-2: right sensor;  
+0: front sensor;  // sensor range 10 - 120 cm
+1: left sensor;   // sensor range 10 - 40 cm
+2: right sensor;  // sensor range 10 - 40 cm
 ```
 Notice: if the distance is beyond the sensor's range, it will return -1;  
