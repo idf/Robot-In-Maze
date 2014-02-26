@@ -72,20 +72,25 @@ The most common status code is 200 (i.e. OK).
 ```
 99 denotes the Arduino is ready to do serial communication  
 ###Sensor Readings  
+In the case you don't know json array, refer to [this](http://stackoverflow.com/questions/10973614/convert-json-array-to-python-list) and [this](http://www.w3schools.com/json/json_syntax.asp).  
 ```json
-{  
-  "sensor": sensor_code,  
-  "value": return_value  
+{ 
+  "sensors": [
+    {"sensor": sensor_code,  "value": return_value},
+    {"sensor": sensor_code,  "value": return_value},
+    {"sensor": sensor_code,  "value": return_value}
+  ]
 }  
 ```
-example:  
+This json array indicates obstacle distances (in cm) from front, left, right. The distances are from periphery of the robot.  
+Example  
 ```json
-{"sensor": 0, "value": 40}  
+{"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30}]}
 ```
-This example indicates obstacle 40cm in the front. The 40cm is from periphery of the robot  
 List of sensor codes currently available:  
 ```
 0: front sensor;  
 1: left sensor;  
 2: right sensor;  
 ```
+Notice: if the distance is beyond the sensor's range, it will return -1;  

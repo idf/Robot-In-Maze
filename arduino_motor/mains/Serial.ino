@@ -1,5 +1,5 @@
 #include "Serial.h"
-
+// public
 SerialCommnder::SerialCommnder() {
   this->command = 99;
   this->is_started = false;
@@ -41,31 +41,6 @@ int SerialCommnder::get_command() {
   return this->command;
 }
 
-bool SerialCommnder::exec_command(int function_code, double parameter) {
-  if(function_code==0) {
-    moveForward(parameter);
-    this->send_command_complete(function_code, 200);
-    return true;
-  }
-  else if(function_code==1) {
-    turnRight(parameter);
-    this->send_command_complete(function_code, 200);
-    return true;
-  }
-  else if(function_code==2) {
-    turnLeft(parameter);
-    this->send_command_complete(function_code, 200);
-    return true;
-  }
-  else {
-    this->send_command_complete(function_code, 405); // Method not Allowed
-    return false;
-  }
-  // TODO
-  this->send_command_complete(function_code, 408); // Request Timeout
-  return false;
-}
-
 void SerialCommnder::send_command_complete(int function_code, int status_code) {
   /*
   aJsonObject* root = aJson.createObject();  
@@ -92,3 +67,50 @@ void SerialCommnder::send_ready_signal() {
     this->is_started = true;
   }
 }
+
+void SerialCommnder::send_sensor_readings(int front_value, int left_value, int right_value) {
+  Serial.print(F("{\"sensors\":["));
+  // front 
+  Serial.print(F("{\"sensor\":")); Serial.print(0);
+  Serial.print(F(",\"value\":")); Serial.print(front_value); Serial.print(F("}")); Serial.print(F(","));
+  // left
+  Serial.print(F("{\"sensor\":")); Serial.print(1);
+  Serial.print(F(",\"value\":")); Serial.print(left_value); Serial.print(F("}")); Serial.print(F(","));
+  // right
+  Serial.print(F("{\"sensor\":")); Serial.print(2);
+  Serial.print(F(",\"value\":")); Serial.print(right_value); Serial.print(F("}"));
+  //end
+  Serial.println(F("]}"));
+   
+}
+
+// private
+bool SerialCommnder::exec_command(int function_code, double parameter) {
+  if(function_code==0) {
+    moveForward(parameter);
+    this->send_command_complete(function_code, 200);
+    return true;
+  }
+  else if(function_code==1) {
+    turnRight(parameter);
+    this->send_command_complete(function_code, 200);
+    return true;
+  }
+  else if(function_code==2) {
+    turnLeft(parameter);
+    this->send_command_complete(function_code, 200);
+    return true;
+  }
+  else if(function_code==10) { // TODO sensor request
+
+  }
+  else {
+    this->send_command_complete(function_code, 405); // Method not Allowed
+    return false;
+  }
+  // TODO
+  this->send_command_complete(function_code, 408); // Request Timeout
+  return false;
+}
+
+
