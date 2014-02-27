@@ -61,7 +61,7 @@ class SerialCommander(object):
 
     def _parse_function_status(self, receive_data_dict):
         """
-        {"function": 0, "status": 200}
+        parse {"function": 0, "status": 200}
         :param receive_data_dict:
         :return:
         """
@@ -72,7 +72,7 @@ class SerialCommander(object):
 
     def _parse_sensor_readings(self, receive_data_dict):
         """
-        {"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30}]}
+        parse {"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30}]}
         :param receive_data_dict:
         :return:
         """
@@ -111,9 +111,9 @@ class SerialCommander(object):
 
         debug_print("Received json: " + receive_data)
         receive_data_dict = json.loads(receive_data)
-        if receive_data_dict.get("senors", None)!=None:
+        if "sensors" in receive_data_dict:
             return self._parse_sensor_readings(receive_data_dict)
-        elif receive_data_dict.get("function", None)!=None:
+        elif "function" in receive_data_dict:
             return self._parse_function_status(receive_data_dict)
         else:
             return None, None
@@ -183,10 +183,6 @@ class SerialThread(threading.Thread):
                 self.commander.command_pop_n_exe()
                 while not self.commander.is_command_acknowledged():
                     pass
-
-
-
-
         print "Exiting " + self.name
 
 
