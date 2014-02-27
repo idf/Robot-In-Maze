@@ -9,16 +9,28 @@ __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
 class SerialCommander(object):
-    def __init__(self, path="/dev/ttyACM0", data_rate=9600):
+
+    def __init__(self, production=True):
         self.ready=False
-        self.ser = serial.Serial(path, data_rate)
-        self.commands =  Queue() # synchronized, queue of [function_code, parameter] #TODO
+        self.ser = None
+        if production:
+            self._init_serial()
+
+        self.commands = Queue() # synchronized, queue of [function_code, parameter] #TODO
+
+        # stop n wait
         self.outstanding_command_pair = None
-        self.ack = False # stop n wait
+        self.ack = False
+
+    def _init_serial(self, path="/devc/ttyACM0", data_rate=9600):
+        # Serial port: /dev/ttyACM0
+        # The Raspberry Pi may not provide enough power to drive an Arduino, so you might need external power.
+        self.ser = serial.Serial(path, data_rate)
+
 
     def _convert_to_machine_code(self, function_code, parameter):
         """
-
+        Convert function code and parameter to the Arduino readable code
         :param function_code: int
         :param parameter: double
         :return: machine code string
@@ -60,7 +72,7 @@ class SerialCommander(object):
         :param function_code: int
         :param parameter: double
         """
-        if self.serial_ready==True:
+        if self.ready==True:
             self.ser.write(self._convert_to_machine_code(function_code, parameter))
 
     def read(self):
@@ -68,14 +80,17 @@ class SerialCommander(object):
         read from the serial
         :return: parsed json
         """
-        global data, robot_status
-
-        while True:
-            data = self.ser.readline()
+        receive_data = ""
+        while True: # keep fetching until found json
+            data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
             print data
 
+            if "{" in data and "}" in data:
+                receive_data = data[data.find("{"): data.find("}")+1]
+                break
+            else:
+                continue
 
-        receive_data = data[data.find("{"): data.find("}")+1]
         print receive_data
         receive_data_dict = json.loads(receive_data)
         if receive_data_dict.get("senors", None):
@@ -97,7 +112,7 @@ class SerialCommander(object):
 
         if dic.get(99, None)==200:
             print "robot ready"
-            self.serial_ready = True
+            self.ready = True
 
     def command_pop_n_exe(self):
         if not self.commands.empty():
@@ -135,7 +150,8 @@ class SerialThread(threading.Thread):
                 time.sleep(5)
 
             if self.commander.commands.empty():
-                pass # TODO
+                # TODO
+                self.commander.command_put(0, 10)
             else:
                 self.commander.command_pop_n_exe()
                 while not self.commander.is_command_acknowledged():
