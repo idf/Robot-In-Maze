@@ -1,4 +1,9 @@
 #include "pathfinder.h"
+#include <list>
+#include <string>
+#include <math.h>
+
+using namespace std;
 
 PathFinder::PathFinder(Robot* robot, Arena* arena)
 {
@@ -8,12 +13,11 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_endY = 13;
 }
 
-
 // highest level exploration
 
 void PathFinder::explore()
 {
-	findPathBetween(0, 0, _endX, _endY);
+	findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
 
 	while (!_arena->isExploredFully())
 	{
@@ -23,9 +27,9 @@ void PathFinder::explore()
 	findPathBetween(_robot->getPosX(), _robot->getPosY(), 0, 0);
 }
 
-// mid level exploration
-// it will control robot to run
-void PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
+// mid level exploration which will find the path based on current map
+// 
+vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
 	// check termination condition: goal or unreachable
 	if (_robot->getPosX() == endX && _robot->getPosY() == endY)
@@ -35,9 +39,146 @@ void PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 
 	// robot sense
 	_robot->senseEnvironment(_arena);
-	// robot move
-	_robot->exploreNextStep(_arena);
+
+	// calculate the path to destination
+    vector<Grid*> path;
+    Grid *current, *child, *start, *end;
+	start = _arena->getGrid(0, 0);
+	start = _arena->getGrid(ARENA_X_SIZE - 2, ARENA_Y_SIZE - 2);
+    list<Grid*> openList;
+    list<Grid*> closedList;
+    list<Grid*>::iterator i;
+    unsigned int n = 0;
+
+    // Add the start point to the openList
+    openList.push_back(start);
+    start->opened = true;
+
+    while (n == 0 || (current != end && n < 50))
+    {
+        // Look for the smallest F value in the openList and make it the current point
+        for (i = openList.begin(); i != openList.end(); ++ i)
+        {
+            if (i == openList.begin() || (*i)->getFScore() <= current->getFScore())
+            {
+                current = (*i);
+            }
+        }
+
+        // Stop if we reached the end
+        if (current == end)
+            break;
+
+        // Remove the current point from the openList
+        openList.remove(current);
+        current->opened = false;
+
+        // Add the current point to the closedList
+        closedList.push_back(current);
+        current->closed = true;
+
+        // Get all current's adjacent walkable points
+		// here x and y are used to iterrate through adjacent cells
+        for (int x = -1; x < 2; x ++)
+        {
+            for (int y = -1; y < 2; y ++)
+            {
+                // If it's current point then pass
+                if (x == 0 && y == 0)
+                    continue;
+
+                // Get this point
+				child = _arena->getGrid(current->getX() + x, current->getY() + y);
+
+                // If it's closed or not walkable then pass
+                if (child->closed || !child->walkable)
+                    continue;
+
+                // If we are at a corner
+                if (x != 0 && y != 0)
+                {
+                    // if the next horizontal point is not walkable or in the closed list then pass
+                    if (!pointIsWalkable(current->getX(), current->getY() + y) || getPoint(current->getX(), current->getY() + y)->closed)
+                    {
+                        continue;
+                    }
+                    // if the next vertical point is not walkable or in the closed list then pass
+                    if (!pointIsWalkable(current->getX() + x, current->getY()) || getPoint(current->getX() + x, current->getY())->closed)
+                    {
+                        continue;
+                    }
+                }
+
+                // If it's already in the openList
+                if (child->opened)
+                {
+                    // If it has a wroste g score than the one that pass through the current point
+                    // then its path is improved when it's parent is the current point
+                    if (child->getGScore() > child->getGScore(current))
+                    {
+                        // Change its parent and g score
+                        child->setParent(current);
+                        child->computeScores(end);
+                    }
+                }
+                else
+                {
+                    // Add it to the openList with current point as parent
+                    openList.push_back(child);
+                    child->opened = true;
+
+                    // Compute it's g, h and f score
+                    child->setParent(current);
+                    child->computeScores(end);
+                }
+            }
+        }
+        ++n;
+    }
+
+    // Reset
+    for (i = openList.begin(); i != openList.end(); ++ i)
+        (*i)->opened = false;
+
+    for (i = closedList.begin(); i != closedList.end(); ++ i)
+        (*i)->closed = false;
+
+    // Resolve the path starting from the end point
+    while (current->hasParent() && current != start)
+    {
+        path.push_back(current->getPosition());
+        current = current->getParent();
+        n ++;
+    }
+
+    return path;
 }
+
+
+// a point is walkable if there is no obstacle or wall within the four squares
+bool PathFinder::pointIsWalkable(int x, int y)
+{
+	if (_arena->getGridType(x, y) == OBSTACLE)
+		return false;
+	// border case
+	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_X_SIZE)
+		return false;
+	if (_arena->getGridType(x + 1, y) == OBSTACLE)
+		return false;
+	if (_arena->getGridType(x, y + 1) == OBSTACLE)
+		return false;
+	if (_arena->getGridType(x + 1, y + 1) == OBSTACLE)
+		return false;
+
+	return true;
+}
+
+// to be changed
+void PathFinder::getMovementList(int startX, int startY, int endX, int endY)
+{
+
+}
+
 
 void PathFinder::selectNextDestination()
 {

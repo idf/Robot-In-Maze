@@ -14,7 +14,8 @@ public:
 	PathFinder(Robot* robot, Arena* arena);
 	~PathFinder();
 	void explore();
-	void findPathBetween(int startX, int startY, int endX, int endY);
+	vector<Grid*> findPathBetween(int startX, int startY, int endX, int endY);
+	bool PathFinder::pointIsWalkable(int x, int y);
 	void selectNextDestination();
 private:
 	int _endX, _endY;
