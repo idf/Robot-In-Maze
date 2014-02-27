@@ -117,7 +117,7 @@ class SerialCommander(object):
         else:
             return None, None
 
-
+    @Deprecated
     def is_ready(self):
         """
         Ready when receiving {"function": 99, "status": 200}
@@ -144,9 +144,10 @@ class SerialCommander(object):
     def is_command_acknowledged(self):
         print "waiting for ack"
         indicator, dic = self.read()
+        print dic
         if indicator!=FUNCTION:
             return False
-        if dic.get(self.outstanding_command_pair[0], None)==200:
+        if dic.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
             print "acknowledged"
             self.ack = True
             self.outstanding_command_pair = None
@@ -168,9 +169,9 @@ class SerialThread(threading.Thread):
     def run(self):
         print "Starting " + self.name
         while True:
-            while not self.commander.ready:
-                self.commander.is_ready()
-                time.sleep(5)
+            # while not self.commander.ready:
+            #     self.commander.is_ready()
+            #     time.sleep(5)
 
             if self.commander.commands.empty():
                 # TODO
