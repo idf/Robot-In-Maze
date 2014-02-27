@@ -6,6 +6,7 @@ import time
 import sys
 from signal import *
 from utils.decorators import *
+from settings import *
 
 __author__ = 'Danyang'
 FUNCTION = 0
@@ -89,8 +90,8 @@ class SerialCommander(object):
         :param function_code: int
         :param parameter: double
         """
-        if self.ready==True:
-            self.ser.write(self._convert_to_machine_code(function_code, parameter))
+        # if self.ready==True:
+        self.ser.write(self._convert_to_machine_code(function_code, parameter))
 
     def read(self):
         """
@@ -105,14 +106,14 @@ class SerialCommander(object):
                 receive_data = data[data.find("{"): data.find("}")+1]
                 break
             else:
-                print "waiting to read"
+                # debug_print("waiting to read")
                 continue
 
-        print "Received: "+receive_data
+        debug_print("Received json: " + receive_data)
         receive_data_dict = json.loads(receive_data)
-        if receive_data_dict.get("senors", None):
+        if receive_data_dict.get("senors", None)!=None:
             return self._parse_sensor_readings(receive_data_dict)
-        elif receive_data_dict.get("function", None):
+        elif receive_data_dict.get("function", None)!=None:
             return self._parse_function_status(receive_data_dict)
         else:
             return None, None
@@ -137,18 +138,19 @@ class SerialCommander(object):
             command_pair = self.commands.get()
             self.write(command_pair[0], command_pair[1])
             self.outstanding_command_pair = command_pair
+            debug_print("Executing command"+str(command_pair))
 
     def command_put(self, function, parameter):
         self.commands.put([function, parameter])
 
     def is_command_acknowledged(self):
-        print "waiting for ack"
+        debug_print("waiting for ack")
         indicator, dic = self.read()
         print dic
         if indicator!=FUNCTION:
             return False
         if dic.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
-            print "acknowledged"
+            debug_print("acknowledged")
             self.ack = True
             self.outstanding_command_pair = None
 
@@ -175,13 +177,12 @@ class SerialThread(threading.Thread):
 
             if self.commander.commands.empty():
                 # TODO
-                print "Put command"
+                debug_print("Put command")
                 self.commander.command_put(0, 10)
             else:
-                print "Executing command"
                 self.commander.command_pop_n_exe()
                 while not self.commander.is_command_acknowledged():
-                    time.sleep(5)
+                    pass
 
 
 
