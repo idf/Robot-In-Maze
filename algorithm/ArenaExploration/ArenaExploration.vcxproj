@@ -67,6 +67,7 @@
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="connector.h" />
+    <ClInclude Include="MapIO.h" />
     <ClInclude Include="pathfinder.h" />
     <ClInclude Include="robot.h" />
     <ClInclude Include="sensor.h" />
@@ -75,6 +76,7 @@
     <ClCompile Include="arena.cpp" />
     <ClCompile Include="connector.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapIO.cpp" />
     <ClCompile Include="pathfinder.cpp" />
     <ClCompile Include="robot.cpp" />
     <ClCompile Include="sensor.cpp" />

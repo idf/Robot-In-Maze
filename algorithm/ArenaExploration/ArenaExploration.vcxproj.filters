@@ -48,6 +48,9 @@
     <ClInclude Include="connector.h">
       <Filter>Header Files\connection</Filter>
     </ClInclude>
+    <ClInclude Include="MapIO.h">
+      <Filter>Header Files\logic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arena.cpp">
@@ -67,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="connector.cpp">
       <Filter>Source Files\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="MapIO.cpp">
+      <Filter>Source Files\logic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
