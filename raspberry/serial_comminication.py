@@ -22,7 +22,7 @@ class SerialCommander(object):
         self.outstanding_command_pair = None
         self.ack = False
 
-    def _init_serial(self, path="/devc/ttyACM0", data_rate=9600):
+    def _init_serial(self, path="/dev/ttyACM0", data_rate=9600):
         # Serial port: /dev/ttyACM0
         # The Raspberry Pi may not provide enough power to drive an Arduino, so you might need external power.
         self.ser = serial.Serial(path, data_rate)
