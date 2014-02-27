@@ -17,10 +17,11 @@ class SerialCommander(object):
     def __init__(self, production=True):
         self.ready=False
         self.ser = None
+
         if production:
             self._init_serial()
 
-        self.commands = Queue() # synchronized, queue of [function_code, parameter] #TODO
+        self.commands = Queue() # synchronized, queue of [function_code, parameter]
 
         # stop n wait
         self.outstanding_command_pair = None
@@ -158,10 +159,11 @@ class SerialCommander(object):
 
 class SerialThread(threading.Thread):
     @Override(threading.Thread)
-    def __init__(self, name):
+    def __init__(self, name, serialCommander = SerialCommander(), production=False):
         super(SerialThread, self).__init__()
-        self.commander = SerialCommander()
+        self.commander = serialCommander
         self.name = name
+        self.production = production
         # clean up
         for sig in (SIGABRT, SIGILL, SIGINT, SIGSEGV, SIGTERM):
             signal(sig, self.commander.disconnect)
@@ -176,9 +178,14 @@ class SerialThread(threading.Thread):
             #     time.sleep(5)
 
             if self.commander.commands.empty():
-                # TODO
-                debug_print("Put command")
-                self.commander.command_put(0, 10)
+                debug_print("Waiting for enqueuing command")
+                if self.production:
+                    # TODO
+                    self.commander.command_put(0, 10)
+                else:
+                    function_code = int(raw_input("function code: "))
+                    parameter = float(raw_input("parameter: "))
+                    self.commander.command_put(function_code, parameter)
             else:
                 self.commander.command_pop_n_exe()
                 while not self.commander.is_command_acknowledged():
