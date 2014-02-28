@@ -60,14 +60,27 @@ void loop(void)
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
   //sideEye->test_readings();
-  moveForward(80);
+  
+  
+
+  if (frontEye->get_ulra_reading()<15){
+     
+     goStraightlineISR();
+  }
+  
+  moveForward(15);
+
+  
+  
+  
+  
   //printCounts();
   //turnLeft(90);
   //printCounts();
   //errorCumulator->compass->printAxis();
 
   //delay(1000);
-
+  
   //turnRight(90);
   //moveForward(80);
   //turnLeft(90);
@@ -88,5 +101,19 @@ void loop(void)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+void goStraightlineISR(){
 
+  turnRight(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnRight(90);
+  //finish
+
+
+
+
+}
 
