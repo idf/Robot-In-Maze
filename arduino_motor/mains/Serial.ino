@@ -92,12 +92,12 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     return true;
   }
   else if(function_code==1) {
-    turnRight(parameter);
+    turnLeft(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==2) {
-    turnLeft(parameter);
+    turnRight(parameter);
     this->send_command_complete(function_code, 200);
     return true;
   }

@@ -49,7 +49,7 @@ void setup(void)
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 
   resetPololuTicks();
-  serialCommnder->send_ready_signal();
+  //serialCommnder->send_ready_signal();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
@@ -60,9 +60,9 @@ void loop(void)
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
   //sideEye->test_readings();
-  moveForward(80);
+  //moveForward(150);
   //printCounts();
-  //turnLeft(90);
+  //turnRight(450);
   //printCounts();
   //errorCumulator->compass->printAxis();
 
@@ -74,7 +74,7 @@ void loop(void)
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
-  //serialCommnder->receive_exec_command();
+  serialCommnder->receive_exec_command();
 
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();

@@ -45,8 +45,8 @@ The example commands Arduino to moveForwad by 123.12 cm.
 List of function codes currently available:  
 ```
 00: void moveForward(double dist);  
-01: void turnRight(double angle);  
-02: void turnLeft(double angle);  
+01: void turnLeft(double angle);  
+02: void turnRight(double angle);  
 10: void getSensorReadings(); // ad-hoc request for sensor readings (ad-hoc).
 ```
 NOTICE: In python each json serial command at very end must end with 
@@ -94,4 +94,4 @@ List of sensor codes currently available:
 1: left sensor;   // sensor range 10 - 40 cm
 2: right sensor;  // sensor range 10 - 40 cm
 ```
-Notice: if the distance is beyond the sensor's range, it will return -1;  
+Notice: if the distance is beyond the sensor's range, it will return -1 (for too far) or 0 (for too short);  

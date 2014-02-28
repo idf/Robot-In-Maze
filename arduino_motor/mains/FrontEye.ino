@@ -29,7 +29,7 @@ void FrontEye::test_readings() {
 
 // private
 int FrontEye::get_ulra_reading() {
-  const int ULTRA_OFFSET = 2;
+  const int ULTRA_OFFSET = 1; 
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
 int FrontEye::get_ir_reading() {
