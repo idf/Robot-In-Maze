@@ -88,7 +88,7 @@ In the case you don't know json array, refer to [this](http://stackoverflow.com/
 This json array indicates obstacle distances (in cm) from front, left, right. The distances are from periphery of the robot.  
 Example  
 ```json
-{"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30}]}
+{"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30},{"sensor":10,"value":30},{"sensor":11,"value":30}]}
 ```
 List of sensor codes currently available:  
 ```
