@@ -175,8 +175,8 @@ void turnRight(double angle) {
 
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
 
-  //errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
+  errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
+  //errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,8 +192,8 @@ void turnLeft(double angle) {
   double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
   
-  //errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
+  errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
+  //errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,5 +210,18 @@ void rightCounter()
   rightCnt=rightCnt+1;
   //if(rightCnt == 19) rightCnt+=1;
   
-
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void goStraightlineCheckpoint(){
+ if (frontEye->get_reading()!=-1&&frontEye->get_reading()<=15){
+  turnRight(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnRight(90);
+  //finish
+ }
+ moveForward(15);
 }

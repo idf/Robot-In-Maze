@@ -63,12 +63,14 @@ void loop(void)
   
   
 
-  if (frontEye->get_ulra_reading()<15){
+ 
      
-     goStraightlineISR();
-  }
+  goStraightlineCheckpoint();
+ 
+
   
-  moveForward(15);
+  
+
 
   
   
@@ -101,19 +103,5 @@ void loop(void)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void goStraightlineISR(){
 
-  turnRight(90);
-  moveForward(15);
-  turnLeft(90);
-  moveForward(15);
-  turnLeft(90);
-  moveForward(15);
-  turnRight(90);
-  //finish
-
-
-
-
-}
 
