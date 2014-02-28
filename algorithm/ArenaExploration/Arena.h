@@ -13,7 +13,6 @@ class Grid
 {
 public:
 	GRIDTYPE type;
-	bool isOnPath;
 	bool opened;
 	bool closed;
 	int distanceTravelled;

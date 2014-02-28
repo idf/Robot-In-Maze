@@ -11,8 +11,8 @@ public:
 	MapIO(Arena* arena);
 	MapIO::~MapIO();
 	void readMapFromFile(std::string filename);
-	void generateMapDescriptor();
-
+	void generateMapDescriptorLevel1();
+	void generateMapDescriptorLevel2();
 private:
 	Arena* _arena;
 };

@@ -27,7 +27,6 @@ void Arena::init()
 		{
 			Grid *g = getGrid(i, j);
 			setGridType(i, j, UNEXPLORED);
-			g->isOnPath = false;
 			g->closed = false;
 			g->opened = false;
 			g->distanceEstimated = 0;

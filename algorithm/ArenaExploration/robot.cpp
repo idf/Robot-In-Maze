@@ -18,6 +18,7 @@ Robot::Robot(int x, int y, int direction): _posX(x), _posY(y), _direction(direct
 	getSensors().push_back(IRFront2);
 	getSensors().push_back(IRLeft);
 	getSensors().push_back(IRRight);
+	delete IRFront1, IRFront2, IRLeft, IRRight;
 }
 
 Robot::~Robot(){}

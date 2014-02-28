@@ -15,15 +15,37 @@ MapIO::~MapIO()
 
 void MapIO::readMapFromFile(std::string filename)
 {
-	ofstream mapFile;
+	ifstream mapFile;
+	string data;
 	mapFile.open (filename);
-
-
+	while(!mapFile.eof)
+	{
+		int count = 0;
+		getline(mapFile, data);
+		for (int i = 0; i < data.length; ++i)
+		{
+			switch (*i)
+			{
+			case '0':
+				_arena->setGridType(i, count, UNOCCUPIED);
+				break;
+			case '1':
+				_arena->setGridType(i, count, OBSTACLE);
+				break;
+			}
+		}
+		++count;
+	}
 	mapFile.close();
 }
 
 
-void MapIO::generateMapDescriptor()
+void MapIO::generateMapDescriptorLevel1()
+{
+
+}
+
+void MapIO::generateMapDescriptorLevel2()
 {
 
 }
