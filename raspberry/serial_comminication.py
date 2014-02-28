@@ -102,15 +102,15 @@ class SerialCommander(object):
         receive_data = ""
         while True: # keep fetching until found json
             data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
-            debug_print("Received data (json and non-json): " + receive_data)
-            if "{" in data and "}" in data:
-                receive_data = data[data.find("{"): data.find("}")+1]
+
+            if "{" in data: # only check for starting "{"
+                receive_data = data[data.find("{"): ]
                 break
             else:
                 # debug_print("waiting to read")
                 continue
 
-
+        debug_print("received serial data: "+receive_data)
         receive_data_dict = json.loads(receive_data)
         if "sensors" in receive_data_dict:
             return self._parse_sensor_readings(receive_data_dict)
@@ -145,13 +145,17 @@ class SerialCommander(object):
         self.commands.put([function, parameter])
 
     def is_command_acknowledged(self):
-        debug_print("waiting for ack")
+        print "waiting for ack"
         indicator, dic = self.read()
-        print dic
-        if indicator!=FUNCTION:
+
+
+        # sensor data
+        if indicator==SENSOR:
+            print dic 
             return False
+
+        # ack
         if dic.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
-            debug_print("acknowledged")
             self.ack = True
             self.outstanding_command_pair = None
 
@@ -180,7 +184,6 @@ class SerialThread(threading.Thread):
             if self.commander.commands.empty():
                 debug_print("Waiting for enqueuing command")
                 if self.production:
-                    # TODO
                     self.commander.command_put(0, 10)
                 else:
                     function_code = int(raw_input("function code: "))
