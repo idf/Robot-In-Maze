@@ -60,14 +60,15 @@ void loop(void)
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
   //sideEye->test_readings();
-  //moveForward(150);
+  //moveForward(150);     
+  //goStraightlineCheckpoint();
   //printCounts();
   //turnRight(450);
   //printCounts();
   //errorCumulator->compass->printAxis();
 
   //delay(1000);
-
+  
   //turnRight(90);
   //moveForward(80);
   //turnLeft(90);

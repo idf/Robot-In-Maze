@@ -210,5 +210,18 @@ void rightCounter()
   rightCnt=rightCnt+1;
   //if(rightCnt == 19) rightCnt+=1;
   
-
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void goStraightlineCheckpoint(){
+ if (frontEye->get_reading()!=-1&&frontEye->get_reading()<=15){
+  turnRight(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnRight(90);
+  //finish
+ }
+ moveForward(15);
 }
