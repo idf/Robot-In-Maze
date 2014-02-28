@@ -31,12 +31,6 @@ void PathFinder::explore()
 // 
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
-	// check termination condition: goal or unreachable
-	if (_robot->getPosX() == endX && _robot->getPosY() == endY)
-		return;
-	if (_arena->getGridType(endX, endY) == OBSTACLE)
-		return;
-
 	// robot sense
 	_robot->senseEnvironment(_arena);
 
@@ -45,6 +39,9 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
     Grid *current, *child, *start, *end;
 	start = _arena->getGrid(0, 0);
 	start = _arena->getGrid(ARENA_X_SIZE - 2, ARENA_Y_SIZE - 2);
+	end = _arena->getGrid(endX, endY);
+	current = start;
+
     list<Grid*> openList;
     list<Grid*> closedList;
     list<Grid*>::iterator i;
@@ -59,7 +56,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
         // Look for the smallest F value in the openList and make it the current point
         for (i = openList.begin(); i != openList.end(); ++ i)
         {
-            if (i == openList.begin() || (*i)->getFScore() <= current->getFScore())
+            if (i == openList.begin() || (*i)->heuristic <= current->heuristic)
             {
                 current = (*i);
             }
@@ -68,6 +65,11 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
         // Stop if we reached the end
         if (current == end)
             break;
+
+		// stop if the point is unreachable
+		// this part may have problem
+		if (_arena->getGridType(endX, endY) == OBSTACLE)
+			break;
 
         // Remove the current point from the openList
         openList.remove(current);
@@ -91,19 +93,19 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 				child = _arena->getGrid(current->getX() + x, current->getY() + y);
 
                 // If it's closed or not walkable then pass
-                if (child->closed || !child->walkable)
+				if (child->closed || !pointIsWalkable(child->x, child->y))
                     continue;
 
                 // If we are at a corner
                 if (x != 0 && y != 0)
                 {
                     // if the next horizontal point is not walkable or in the closed list then pass
-                    if (!pointIsWalkable(current->getX(), current->getY() + y) || getPoint(current->getX(), current->getY() + y)->closed)
+					if (!pointIsWalkable(current->getX(), current->getY() + y) || _arena->getGrid(current->getX(), current->getY() + y)->closed)
                     {
                         continue;
                     }
                     // if the next vertical point is not walkable or in the closed list then pass
-                    if (!pointIsWalkable(current->getX() + x, current->getY()) || getPoint(current->getX() + x, current->getY())->closed)
+                    if (!pointIsWalkable(current->getX() + x, current->getY()) || _arena->getGrid(current->getX() + x, current->getY())->closed)
                     {
                         continue;
                     }
@@ -114,10 +116,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
                 {
                     // If it has a wroste g score than the one that pass through the current point
                     // then its path is improved when it's parent is the current point
-                    if (child->getGScore() > child->getGScore(current))
+                    if (child->distanceTravelled > child->getDistanceTravelled(current))
                     {
                         // Change its parent and g score
-                        child->setParent(current);
+                        child->parent = current;
                         child->computeScores(end);
                     }
                 }
@@ -128,7 +130,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
                     child->opened = true;
 
                     // Compute it's g, h and f score
-                    child->setParent(current);
+                    child->parent = current;
                     child->computeScores(end);
                 }
             }
@@ -146,8 +148,8 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
     // Resolve the path starting from the end point
     while (current->hasParent() && current != start)
     {
-        path.push_back(current->getPosition());
-        current = current->getParent();
+        path.push_back(current);
+        current = current->parent;
         n ++;
     }
 
@@ -161,7 +163,7 @@ bool PathFinder::pointIsWalkable(int x, int y)
 	if (_arena->getGridType(x, y) == OBSTACLE)
 		return false;
 	// border case
-	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_X_SIZE)
+	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_Y_SIZE)
 		return false;
 	if (_arena->getGridType(x + 1, y) == OBSTACLE)
 		return false;
@@ -182,7 +184,7 @@ void PathFinder::getMovementList(int startX, int startY, int endX, int endY)
 
 void PathFinder::selectNextDestination()
 {
-	for (int i = ARENA_X_SIZE-1; i >=0; -i)
+	for (int i = ARENA_X_SIZE - 1; i >=0; -i)
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
 			if (_arena->getGridType(i, j) == UNEXPLORED)

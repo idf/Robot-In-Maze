@@ -1,5 +1,14 @@
 #include "Arena.h"
 
+// region grid class
+void Grid::computeScores(Grid *end)
+{
+	distanceTravelled = getDistanceTravelled(parent);
+	distanceEstimated = getDistanceEstimated(end);
+	heuristic = distanceTravelled + distanceEstimated;
+}
+
+// region arena class
 Arena::Arena()
 {
 	init();
@@ -16,22 +25,23 @@ void Arena::init()
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
+			Grid *g = getGrid(i, j);
 			setGridType(i, j, UNEXPLORED);
-			setIsOnPath(i, j, false);
-			setIsClosed(i, j, false);
-			setIsOpen(i, j, false);
-			setDistanceEstimated(i, j, 0);
-			setDistanceTravelled(i, j, 0);
-			getGrid(i, j)->x = i;
-			getGrid(i, j)->y = j;
+			g->isOnPath = false;
+			g->closed = false;
+			g->opened = false;
+			g->distanceEstimated = 0;
+			g->distanceTravelled = 0;
+			g->heuristic = 0;
+			g->parent = NULL;
 		}
 	}
 	// set start and end
-	for(int i = 0; i < 3; ++i)
+	for(int i = ARENA_X_SIZE - 3; i < ARENA_X_SIZE; ++i)
 		for (int j = 0; j < 3; ++j)
 			setGridType(i, j, START);
 
-	for(int i = ARENA_X_SIZE - 3; i < ARENA_X_SIZE; ++i)
+	for(int i = 0; i < 3; ++i)
 		for (int j = ARENA_Y_SIZE - 3; j < ARENA_Y_SIZE; ++j)
 			setGridType(i, j, GOAL);
 }

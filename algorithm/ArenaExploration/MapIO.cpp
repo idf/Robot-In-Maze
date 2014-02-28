@@ -1,4 +1,7 @@
 #include "MapIO.h"
+#include <fstream>
+
+using namespace std;
 
 MapIO::MapIO(Arena* arena)
 {
@@ -10,9 +13,13 @@ MapIO::~MapIO()
 
 }
 
-void MapIO::readMapFromString(std::string filename)
+void MapIO::readMapFromFile(std::string filename)
 {
+	ofstream mapFile;
+	mapFile.open (filename);
 
+
+	mapFile.close();
 }
 
 

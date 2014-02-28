@@ -8,13 +8,13 @@
 class MapIO
 {
 public:
-	MapIO::MapIO(Arena* arena);
+	MapIO(Arena* arena);
 	MapIO::~MapIO();
-	void readMapFromString(std::string filename);
+	void readMapFromFile(std::string filename);
 	void generateMapDescriptor();
 
 private:
 	Arena* _arena;
-}
+};
 
 #endif
