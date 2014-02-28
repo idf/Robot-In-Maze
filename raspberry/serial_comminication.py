@@ -54,9 +54,9 @@ class SerialCommander(object):
         :param parameter: double
         :return: machine code string
         """
-        function_code_str = '000000' + str(function_code)
+        function_code_str = '0000000' + str(function_code)
         function_code_str = function_code_str[-2:]
-        parameter_str = '000000' + str(int(parameter * 100))
+        parameter_str = '0000000' + str(int(parameter * 100))
         parameter_str = parameter_str[-5:]
         return function_code_str + parameter_str
 
@@ -102,7 +102,7 @@ class SerialCommander(object):
         receive_data = ""
         while True: # keep fetching until found json
             data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
-
+            debug_print("Received data (json and non-json): " + receive_data)
             if "{" in data and "}" in data:
                 receive_data = data[data.find("{"): data.find("}")+1]
                 break
@@ -110,7 +110,7 @@ class SerialCommander(object):
                 # debug_print("waiting to read")
                 continue
 
-        debug_print("Received json: " + receive_data)
+
         receive_data_dict = json.loads(receive_data)
         if "sensors" in receive_data_dict:
             return self._parse_sensor_readings(receive_data_dict)

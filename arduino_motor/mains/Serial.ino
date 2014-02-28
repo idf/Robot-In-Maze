@@ -74,7 +74,7 @@ void SerialCommnder::send_sensor_readings(int front_value, int left_value, int r
   Serial.print(F("{\"sensor\":")); Serial.print(0);
   Serial.print(F(",\"value\":")); Serial.print(front_value); Serial.print(F("}")); Serial.print(F(","));
   // left
-  Serial.print(F("{\"sensor\":")); Serial.print(1);
+  Serial.print(F("{\"sensor\":")); Serial.print(1); 
   Serial.print(F(",\"value\":")); Serial.print(left_value); Serial.print(F("}")); Serial.print(F(","));
   // right
   Serial.print(F("{\"sensor\":")); Serial.print(2);

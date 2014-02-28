@@ -2,18 +2,18 @@
 //public
 SideEye::SideEye(unsigned char left_pin, unsigned char right_pin) {
   this->sharp_left = new SharpIR(left_pin, 250, 95, SHORT);//left side
-  this->sharp_right = new SharpIR(right_pin, 250, 95, SHORT);//right front
+  this->sharp_right = new SharpIR(right_pin, 250, 95, LONG);//right front
 }
 void SideEye::init() {
  
 }
 
-int SideEye::get_reading_right() {
-  return this->get_reading(this->sharp_right);
+int SideEye::output_reading_left() {
+  return this->output_reading(this->sharp_left, SHORT);
 }
 
-int SideEye::get_reading_left() {
-  return this->get_reading(this->sharp_left);
+int SideEye::output_reading_right() {
+  return this->output_reading(this->sharp_right, LONG);
 }
 
 void SideEye::test_readings() {
@@ -21,25 +21,40 @@ void SideEye::test_readings() {
   Serial.print(F("Right SharpIR distance: "));  Serial.println(dis);
   dis = this->sharp_left->distance();
   Serial.print(F("Left SharpIR distance: ")); Serial.println(dis);
-  Serial.print(F("Get Right Reading: ")); Serial.println(this->get_reading_right());
-  Serial.print(F("Get Left Reading: ")); Serial.println(this->get_reading_left());
+
 }
 
 // private
-bool SideEye::is_within_range(SharpIR* sensor) {
+bool SideEye::is_within_range(SharpIR* sensor, int model) {
+  int upper, lower;
+  if(model==SHORT){
+    upper = 49;
+    lower = 5;
+  }
+  else {
+    upper = 120;
+    lower = 30;
+  }
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
-    if(distance>49 || distance<5) // TODO
+    if(distance>upper || distance<lower) // TODO
       return false;
     delay(20);
   }
   return true;
 }
 
-int SideEye::get_reading(SharpIR* sensor) {
-  const int OFFSET = 0;
+int SideEye::output_reading(SharpIR* sensor, int model) {
+  int OFFSET;
+  if (model==SHORT) {
+    OFFSET = 0;
+  }
+  else {
+    OFFSET = -1;
+  }
+
   int dis = sensor->distance() - OFFSET;
-  if (this->is_within_range(sensor)) {
+  if (this->is_within_range(sensor, model)) {
     dis = (dis+5)/10*10; 
   }
   else {

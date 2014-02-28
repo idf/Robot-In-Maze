@@ -1,8 +1,9 @@
 #include "FrontEye.h"
 //public
-FrontEye::FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin) {
+FrontEye::FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin_left, unsigned char ir_pin_right) {
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
-  this->sharpLong = new SharpIR(ir_pin, 250, 95, LONG);
+  this->sharp_left = new SharpIR(ir_pin_left, 250, 95, SHORT);
+  this->sharp_right = new SharpIR(ir_pin_right, 250, 95, SHORT);
 }
 void FrontEye::init() {
   this->ultrasound->init();
@@ -17,30 +18,67 @@ int FrontEye::get_reading() {
   return dis;
 }
 
+int FrontEye::output_reading_ultra() {
+  int dis = this->get_ulra_reading();
+  if(this->is_within_range(this->ultrasound)) 
+    dis = (dis+5)/10*10;
+  else 
+    dis = -1;
+  return dis;
+}
+
+int FrontEye::output_reading_ir_left() {
+  int dis = this->get_ir_reading_left();
+  if(this->is_within_range(this->ultrasound)) 
+    dis = (dis+5)/10*10;
+  else 
+    dis = -1;
+  return dis;
+}
+
+int FrontEye::output_reading_ir_right() {
+  int dis = this->get_ir_reading_right();
+  if(this->is_within_range(this->ultrasound)) 
+    dis = (dis+5)/10*10;
+  else 
+    dis = -1;
+  return dis;  
+}
+
 void FrontEye::test_readings() {
   int dis= this->get_ulra_reading();
   Serial.print("Ultrasound Distance: ");
   Serial.println(dis);
   
-  int dis1 = this->get_ir_reading();  // this returns the distance to the object you're measuring
-  Serial.print("SharpIR distance long: ");  // returns it to the serial monitor
+  int dis1 = this->get_ir_reading_left();  // this returns the distance to the object you're measuring
+  Serial.print("Left SharpIR distance: ");  // returns it to the serial monitor
   Serial.println(dis1);
+
+  int dis2 = this->get_ir_reading_right();  // this returns the distance to the object you're measuring
+  Serial.print("Right SharpIR distance: ");  // returns it to the serial monitor
+  Serial.println(dis2);
+
 }
 
 // private
 int FrontEye::get_ulra_reading() {
-  const int ULTRA_OFFSET = 1; 
+  const int ULTRA_OFFSET = 4; 
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
-int FrontEye::get_ir_reading() {
-  const int IR_OFFSET = 1;
-  return this->sharpLong->distance()-IR_OFFSET;
+int FrontEye::get_ir_reading_left() {
+  const int IR_OFFSET = 2;
+  return this->sharp_left->distance()-IR_OFFSET;
+}
+
+int FrontEye::get_ir_reading_right() {
+  const int IR_OFFSET = 2;
+  return this->sharp_right->distance()-IR_OFFSET;
 }
 
 bool FrontEye::is_within_range(SharpIR* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
-    if(distance>120 || distance<30) // TODO
+    if(distance>49 || distance<5) // TODO
       return false;
     delay(20);
   }

@@ -144,5 +144,16 @@ double angle_to_ticks(double angle) {
 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void getSensorReadings() {
-  serialCommnder->send_sensor_readings(frontEye->get_reading(), sideEye->get_reading_left(), sideEye->get_reading_right());
+  serialCommnder->send_sensor_readings(frontEye->get_reading(), sideEye->output_reading_left(), sideEye->output_reading_right());
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void obstacle_checkpoint() {
+  turnLeft(90);
+  moveForward(10);
+
+  turnLeft(90);
+  moveForward(10);
+  turnLeft(90);
+  moveForward(10);
+  turnRight(90);
 }

@@ -8,14 +8,14 @@ class SideEye{
 public:
   SideEye(unsigned char left_pin, unsigned char right_pin);
   void init();
-  int get_reading_right();
-  int get_reading_left();
+  int output_reading_right();
+  int output_reading_left();
   void test_readings();
 private: 
   SharpIR* sharp_left;
   SharpIR* sharp_right;
-  bool is_within_range(SharpIR* sensor);
-  int get_reading(SharpIR* sensor);
+  bool is_within_range(SharpIR* sensor, int model);
+  int output_reading(SharpIR* sensor, int model);
 };
 #endif
 
