@@ -14,12 +14,12 @@ SENSOR = 1
 
 class SerialCommander(object):
 
-    def __init__(self, production=True):
+    def __init__(self, port="/dev/ttyACM0", data_rate=9600,production=True):
         self.ready=False
         self.ser = None
 
         if production:
-            self._init_serial()
+            self._init_serial(port, data_rate)
 
         self.commands = Queue() # synchronized, queue of [function_code, parameter]
 
@@ -31,10 +31,10 @@ class SerialCommander(object):
         print "closing serial"
         if self.ser.isOpen():
             self.ser.close()
-            sys.exit(1)
 
 
-    def _init_serial(self, port="/dev/ttyACM0", data_rate=9600):
+
+    def _init_serial(self, port, data_rate):
         # Serial port: /dev/ttyACM0
         # The Raspberry Pi may not provide enough power to drive an Arduino, so you might need external power.
         self.ser = serial.Serial()
@@ -43,7 +43,7 @@ class SerialCommander(object):
         self.ser.timeout = 1
 
 
-        self.disconnect()
+        # self.disconnect()
         self.ser.open()
 
 
@@ -151,7 +151,7 @@ class SerialCommander(object):
 
         # sensor data
         if indicator==SENSOR:
-            print dic 
+            print dic
             return False
 
         # ack
@@ -163,7 +163,7 @@ class SerialCommander(object):
 
 class SerialThread(threading.Thread):
     @Override(threading.Thread)
-    def __init__(self, name, serialCommander = SerialCommander(), production=False):
+    def __init__(self, name, serialCommander, production=False):
         super(SerialThread, self).__init__()
         self.commander = serialCommander
         self.name = name
