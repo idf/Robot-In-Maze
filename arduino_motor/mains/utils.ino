@@ -144,7 +144,13 @@ double angle_to_ticks(double angle) {
 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void getSensorReadings() {
-  serialCommnder->send_sensor_readings(frontEye->get_reading(), sideEye->output_reading_left(), sideEye->output_reading_right());
+  serialCommnder->send_sensor_readings(
+    frontEye->output_reading_ultra(),
+    frontEye->output_reading_ir_left(),
+    frontEye->output_reading_ir_right(),
+    sideEye->output_reading_left(),
+    sideEye->output_reading_right()
+    );
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void obstacle_checkpoint() {
@@ -156,4 +162,18 @@ void obstacle_checkpoint() {
   turnLeft(90);
   moveForward(10);
   turnRight(90);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void goStraightlineCheckpoint(){
+ if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=15){
+  turnRight(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnLeft(90);
+  moveForward(15);
+  turnRight(90);
+  //finish
+ }
+ moveForward(15);
 }

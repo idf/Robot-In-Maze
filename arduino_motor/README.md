@@ -79,6 +79,8 @@ In the case you don't know json array, refer to [this](http://stackoverflow.com/
   "sensors": [
     {"sensor": sensor_code,  "value": return_value},
     {"sensor": sensor_code,  "value": return_value},
+    {"sensor": sensor_code,  "value": return_value},
+    {"sensor": sensor_code,  "value": return_value},
     {"sensor": sensor_code,  "value": return_value}
   ]
 }  
@@ -90,8 +92,10 @@ Example
 ```
 List of sensor codes currently available:  
 ```
-0: front sensor;  // sensor range 10 - 120 cm
-1: left sensor;   // sensor range 10 - 40 cm
-2: right sensor;  // sensor range 10 - 40 cm
+0: front ultra sensor;  // sensor range 10 - 120 cm
+1: front left sensor;   // 10 - 40 cm
+2: front right sensor;  // 10 - 40 cm
+10: sided left sensor;  // 10 - 40 cm
+11: sided right sensor; // 30 - 120 cm
 ```
-Notice: if the distance is beyond the sensor's range, it will return -1 (for too far) or 0 (for too short);  
+Notice: if the distance is beyond the sensor's range, it will return -1;  

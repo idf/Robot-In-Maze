@@ -9,23 +9,7 @@ bool SerialCommnder::receive_exec_command() {
   if(Serial.available()>0) {
     int function_code;
     double parameter;
-    /*
-    String command_string =  Serial.readStringUntil('\n');
 
-    if(command_string.length()!=7)
-      return false;
-
-   
-    function_code = 10*(command_string[0]-'0');
-    function_code += (command_string[1]-'0');
-
-    
-    parameter = 100*(command_string[2]-'0');
-    parameter += 10*(command_string[3]-'0');
-    parameter += (command_string[4]-'0');
-    parameter += 1/10.0*(command_string[5]-'0');
-    parameter += 1/100.0*(command_string[6]-'0');
-  */
     long comamnd_int = Serial.parseInt();
     function_code = comamnd_int/100000;
     parameter = comamnd_int%100000;
@@ -68,16 +52,22 @@ void SerialCommnder::send_ready_signal() {
   }
 }
 
-void SerialCommnder::send_sensor_readings(int front_value, int left_value, int right_value) {
+void SerialCommnder::send_sensor_readings(int front_value, int front_left_value, int front_right_value, int left_value, int right_value) {
   Serial.print(F("{\"sensors\":["));
   // front 
   Serial.print(F("{\"sensor\":")); Serial.print(0);
   Serial.print(F(",\"value\":")); Serial.print(front_value); Serial.print(F("}")); Serial.print(F(","));
+
+  Serial.print(F("{\"sensor\":")); Serial.print(1);
+  Serial.print(F(",\"value\":")); Serial.print(front_left_value); Serial.print(F("}")); Serial.print(F(","));
+
+  Serial.print(F("{\"sensor\":")); Serial.print(2);
+  Serial.print(F(",\"value\":")); Serial.print(front_right_value); Serial.print(F("}")); Serial.print(F(","));
   // left
-  Serial.print(F("{\"sensor\":")); Serial.print(1); 
+  Serial.print(F("{\"sensor\":")); Serial.print(10); 
   Serial.print(F(",\"value\":")); Serial.print(left_value); Serial.print(F("}")); Serial.print(F(","));
   // right
-  Serial.print(F("{\"sensor\":")); Serial.print(2);
+  Serial.print(F("{\"sensor\":")); Serial.print(11);
   Serial.print(F(",\"value\":")); Serial.print(right_value); Serial.print(F("}"));
   //end
   Serial.println(F("]}"));

@@ -9,15 +9,6 @@ void FrontEye::init() {
   this->ultrasound->init();
 }
 
-int FrontEye::get_reading() {
-  int dis = this->get_ulra_reading();
-  if(this->is_within_range(this->ultrasound)) 
-    dis = (dis+5)/10*10;
-  else 
-    dis = -1;
-  return dis;
-}
-
 int FrontEye::output_reading_ultra() {
   int dis = this->get_ulra_reading();
   if(this->is_within_range(this->ultrasound)) 
@@ -66,12 +57,12 @@ int FrontEye::get_ulra_reading() {
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
 int FrontEye::get_ir_reading_left() {
-  const int IR_OFFSET = 2;
+  const int IR_OFFSET = 2; // TODO
   return this->sharp_left->distance()-IR_OFFSET;
 }
 
 int FrontEye::get_ir_reading_right() {
-  const int IR_OFFSET = 2;
+  const int IR_OFFSET = 2; // TODO
   return this->sharp_right->distance()-IR_OFFSET;
 }
 
