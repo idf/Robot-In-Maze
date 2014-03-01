@@ -97,6 +97,12 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					current->getY() + y >= ARENA_Y_SIZE)
 					continue;
 
+				// if the robot can't move in 45 degree direction
+#ifdef STRAIGHT_MODE
+			    if (abs(x) == abs(y))
+					continue;
+#endif
+
                 // Get this point
 				child = _arena->getGrid(current->getX() + x, current->getY() + y);
 
