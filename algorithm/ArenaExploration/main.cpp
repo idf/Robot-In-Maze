@@ -1,14 +1,29 @@
 #include "Arena.h"
 #include "robot.h"
 #include "sensor.h"
+#include "MapIO.h"
+#include "connector.h"
 
 #include "pathfinder.h"
+
+using namespace std;
+
+// global connector
+// bad pattern but convenient
+Connector* conn = new Connector();
 
 int main(int argc, char* argv[])
 {
 	Arena* arena = new Arena();
-	Robot* robot = new Robot(18, 0, 0);
-	PathFinder* pathFinder = new PathFinder(robot, arena);
+	Arena* fullArena = new Arena();
+	Robot* robot = new Robot(ARENA_START_X, ARENA_START_Y, 0);
+	MapIO* io = new MapIO(arena, fullArena);
+	io->readMapFromFile("testmap.txt");
+	cout << "Map successfully read." << endl;
+#ifdef DEBUG
+	io->printArena(fullArena);
+#endif
+	PathFinder* pathFinder = new PathFinder(robot, fullArena);
 	// wait for start event
 	//while (!startEventReceived())
 	//	;
@@ -16,5 +31,7 @@ int main(int argc, char* argv[])
 	//// wait for run event
 	//while (!runEventReceived())
 	//	;
-	pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), 0, 13);
+	vector<Grid*> result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y);
+	io->printPath(result);
+	getchar();
 }

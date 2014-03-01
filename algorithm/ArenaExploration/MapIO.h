@@ -3,18 +3,23 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "Arena.h"
 
 class MapIO
 {
 public:
 	MapIO(Arena* arena);
+	MapIO::MapIO(Arena* arena, Arena* fullArena);
 	MapIO::~MapIO();
+	void MapIO::printArena(Arena* arena);
+	void MapIO::printPath(std::vector<Grid*> path);
 	void readMapFromFile(std::string filename);
 	void generateMapDescriptorLevel1();
 	void generateMapDescriptorLevel2();
 private:
 	Arena* _arena;
+	Arena* _fullArena;
 };
 
 #endif

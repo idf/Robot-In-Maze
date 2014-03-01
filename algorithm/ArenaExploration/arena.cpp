@@ -26,6 +26,8 @@ void Arena::init()
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
 			Grid *g = getGrid(i, j);
+			g->x = i;
+			g->y = j;
 			setGridType(i, j, UNEXPLORED);
 			g->closed = false;
 			g->opened = false;
@@ -36,11 +38,11 @@ void Arena::init()
 		}
 	}
 	// set start and end
-	for(int i = ARENA_X_SIZE - 3; i < ARENA_X_SIZE; ++i)
-		for (int j = 0; j < 3; ++j)
+	for(int i = ARENA_START_X; i < ARENA_START_X + 3; ++i)
+		for (int j = ARENA_START_Y; j < ARENA_START_Y + 3; ++j)
 			setGridType(i, j, START);
 
-	for(int i = 0; i < 3; ++i)
+	for(int i = ARENA_X_SIZE - 3; i < ARENA_X_SIZE; ++i)
 		for (int j = ARENA_Y_SIZE - 3; j < ARENA_Y_SIZE; ++j)
 			setGridType(i, j, GOAL);
 }

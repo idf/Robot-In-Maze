@@ -47,6 +47,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -71,6 +72,7 @@
     <ClInclude Include="connector.h" />
     <ClInclude Include="MapIO.h" />
     <ClInclude Include="pathfinder.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="robot.h" />
     <ClInclude Include="sensor.h" />
   </ItemGroup>

@@ -32,14 +32,14 @@ void PathFinder::explore()
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
 	// robot sense
-	_robot->senseEnvironment(_arena);
+	//_robot->senseEnvironment(_arena);
 
 	// calculate the path to destination
     vector<Grid*> path;
     Grid *current, *child, *start, *end;
 	start = _arena->getGrid(0, 0);
-	start = _arena->getGrid(ARENA_X_SIZE - 2, ARENA_Y_SIZE - 2);
-	end = _arena->getGrid(endX, endY);
+	start = _arena->getGrid(ARENA_START_X, ARENA_START_Y);
+	end = _arena->getGrid(ARENA_END_X, ARENA_END_Y);
 	current = start;
 
     list<Grid*> openList;
@@ -53,6 +53,11 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 
     while (n == 0 || (current != end && n < 50))
     {
+		// stop if the point is unreachable
+		// this part may have problem
+		if (_arena->getGridType(endX, endY) == OBSTACLE)
+			break;
+
         // Look for the smallest F value in the openList and make it the current point
         for (i = openList.begin(); i != openList.end(); ++ i)
         {
@@ -66,10 +71,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
         if (current == end)
             break;
 
-		// stop if the point is unreachable
-		// this part may have problem
-		if (_arena->getGridType(endX, endY) == OBSTACLE)
-			break;
 
         // Remove the current point from the openList
         openList.remove(current);
@@ -88,6 +89,13 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
                 // If it's current point then pass
                 if (x == 0 && y == 0)
                     continue;
+
+				// if index out of border then pass
+				if (current->getX() + x < 0 ||
+					current->getX() + x >= ARENA_X_SIZE ||
+					current->getY() + y < 0 ||
+					current->getY() + y >= ARENA_Y_SIZE)
+					continue;
 
                 // Get this point
 				child = _arena->getGrid(current->getX() + x, current->getY() + y);
@@ -152,7 +160,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
         current = current->parent;
         n ++;
     }
-
     return path;
 }
 
@@ -160,10 +167,9 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 // a point is walkable if there is no obstacle or wall within the four squares
 bool PathFinder::pointIsWalkable(int x, int y)
 {
+
+	// obstacle case
 	if (_arena->getGridType(x, y) == OBSTACLE)
-		return false;
-	// border case
-	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_Y_SIZE)
 		return false;
 	if (_arena->getGridType(x + 1, y) == OBSTACLE)
 		return false;
@@ -172,12 +178,31 @@ bool PathFinder::pointIsWalkable(int x, int y)
 	if (_arena->getGridType(x + 1, y + 1) == OBSTACLE)
 		return false;
 
+	// border case
+	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_Y_SIZE)
+		return false;
+	
+	// unexplored case
+	// for safety reason, don't go to that point
+	if (_arena->getGridType(x, y) == UNEXPLORED)
+		return false;
+	if (_arena->getGridType(x + 1, y) == UNEXPLORED)
+		return false;
+	if (_arena->getGridType(x, y + 1) == UNEXPLORED)
+		return false;
+	if (_arena->getGridType(x + 1, y + 1) == UNEXPLORED)
+		return false;
+
 	return true;
 }
 
 // to be changed
 void PathFinder::getMovementList(int startX, int startY, int endX, int endY)
 {
+	// get path list first
+	
+
+	// compute the movement later
 
 }
 
