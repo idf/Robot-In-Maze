@@ -144,22 +144,28 @@ class SerialCommander(object):
     def command_put(self, function, parameter):
         self.commands.put([function, parameter])
 
-    def is_command_acknowledged(self):
+    def is_command_empty(self):
+        return self.commands.empty()
+
+    def response(self):
+        """
+        Parse the response from the serial
+        :return: ack:bool, type_data: int, data:dict
+        """
         print "waiting for ack"
-        indicator, dic = self.read()
+        type_data, data = self.read()
 
 
         # sensor data
-        if indicator==SENSOR:
-            print dic
-            return False
+        if type_data==SENSOR:
+            self.ack = False
 
         # ack
-        if dic.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
+        if data.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
             self.ack = True
             self.outstanding_command_pair = None
 
-        return self.ack
+        return self.ack, type_data, data
 
 class SerialThread(threading.Thread):
     @Override(threading.Thread)
@@ -177,11 +183,7 @@ class SerialThread(threading.Thread):
     def run(self):
         print "Starting " + self.name
         while True:
-            # while not self.commander.ready:
-            #     self.commander.is_ready()
-            #     time.sleep(5)
-
-            if self.commander.commands.empty():
+            if self.commander.is_command_empty():
                 debug_print("Waiting for enqueuing command")
                 if self.production:
                     self.commander.command_put(0, 10)
@@ -191,8 +193,15 @@ class SerialThread(threading.Thread):
                     self.commander.command_put(function_code, parameter)
             else:
                 self.commander.command_pop_n_exe()
-                while not self.commander.is_command_acknowledged():
-                    pass
+                # stop and wait
+                while True:
+                    ack, type_data, data = self.commander.response()
+                    # TODO write data
+                    print data
+                    if ack:
+                        # TODO write data
+                        break
+
         print "Exiting " + self.name
 
 
