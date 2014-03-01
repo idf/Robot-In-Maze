@@ -202,6 +202,8 @@ bool PathFinder::pointIsWalkable(int x, int y)
 	return true;
 }
 
+
+
 // to be changed
 void PathFinder::getMovementList(int startX, int startY, int endX, int endY)
 {
@@ -211,7 +213,6 @@ void PathFinder::getMovementList(int startX, int startY, int endX, int endY)
 	// compute the movement later
 
 }
-
 
 void PathFinder::selectNextDestination()
 {

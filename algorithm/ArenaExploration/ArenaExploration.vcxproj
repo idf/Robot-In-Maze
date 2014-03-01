@@ -34,9 +34,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="gtkmm-vc100-d-2_4.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="gtkmm-vc100-2_4.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -60,6 +62,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GUI;STRAIGHT_MODE;DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -70,6 +73,8 @@
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="connector.h" />
+    <ClInclude Include="displayItem.h" />
+    <ClInclude Include="mainwindow.h" />
     <ClInclude Include="MapIO.h" />
     <ClInclude Include="pathfinder.h" />
     <ClInclude Include="resource.h" />
@@ -79,7 +84,9 @@
   <ItemGroup>
     <ClCompile Include="arena.cpp" />
     <ClCompile Include="connector.cpp" />
+    <ClCompile Include="displayItem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="MapIO.cpp" />
     <ClCompile Include="pathfinder.cpp" />
     <ClCompile Include="robot.cpp" />

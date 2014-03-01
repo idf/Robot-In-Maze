@@ -31,6 +31,12 @@
     <Filter Include="Source Files\connection">
       <UniqueIdentifier>{e1205aa2-c13b-4c6c-894c-9b3f38591c8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gui">
+      <UniqueIdentifier>{b5db261f-b390-4747-b1aa-e242166d105f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui">
+      <UniqueIdentifier>{9ff59cb3-2ab8-448b-8d31-23fba5c62ec6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h">
@@ -54,6 +60,12 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mainwindow.h">
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="displayItem.h">
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arena.cpp">
@@ -76,6 +88,12 @@
     </ClCompile>
     <ClCompile Include="MapIO.cpp">
       <Filter>Source Files\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="displayItem.cpp">
+      <Filter>Source Files\gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
