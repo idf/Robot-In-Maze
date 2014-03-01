@@ -13,7 +13,6 @@ FUNCTION = 0
 SENSOR = 1
 
 class SerialCommander(object):
-
     def __init__(self, port="/dev/ttyACM0", data_rate=9600,production=True):
         self.ready=False
         self.ser = None
@@ -21,7 +20,8 @@ class SerialCommander(object):
         if production:
             self._init_serial(port, data_rate)
 
-        self.commands = Queue() # synchronized, queue of [function_code, parameter]
+        self.commands_outgoing = Queue() # synchronized, queue of [function_code, parameter]
+        self.responses_outgoing = Queue() # queue of [ack, type_data, data]
 
         # stop n wait
         self.outstanding_command_pair = None
@@ -84,7 +84,7 @@ class SerialCommander(object):
 
         return SENSOR, reading_dic
 
-
+    ########################################################################################################################
     def write(self, function_code, parameter):
         """
         write to the serial
@@ -96,28 +96,34 @@ class SerialCommander(object):
 
     def read(self):
         """
-        read from the serial
+        Read from the serial
+        Guaranteed to get json response
         :return: parsed json
         """
         receive_data = ""
         while True: # keep fetching until found json
             data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
 
-            if "{" in data: # only check for starting "{"
+            if "{" in data: # only check for starting "{" # naive type checking
                 receive_data = data[data.find("{"): ]
                 break
             else:
-                # debug_print("waiting to read")
+                # if no json, wait
                 continue
 
         debug_print("received serial data: "+receive_data)
-        receive_data_dict = json.loads(receive_data)
-        if "sensors" in receive_data_dict:
-            return self._parse_sensor_readings(receive_data_dict)
-        elif "function" in receive_data_dict:
-            return self._parse_function_status(receive_data_dict)
-        else:
+        try:
+            receive_data_dict = json.loads(receive_data)
+            if "sensors" in receive_data_dict:
+                return self._parse_sensor_readings(receive_data_dict)
+            elif "function" in receive_data_dict:
+                return self._parse_function_status(receive_data_dict)
+            else:
+                return None, None
+        except ValueError:
+            print "json mal-formatted"
             return None, None
+
 
     @Deprecated
     def is_ready(self):
@@ -133,20 +139,22 @@ class SerialCommander(object):
             print "robot ready"
             self.ready = True
 
+    ########################################################################################################################
     def command_pop_n_exe(self):
-        if not self.commands.empty():
+        if not self.commands_outgoing.empty():
             self.ack = False
-            command_pair = self.commands.get()
+            command_pair = self.commands_outgoing.get()
             self.write(command_pair[0], command_pair[1])
             self.outstanding_command_pair = command_pair
             debug_print("Executing command"+str(command_pair))
 
     def command_put(self, function, parameter):
-        self.commands.put([function, parameter])
+        self.commands_outgoing.put([function, parameter])
 
     def is_command_empty(self):
-        return self.commands.empty()
+        return self.commands_outgoing.empty()
 
+    ########################################################################################################################
     def response(self):
         """
         Parse the response from the serial
@@ -167,41 +175,95 @@ class SerialCommander(object):
 
         return self.ack, type_data, data
 
-class SerialThread(threading.Thread):
+    def response_put(self, ack, type_data, data):
+        self.responses_outgoing.put([ack, type_data, data])
+
+    def response_pop(self):
+        """
+        blocking, pop out one of the item from responses_outgoing queue
+        if empty, wait until the Queue is written by other threads
+        :return: [ack, type_data, data]
+        """
+        return self.responses_outgoing.get()
+
+    ########################################################################################################################
+
+
+# serialCommander is the shared resources
+class AbstractThread(threading.Thread):
     @Override(threading.Thread)
-    def __init__(self, name, serialCommander, production=False):
-        super(SerialThread, self).__init__()
-        self.commander = serialCommander
+    def __init__(self, name, production=False):
+        super(AbstractThread, self).__init__()
         self.name = name
         self.production = production
-        # clean up
-        for sig in (SIGABRT, SIGILL, SIGINT, SIGSEGV, SIGTERM):
-            signal(sig, self.commander.disconnect)
+
+    def print_msg(self, msg):
+        print "%s %s says: %s"%(self.__class__.name, self.name, msg)
 
 
-    @Override(threading.Thread)
+class SerialExecutionThread(AbstractThread):
+    @Override(AbstractThread)
+    def __init__(self, name, serialCommander, production=False):
+        super(SerialExecutionThread, self).__init__(name, production)
+
+        self.commander = serialCommander
+        # daemon thread
+        self.setDaemon(True)
+
+    @Override(AbstractThread)
     def run(self):
-        print "Starting " + self.name
+        self.print_msg("Starting")
         while True:
             if self.commander.is_command_empty():
-                debug_print("Waiting for enqueuing command")
+                self.print_msg("Waiting for enqueuing command")
                 if self.production:
-                    self.commander.command_put(0, 10)
+                    # waiting for request_command to be called
+                    time.sleep(1)
+                    continue
                 else:
                     function_code = int(raw_input("function code: "))
                     parameter = float(raw_input("parameter: "))
                     self.commander.command_put(function_code, parameter)
             else:
                 self.commander.command_pop_n_exe()
-                # stop and wait
+                # stop and wait for ack
                 while True:
                     ack, type_data, data = self.commander.response()
-                    # TODO write data
+                    self.commander.response_put(ack, type_data, data)
+
                     print data
                     if ack:
-                        # TODO write data
                         break
 
-        print "Exiting " + self.name
+        self.print_msg("Exiting")
 
 
+class SerialMessagingThread(AbstractThread):
+    @Override(AbstractThread)
+    def __init__(self, name, serialCommander, production=False):
+        super(SerialMessagingThread, self).__init__(name, production)
+
+        self.commander = serialCommander
+
+    @Override(AbstractThread)
+    def run(self):
+        self.print_msg("Starting")
+
+        self.print_msg("Exiting")
+
+    def run_pipeline_style(self):
+        self.commander.command_put(0, 10)
+        self.commander.command_put(1, 90)
+        self.commander.command_put(2, 90)
+
+        print self.commander.response_pop()
+        print self.commander.response_pop()
+        print self.commander.response_pop()
+
+    def run_wait_style(self):
+        self.commander.command_put(0, 10)
+        print self.commander.response_pop()
+        self.commander.command_put(1, 90)
+        print self.commander.response_pop()
+        self.commander.command_put(2, 90)
+        print self.commander.response_pop()

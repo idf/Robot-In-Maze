@@ -32,6 +32,8 @@ class ReadingThread(threading.Thread):
             if not self.queue_wrapper.is_empty():
                 print self.queue_wrapper.dequeue()
 
+    def put(self, item):
+        self.queue_wrapper.enqueue(item)
 
 class WritingThread(threading.Thread):
     def __init__(self, queue):

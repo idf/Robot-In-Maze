@@ -12,7 +12,7 @@ def main(args):
         serialCommander = SerialCommander() # shared resources
 
 
-    serialThread = SerialThread("serial", serialCommander, production=False)
+    serialThread = SerialExecutionThread("serial", serialCommander, production=False)
     serialThread.start()
 
 
