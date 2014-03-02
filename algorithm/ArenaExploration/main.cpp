@@ -32,11 +32,7 @@ int main(int argc, char* argv[])
 #ifdef GUI
 	Gtk::Main kit(argc, argv);
 	MainWindow window;
-
-	Gtk::Window test;
-	Gtk::Main::run(test);
-	test.add(*(new Gtk::Label("test")));
-	test.show_all_children();
+	Gtk::Main::run(window);
 
 #endif
 
