@@ -1,12 +1,17 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow()
-	:arena(ARENA_X_SIZE, ARENA_Y_SIZE, true), robot(0, 0)
+	:arena(ARENA_X_SIZE, ARENA_Y_SIZE, true), robot(0, 0), box(), startButton("start")
 {
 	// init table
 	arena.set_row_spacings(2);
 	arena.set_col_spacings(2);
-	this->add(arena);
+	box.add(arena);
+	box.add(startButton);
+	this->add(box);
+
+	box.show_all();
+	this->show_all();
 }
 
 // Display the arena based on current information

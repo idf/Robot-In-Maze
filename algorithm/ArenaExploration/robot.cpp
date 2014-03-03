@@ -69,7 +69,7 @@ map<Sensor*, float>* Robot::getDataFromSensor()
 }
 
 // collect sensor information and update the arena information
-void Robot::senseEnvironment(Arena* arena)
+void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
 {
 #ifdef HARDWARE
 	map<Sensor*, float>* sensorData = getDataFromSensor();
@@ -87,55 +87,15 @@ void Robot::senseEnvironment(Arena* arena)
 		}
 	}
 #else
-	// simulation, don't need sensor data
-	// manually set map explored
-	switch(this->getDirection())
-	{
-	case 0: // facing down
-		// front
-		arena->setGridType(getPosX(), getPosY()+2, arena->getRealGridType(getPosX(), getPosY()+2));
-		arena->setGridType(getPosX()+1, getPosY()+2, arena->getRealGridType(getPosX()+1, getPosY()+2));
-		// left
-		arena->setGridType(getPosX()-1, getPosY()+1, arena->getRealGridType(getPosX()-1, getPosY()+1));
-		// right
-		arena->setGridType(getPosX()+2, getPosY()+1, arena->getRealGridType(getPosX()+2, getPosY()+1));
-		break;
-	case 90:  // left
-		// front
-		arena->setGridType(getPosX()-1, getPosY(), arena->getRealGridType(getPosX()-1, getPosY()));
-		arena->setGridType(getPosX()-1, getPosY()+1, arena->getRealGridType(getPosX()-1, getPosY()+1));
-		// left
-		arena->setGridType(getPosX(), getPosY()+2, arena->getRealGridType(getPosX(), getPosY()+2));
-		// right
-		arena->setGridType(getPosX(), getPosY()-1, arena->getRealGridType(getPosX(), getPosY()-1));
-		break;
-	case 180: // facing up
-		// front
-		arena->setGridType(getPosX(), getPosY()-1, arena->getRealGridType(getPosX(), getPosY()-1));
-		arena->setGridType(getPosX()+1, getPosY()-1, arena->getRealGridType(getPosX()+1, getPosY()-1));
-		// left
-		arena->setGridType(getPosX()-1, getPosY(), arena->getRealGridType(getPosX()-1, getPosY()));
-		// right
-		arena->setGridType(getPosX()+1, getPosY(), arena->getRealGridType(getPosX()+2, getPosY()));
-		break;
-	case 270:  // facing right
-		// front
-		arena->setGridType(getPosX()+2, getPosY(), arena->getRealGridType(getPosX()+2, getPosY()));
-		arena->setGridType(getPosX()+2, getPosY()+1, arena->getRealGridType(getPosX()+2, getPosY()+1));
-		// left
-		arena->setGridType(getPosX()+1, getPosY()-1, arena->getRealGridType(getPosX()+1, getPosY()-1));
-		// right
-		arena->setGridType(getPosX()+1, getPosY()+2, arena->getRealGridType(getPosX()+1, getPosY()+2));
-		break;
-	}
+	// open up surrounding areas
+	int x = this->getPosX(), y = this->getPosY();
+	arena->setGridType(x, y-1, fullArena->getGridType(x, y-1));
+	arena->setGridType(x+1, y-1, fullArena->getGridType(x+1, y-1));
+	arena->setGridType(x-1, y, fullArena->getGridType(x-1, y));
+	arena->setGridType(x-1, y+1, fullArena->getGridType(x-1, y+1));
+	arena->setGridType(x+2, y, fullArena->getGridType(x+2, y));
+	arena->setGridType(x+2, y+1, fullArena->getGridType(x+2, y+1));
+	arena->setGridType(x, y+2, fullArena->getGridType(x, y+2));
+	arena->setGridType(x+1, y+2, fullArena->getGridType(x+1, y+2));
 #endif
-}
-
-
-// calculate the next move based on information and past path
-// algorithm: AStar
-// function: manhattan distance
-void Robot::exploreNextStep(Arena* arena)
-{
-	
 }

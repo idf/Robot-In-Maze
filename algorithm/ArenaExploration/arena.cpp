@@ -19,6 +19,21 @@ Arena::~Arena()
 	delete _grid;
 }
 
+GRIDTYPE Arena::getGridType(int posX, int posY)
+{
+	if (posX < 0 || posX >= ARENA_X_SIZE || posY < 0 || posY >= ARENA_Y_SIZE)
+		return OBSTACLE;
+	else
+		return _grid[posX][posY].type;
+}
+void Arena::setGridType(int posX, int posY, GRIDTYPE gridType)
+{
+	if (posX < 0 || posX >= ARENA_X_SIZE || posY < 0 || posY >= ARENA_Y_SIZE)
+		return;
+	else
+	    _grid[posX][posY].type = gridType;
+}
+
 void Arena::init()
 {
 	for(int i = 0; i < ARENA_X_SIZE; ++i)

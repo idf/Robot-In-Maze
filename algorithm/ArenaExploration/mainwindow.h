@@ -17,8 +17,12 @@ public:
 	void refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path);
 protected:
 	// singnal handlers
+
+
 	Gtk::Table arena;
 	DisplayItem robot;
+	Gtk::HBox box;
+	Gtk::Button startButton;
 };
 
 #endif

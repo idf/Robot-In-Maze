@@ -4,13 +4,9 @@
 #include "MapIO.h"
 #include "connector.h"
 #include "pathfinder.h"
-
 #include <ctime>
-
-#ifdef GUI
 #include <gtkmm.h>
 #include "mainwindow.h"
-#endif
 
 using namespace std;
 
@@ -28,13 +24,14 @@ int main(int argc, char* argv[])
 #ifndef HARDWARE
 	io->readMapFromFile("testmap.txt");
 	cout << "Map successfully read." << endl;
-
-#ifdef DEBUG
-	io->printArena(fullArena);
 #endif
-
-#endif
-	PathFinder* pathFinder = new PathFinder(robot, fullArena);
+	Gtk::Main kit(argc, argv);
+	MainWindow window;
+	Gtk::Main::run(window);
+	PathFinder* pathFinder = new PathFinder(robot, arena, fullArena, &window);
+	pathFinder->explore();
+	
+	
 	// wait for start event
 	//while (!startEventReceived())
 	//	;
@@ -42,14 +39,4 @@ int main(int argc, char* argv[])
 	//// wait for run event
 	//while (!runEventReceived())
 	//	;
-	//vector<Grid*> result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y);
-
-#ifdef GUI
-	Gtk::Main kit(argc, argv);
-	MainWindow window;
-	window.refreshDisplay(robot, fullArena, result);
-	Gtk::Main::run(window);
-#endif
-
-	getchar();
 }

@@ -41,8 +41,8 @@ public:
 
 	inline Grid* getGrid(int posX, int posY) { return &_grid[posX][posY]; }
 
-	inline GRIDTYPE getGridType(int posX, int posY) { return _grid[posX][posY].type; }
-	inline void setGridType(int posX, int posY, GRIDTYPE gridType) { _grid[posX][posY].type = gridType; }
+	GRIDTYPE getGridType(int posX, int posY);
+	void setGridType(int posX, int posY, GRIDTYPE gridType);
 
 	void init();
 	bool isExploredFully();

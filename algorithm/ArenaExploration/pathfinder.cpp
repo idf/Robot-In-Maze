@@ -2,6 +2,7 @@
 #include <list>
 #include <string>
 #include <math.h>
+#include <Windows.h>
 
 using namespace std;
 
@@ -9,37 +10,84 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 {
 	_robot = robot;
 	_arena = arena;
-	_endX = 18;
-	_endY = 13;
+	_endX = ARENA_END_X;
+	_endY = ARENA_END_Y;
 }
+
+PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, MainWindow* window)
+{
+	_robot = robot;
+	_arena = arena;
+	_fullArena = fullArena;
+	_window = window;
+	_endX = ARENA_END_X;
+	_endY = ARENA_END_Y;
+}
+
+PathFinder::~PathFinder()
+{}
 
 // highest level exploration
-
 void PathFinder::explore()
 {
-	findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
-
+	// explore the map
 	while (!_arena->isExploredFully())
 	{
-		selectNextDestination();
-		findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
+#ifdef DEBUG
+		cout << _robot->getPosX() << ", " << _robot->getPosY() << endl;
+#endif
+		while (_robot->getPosX() != _endX || _robot->getPosY() != _endY )
+		{
+			// if not reachable, check whether it is detectable, if not, break;
+			if(!pointIsWalkable(_endX, _endY))
+			{
+				if(!substituteNewPoint(_endX, _endY))
+					break;
+			}
+			// move to new place, sense the surrounding
+			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
+			vector<Grid*>::reverse_iterator i = result.rbegin();
+			if (result.begin() != result.end()) // list not empty
+				getRobotToMove(*i);
+			_robot->senseEnvironment(_arena, _fullArena);
+			this->_window->refreshDisplay(_robot, _arena, result);
+			// time wait
+			//Sleep(500);
+		}
+#ifdef DEBUG
+		cout << "old destination: " << _endX << _endY;
+#endif
+		this->selectNextDestination();
+#ifdef DEBUG
+		cout << "new destination: " << _endX << _endY << endl;
+		// debug
+		for (int i = 0; i < ARENA_Y_SIZE; ++i)
+			{
+				for (int j = 0; j < ARENA_X_SIZE; ++j)
+					cout << _arena->getGridType(j, i);
+				cout << endl;
+			}
+		//debug
+#endif
 	}
-	findPathBetween(_robot->getPosX(), _robot->getPosY(), 0, 0);
+	// go back to start point
+	while (_robot->getPosX() != ARENA_START_X && _robot->getPosY() != ARENA_START_Y)
+	{
+		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
+		vector<Grid*>::reverse_iterator i = result.rbegin();
+		if (result.begin() != result.end()) // list not empty
+			getRobotToMove(*i);
+	}
 }
 
-// mid level exploration which will find the path based on current map
-// 
+// Find the path based on current map
+// astar, not the shortest path
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
-	// robot sense
-	_robot->senseEnvironment(_arena);
-
-	// calculate the path to destination
     vector<Grid*> path;
     Grid *current, *child, *start, *end;
-	start = _arena->getGrid(0, 0);
-	start = _arena->getGrid(ARENA_START_X, ARENA_START_Y);
-	end = _arena->getGrid(ARENA_END_X, ARENA_END_Y);
+	start = _arena->getGrid(startX, startY);
+	end = _arena->getGrid(endX, endY);
 	current = start;
 
     list<Grid*> openList;
@@ -70,7 +118,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
         // Stop if we reached the end
         if (current == end)
             break;
-
 
         // Remove the current point from the openList
         openList.remove(current);
@@ -169,11 +216,9 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
     return path;
 }
 
-
 // a point is walkable if there is no obstacle or wall within the four squares
 bool PathFinder::pointIsWalkable(int x, int y)
 {
-
 	// obstacle case
 	if (_arena->getGridType(x, y) == OBSTACLE)
 		return false;
@@ -189,40 +234,58 @@ bool PathFinder::pointIsWalkable(int x, int y)
 		return false;
 	
 	// unexplored case
-	// for safety reason, don't go to that point
-	if (_arena->getGridType(x, y) == UNEXPLORED)
+	/*if (_arena->getGridType(x, y) == UNEXPLORED)
 		return false;
 	if (_arena->getGridType(x + 1, y) == UNEXPLORED)
 		return false;
 	if (_arena->getGridType(x, y + 1) == UNEXPLORED)
 		return false;
 	if (_arena->getGridType(x + 1, y + 1) == UNEXPLORED)
-		return false;
+		return false;*/
 
 	return true;
 }
 
-
+bool PathFinder::substituteNewPoint(int x, int y)
+{
+	if (pointIsWalkable(_endX-2, _endY-1)) {_endX=_endX-2; _endY--; return true;}
+	if (pointIsWalkable(_endX-2, _endY)) {_endX=_endX-2; return true;}
+	if (pointIsWalkable(_endX-1, _endY+1)) {_endX--; _endY++; return true;}
+	if (pointIsWalkable(_endX, _endY+1)) {_endY++; return true;}
+	if (pointIsWalkable(_endX+1, _endY+1)) {_endX++; _endY++; return true;}
+	if (pointIsWalkable(_endX+1, _endY-1)) {_endX++; _endY--; return true;}
+	if (pointIsWalkable(_endX-1, _endY-2)) {_endX--; _endY = _endY-2; return true;}
+	if (pointIsWalkable(_endX, _endY-2)) {_endY = _endY-2; return true;}
+	return false;
+}
 
 // to be changed
-void PathFinder::getMovementList(int startX, int startY, int endX, int endY)
+void PathFinder::getRobotToMove(Grid* destination)
 {
-	// get path list first
-	
+#ifdef HARDWARE
 
-	// compute the movement later
+#else
+	this->_robot->setLocation(destination->getX(), destination->getY());
+#endif
+}
+
+void PathFinder::getMovementList(std::vector<Grid*>)
+{
 
 }
 
 void PathFinder::selectNextDestination()
 {
-	for (int i = ARENA_X_SIZE - 1; i >=0; -i)
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
 			if (_arena->getGridType(i, j) == UNEXPLORED)
 			{
-				_endX = i;
-				_endY = j;
+				this->_endX = i;
+				this->_endY = j;
+				return;
 			}
 		}
+	}
 }

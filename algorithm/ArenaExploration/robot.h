@@ -25,8 +25,11 @@ public:
 	void moveForward(int dist);
 	std::map<Sensor*, float>* getDataFromSensor();
 
-	void senseEnvironment(Arena* arena);
-	void exploreNextStep(Arena* arena);
+	void senseEnvironment(Arena* arena, Arena* fullArena);
+
+#ifndef HARDWARE
+	inline void setLocation(int x, int y) {_posX = x; _posY = y;}
+#endif
 
 private:
 	int _posX, _posY;
