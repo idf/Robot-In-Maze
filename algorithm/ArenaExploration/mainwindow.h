@@ -7,18 +7,18 @@
 #include <gtkmm.h>
 #include "Arena.h"
 #include "displayItem.h"
+#include "robot.h"
 
 class MainWindow : public Gtk::Window
 {
 public:
 	MainWindow();
 	virtual ~MainWindow();
-
+	void refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path);
 protected:
 	// singnal handlers
 	Gtk::Table arena;
-	Gtk::EventBox startArea, goalArea, robot;
-	std::vector<DisplayItem> obstacles, path, exploredGrids;
+	DisplayItem robot;
 };
 
 #endif

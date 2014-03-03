@@ -32,7 +32,7 @@ void PathFinder::explore()
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
 	// robot sense
-	//_robot->senseEnvironment(_arena);
+	_robot->senseEnvironment(_arena);
 
 	// calculate the path to destination
     vector<Grid*> path;
