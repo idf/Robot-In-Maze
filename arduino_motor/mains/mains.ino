@@ -53,6 +53,7 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
+  //warmingUp();
   //resetPololuTicks();
   //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
@@ -72,7 +73,7 @@ void loop(void)
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
-  serialCommnder->receive_exec_command();
+  //serialCommnder->receive_exec_command();
 
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
@@ -81,10 +82,46 @@ void loop(void)
 
   //getSensorReadings();
   //obstacle_checkpoint();
+  //softwareProjectLabSqure();
+  warmingUp();
+  /*
+  for(int i=0; i<15; i++) {
+    moveForward(10);
+    printCounts();
+  }
+  */
 
+  moveForward(10);
+  printCounts();
+  //softwareProjectLabSqure();
   delay(1000);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+void softwareProjectLabSqure() {
+  for(int i=0; i<11; i++) {
+    moveForward(10);
+    printCounts();
+  } 
+
+  turnRight(90);
+  printCounts();
+  for(int i=0; i<6; i++) {
+    moveForward(10);
+    printCounts();
+  }
+  turnRight(90);
+  printCounts();
+}
 
 
+void warmingUp() {
+  static bool first_time = true;
+  if(first_time) {
+    moveForward(10);
+    delay(100);
+    moveForward(10);
+    delay(2000);
+    first_time = false;
+  }
+}

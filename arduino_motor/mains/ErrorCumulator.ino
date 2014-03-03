@@ -82,10 +82,12 @@ void ErrorCumulator::change_to_forward_mode() {
 
   }
   // end of change 
-  this->reset_dead_reckoning();
+  this->reset_dead_reckoning(); // suppposed to do
+  
   this->deltaX = this->forward_deltaX;
   this->deltaY = this->forward_deltaY;
   this->theta = this->forward_theta;
+  
   
   // this->theta = this->turning_error; // = rather than +=
 
@@ -104,7 +106,7 @@ void ErrorCumulator::change_to_left_mode() {
 // private
 void ErrorCumulator::change_to_turning_mode(int mode) {
   if(this->current_mode==mode) {
-
+    return;
   }
   else if (this->current_mode==FORWORD) {
     this->forward_deltaX = this->deltaX ;

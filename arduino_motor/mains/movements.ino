@@ -61,7 +61,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
   
   midPID.Compute();
-  SetpointRight = Config::PID_SETPOINT + map(OutputMid,-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2, -Config::PID_SETPOINT, +Config::PID_SETPOINT);
+  SetpointRight = Config::PID_SETPOINT  + map(OutputMid,-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2, -Config::PID_SETPOINT, +Config::PID_SETPOINT);
   rightPID.Compute();
   leftPID.Compute();
 
@@ -117,11 +117,11 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
 
     /* IMPORTANT */
-    if(isLeftForward*isRightForward>0)
+    //if(isLeftForward*isRightForward>0)
       delay(Config::MIN_SPEED*0.5); // long distance problem
   }
   // fading
-  setScale(0.25); // small, increase accuracy, too small, cannot move (torque)
+  setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
   //Serial.println(F("fading"));
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
@@ -136,7 +136,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
     configureMotor(isLeftForward, isRightForward);
   }
-  setScale(1/0.25);
+  setScale(1/0.35);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
   delay(300);
