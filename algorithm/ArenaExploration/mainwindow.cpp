@@ -6,15 +6,30 @@
 using namespace std;
 
 MainWindow::MainWindow()
-	:arena(ARENA_X_SIZE, ARENA_Y_SIZE, true), robot(0, 0), startButton("test")
+	:arenaDisplay(ARENA_X_SIZE, ARENA_Y_SIZE, true), robotDisplay(0, 0), startButton("test")
 {
+	arena = new Arena();
+	robot = new Robot(ARENA_START_X, ARENA_START_Y, 0);
+	fullArena = new Arena();  // simulation purpose
+	io = new MapIO(arena, fullArena);
+	
 	// init table
-	arena.set_row_spacings(2);
-	arena.set_col_spacings(2);
-	this->add(arena);
-	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::refreshDisplay),
-          250 );
+	arenaDisplay.set_row_spacings(2);
+	arenaDisplay.set_col_spacings(2);
+	this->add(arenaDisplay);
+	//startButton.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::refreshDisplay));
+	Glib::signal_idle().connect_once( sigc::mem_fun(*this, &MainWindow::start));
 	this->show_all();
+}
+
+void MainWindow::start()
+{
+	#ifndef HARDWARE
+	io->readMapFromFile("testmap.txt");
+	cout << "Map successfully read." << endl;
+#endif
+	PathFinder* pathFinder = new PathFinder(robot, arena, fullArena, this);
+	pathFinder->explore();
 }
 
 // Display the arena based on current information
@@ -24,34 +39,33 @@ MainWindow::MainWindow()
 // path: #4E74A6
 // unexplored: #BDBF78
 // start and end: #BFA524
-bool MainWindow::refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path)
+void MainWindow::refreshDisplay()
 {
-	Gtk::Button bt("test");
-	bt.clicked();
 	Gdk::Color unoccupied("white"), obstacle("#2E231F"), robotColor("#263C8B"), pathColor("#4E74A6"), unexplored("#BDBF78"), startAndEnd("#BFA524");
 
 	// remove the existing display
-	Glib::ListHandle<Widget*> childList = this->arena.get_children();
+	arenaDisplay.hide_all();
+	Glib::ListHandle<Widget*> childList = this->arenaDisplay.get_children();
 	Glib::ListHandle<Widget*>::iterator it = childList.begin();
 	while (it != childList.end()) 
 	{
-		this->arena.remove(**it);
+		this->arenaDisplay.remove(**it);
 		it++;
 	}
 
 	// display path
-	for (std::vector<Grid*>::iterator i = path.begin(); i != path.end(); ++i)
-	{
-		DisplayItem* onePath = new DisplayItem((*i)->getX(), (*i)->getY());
-		onePath->modify_bg(Gtk::StateType::STATE_NORMAL, pathColor);
-		this->arena.attach(*onePath, onePath->x, onePath->x+1, onePath->y, onePath->y+1);
-	}
+	//for (std::vector<Grid*>::iterator i = path.begin(); i != path.end(); ++i)
+	//{
+	//	DisplayItem* onePath = new DisplayItem((*i)->getX(), (*i)->getY());
+	//	onePath->modify_bg(Gtk::StateType::STATE_NORMAL, pathColor);
+	//	this->arenaDisplay.attach(*onePath, onePath->x, onePath->x+1, onePath->y, onePath->y+1);
+	//}
 
 	// display robot
-	this->robot.x = robot->getPosX();
-	this->robot.y = robot->getPosY();
-	this->robot.modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
-	this->arena.attach(this->robot, this->robot.x, this->robot.x+ROBOT_SIZE, this->robot.y, this->robot.y+ROBOT_SIZE);
+	this->robotDisplay.x = robot->getPosX();
+	this->robotDisplay.y = robot->getPosY();
+	this->robotDisplay.modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+	this->arenaDisplay.attach(this->robotDisplay, this->robotDisplay.x, this->robotDisplay.x+ROBOT_SIZE, this->robotDisplay.y, this->robotDisplay.y+ROBOT_SIZE);
 
 	// display Arena
 	for (int i = 0; i < ARENA_X_SIZE; ++i)
@@ -59,7 +73,7 @@ bool MainWindow::refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> p
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
 			DisplayItem* oneGrid = new DisplayItem(i, j);
-			this->arena.attach(*oneGrid, oneGrid->x, oneGrid->x+1,oneGrid->y, oneGrid->y+1);
+			this->arenaDisplay.attach(*oneGrid, oneGrid->x, oneGrid->x+1,oneGrid->y, oneGrid->y+1);
 			switch(arena->getGridType(i, j))
 			{
 			case UNOCCUPIED:
@@ -78,11 +92,9 @@ bool MainWindow::refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> p
 			}
 		}
 	}
-	this->show_all();
-	return true;
+	arenaDisplay.show_all();
+	//return true;
 }
 
 MainWindow::~MainWindow()
-{
-
-}
+{  }

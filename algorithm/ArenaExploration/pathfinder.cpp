@@ -50,9 +50,8 @@ void PathFinder::explore()
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMove(*i);
 			_robot->senseEnvironment(_arena, _fullArena);
-			this->_window->refreshDisplay(_robot, _arena, result);
-			// time wait
-			Sleep(500);
+			Sleep(2000);
+			_window->startButton.clicked();
 			cout << "timeout";
 		}
 #ifdef DEBUG

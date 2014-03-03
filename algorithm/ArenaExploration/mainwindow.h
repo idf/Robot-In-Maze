@@ -8,19 +8,24 @@
 #include "Arena.h"
 #include "displayItem.h"
 #include "robot.h"
+#include "MapIO.h"
 
 class MainWindow : public Gtk::Window
 {
 public:
 	MainWindow();
 	virtual ~MainWindow();
-	bool refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path);
+	void refreshDisplay();
+	void start();
+	Gtk::Button startButton;
 protected:
 	void testThread();
-	Gtk::Table arena;
-	DisplayItem robot;
-	Gtk::Button startButton;
-
+	Gtk::Table arenaDisplay;
+	DisplayItem robotDisplay;
+	Arena* arena;
+	Robot* robot;
+	Arena* fullArena;
+	MapIO* io;
 };
 
 #endif
