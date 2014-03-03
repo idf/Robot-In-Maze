@@ -13,7 +13,9 @@ def main(args):
 
 
     serialThread = SerialExecutionThread("serial", serialCommander, production=False)
+    # serialMessagingThread = SerialMessagingThread("msg", serialCommander, production=False)
     serialThread.start()
+    # serialMessagingThread.start()
 
 
 if __name__=="__main__":

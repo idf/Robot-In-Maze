@@ -189,7 +189,7 @@ void turnLeft(double angle) {
 
   double adjusted_angle = errorCumulator->adjust_turning_angle(isRightForward*angle);
   adjusted_angle = abs(adjusted_angle);
-  double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
+  double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE_LEFT;
   double realNoOfTicksForAngle = reachTickTarget(isLeftForward, isRightForward, noOfTicksForAngle);
   
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 

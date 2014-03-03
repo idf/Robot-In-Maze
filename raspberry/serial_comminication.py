@@ -25,7 +25,7 @@ class SerialCommander(object):
 
         # stop n wait
         self.outstanding_command_pair = None
-        self.ack = False
+
 
     def disconnect(self, *args):
         print "closing serial"
@@ -160,20 +160,21 @@ class SerialCommander(object):
         Parse the response from the serial
         :return: ack:bool, type_data: int, data:dict
         """
+        ack = False
         print "waiting for ack"
         type_data, data = self.read()
 
 
         # sensor data
         if type_data==SENSOR:
-            self.ack = False
+            ack = False
 
         # ack
         if data.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
-            self.ack = True
+            ack = True
             self.outstanding_command_pair = None
 
-        return self.ack, type_data, data
+        return ack, type_data, data
 
     def response_put(self, ack, type_data, data):
         self.responses_outgoing.put([ack, type_data, data])
@@ -184,6 +185,8 @@ class SerialCommander(object):
         if empty, wait until the Queue is written by other threads
         :return: [ack, type_data, data]
         """
+        if self.responses_outgoing.empty():
+            return None
         return self.responses_outgoing.get()
 
     ########################################################################################################################
@@ -198,7 +201,7 @@ class AbstractThread(threading.Thread):
         self.production = production
 
     def print_msg(self, msg):
-        print "%s %s says: %s"%(self.__class__.name, self.name, msg)
+        print "%s says: %s"%(self.name, msg)
 
 
 class SerialExecutionThread(AbstractThread):
@@ -208,7 +211,7 @@ class SerialExecutionThread(AbstractThread):
 
         self.commander = serialCommander
         # daemon thread
-        self.setDaemon(True)
+        # self.setDaemon(True)
 
     @Override(AbstractThread)
     def run(self):
@@ -238,6 +241,7 @@ class SerialExecutionThread(AbstractThread):
         self.print_msg("Exiting")
 
 
+# Alternative Design, other thread writing to Shared Queue
 class SerialMessagingThread(AbstractThread):
     @Override(AbstractThread)
     def __init__(self, name, serialCommander, production=False):
@@ -248,7 +252,7 @@ class SerialMessagingThread(AbstractThread):
     @Override(AbstractThread)
     def run(self):
         self.print_msg("Starting")
-
+        self.run_pipeline_style()
         self.print_msg("Exiting")
 
     def run_pipeline_style(self):

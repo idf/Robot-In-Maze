@@ -20,7 +20,7 @@ int FrontEye::output_reading_ultra() {
 
 int FrontEye::output_reading_ir_left() {
   int dis = this->get_ir_reading_left();
-  if(this->is_within_range(this->ultrasound)) 
+  if(this->is_within_range(this->sharp_left)) 
     dis = (dis+5)/10*10;
   else 
     dis = -1;
@@ -29,7 +29,7 @@ int FrontEye::output_reading_ir_left() {
 
 int FrontEye::output_reading_ir_right() {
   int dis = this->get_ir_reading_right();
-  if(this->is_within_range(this->ultrasound)) 
+  if(this->is_within_range(this->sharp_right)) 
     dis = (dis+5)/10*10;
   else 
     dis = -1;
@@ -69,7 +69,7 @@ int FrontEye::get_ir_reading_right() {
 bool FrontEye::is_within_range(SharpIR* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
-    if(distance>49 || distance<5) // TODO
+    if(distance>45 || distance<5) // TODO
       return false;
     delay(20);
   }

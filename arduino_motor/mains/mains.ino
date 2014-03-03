@@ -11,11 +11,10 @@
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-  int minx = 0;
-  int maxx = 0;
-  int miny = 0;
-  int maxy = 0;
-
+int minx = 0;
+int maxx = 0;
+int miny = 0;
+int maxy = 0;
 
 
 void setup(void)
@@ -63,13 +62,11 @@ void loop(void)
   //moveForward(150);     
   //goStraightlineCheckpoint();
   //printCounts();
-  //turnRight(450);
+  //turnRight(90);
   //printCounts();
   //errorCumulator->compass->printAxis();
-
-  //delay(1000);
   
-  //turnRight(90);
+  //turnLeft(90);
   //moveForward(80);
   //turnLeft(90);
   //motorShield.setSpeeds(-400, -400);

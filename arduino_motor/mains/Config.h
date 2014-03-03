@@ -12,6 +12,7 @@ public:
   static int const SAMPLE_TIME;
 
   static double const WHEELS_INTERVAL;
+  static double const WHEELS_INTERVAL_LEFT;
   static double MAX_SPEED;
   static double TARGET_SPEED;
   static double MIN_SPEED;
@@ -20,5 +21,6 @@ public:
   static double PID_SETPOINT;
 
   static double const TICKS_PER_DEGREE;
+  static double const TICKS_PER_DEGREE_LEFT;
 };
 #endif

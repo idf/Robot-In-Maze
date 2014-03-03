@@ -32,8 +32,8 @@ bool SideEye::is_within_range(SharpIR* sensor, int model) {
     lower = 5;
   }
   else {
-    upper = 120;
-    lower = 35;
+    upper = 110;
+    lower = 25;
   }
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
