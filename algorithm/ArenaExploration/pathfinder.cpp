@@ -52,7 +52,8 @@ void PathFinder::explore()
 			_robot->senseEnvironment(_arena, _fullArena);
 			this->_window->refreshDisplay(_robot, _arena, result);
 			// time wait
-			//Sleep(500);
+			Sleep(500);
+			cout << "timeout";
 		}
 #ifdef DEBUG
 		cout << "old destination: " << _endX << _endY;
@@ -71,7 +72,7 @@ void PathFinder::explore()
 #endif
 	}
 	// go back to start point
-	while (_robot->getPosX() != ARENA_START_X && _robot->getPosY() != ARENA_START_Y)
+	while (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
 	{
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
 		vector<Grid*>::reverse_iterator i = result.rbegin();

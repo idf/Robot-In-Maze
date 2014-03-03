@@ -14,15 +14,13 @@ class MainWindow : public Gtk::Window
 public:
 	MainWindow();
 	virtual ~MainWindow();
-	void refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path);
+	bool refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path);
 protected:
-	// singnal handlers
-
-
+	void testThread();
 	Gtk::Table arena;
 	DisplayItem robot;
-	Gtk::HBox box;
 	Gtk::Button startButton;
+
 };
 
 #endif

@@ -1,16 +1,19 @@
 #include "mainwindow.h"
+#include "MapIO.h"
+#include "pathfinder.h"
+#include <iostream>
+
+using namespace std;
 
 MainWindow::MainWindow()
-	:arena(ARENA_X_SIZE, ARENA_Y_SIZE, true), robot(0, 0), box(), startButton("start")
+	:arena(ARENA_X_SIZE, ARENA_Y_SIZE, true), robot(0, 0), startButton("test")
 {
 	// init table
 	arena.set_row_spacings(2);
 	arena.set_col_spacings(2);
-	box.add(arena);
-	box.add(startButton);
-	this->add(box);
-
-	box.show_all();
+	this->add(arena);
+	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::refreshDisplay),
+          250 );
 	this->show_all();
 }
 
@@ -21,8 +24,10 @@ MainWindow::MainWindow()
 // path: #4E74A6
 // unexplored: #BDBF78
 // start and end: #BFA524
-void MainWindow::refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path)
+bool MainWindow::refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> path)
 {
+	Gtk::Button bt("test");
+	bt.clicked();
 	Gdk::Color unoccupied("white"), obstacle("#2E231F"), robotColor("#263C8B"), pathColor("#4E74A6"), unexplored("#BDBF78"), startAndEnd("#BFA524");
 
 	// remove the existing display
@@ -73,7 +78,8 @@ void MainWindow::refreshDisplay(Robot* robot, Arena* arena, std::vector<Grid*> p
 			}
 		}
 	}
-	this->show_all_children();
+	this->show_all();
+	return true;
 }
 
 MainWindow::~MainWindow()
