@@ -2,6 +2,7 @@ import threading
 from bluetooth import *
 from serial_stub import *
 from serial_comminication import *
+
 def goodbye(client_sock, server_sock):
     if client_sock:
         print "Closing bluetooth client"
@@ -15,8 +16,8 @@ class androidCommander():
         self.client_sock = None
         self.server_sock = None
         self.is_connected = False
-        #self.commander = SerialCommanderStub()
-        self.commander = serial_commander
+        #self.serial_commander = SerialCommanderStub()
+        self.serial_commander = serial_commander
 
     def is_connect(self):
         return self.is_connected
@@ -33,10 +34,10 @@ class androidCommander():
         port = self.server_sock.getsockname()[1]
         uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
         advertise_service(self.server_sock, "SampleServer",
-    	                      service_id = uuid,
-        	                  service_classes = [uuid, SERIAL_PORT_CLASS],
-                	          profiles = [SERIAL_PORT_PROFILE],
-                        	  )
+                          service_id=uuid,
+                          service_classes=[uuid, SERIAL_PORT_CLASS],
+                          profiles=[SERIAL_PORT_PROFILE],
+        )
         import atexit
         atexit.register(goodbye, None, self.server_sock)
         print "atexit registered 1"
@@ -103,9 +104,8 @@ class androidCommander():
                 print "Received from Android: %s" % b_data
                 if len(b_data) != 0:
                     print "decoding"
-                    print self.decode(b_data)
-                #return self.decode(b_data)
-                    self.write(self.decode(b_data))
+                    message =  self.decode_n_execute(b_data)
+                    self.write(message)
         except IOError:
             print "disconnected"
             self.is_connected = False
@@ -114,9 +114,9 @@ class androidCommander():
 
     def __execute_msg(self, function_code, parameter):
         #self.write("Forward")
-        self.commander.command_put(function_code, parameter)
+        self.serial_commander.command_put(function_code, parameter)
         while True:
-            lst = self.commander.response_pop()
+            lst = self.serial_commander.response_pop()
             print "Waiting for response"
             print lst
             if lst==None:
@@ -131,7 +131,7 @@ class androidCommander():
                     continue
 
 
-    def decode(self, msg):
+    def decode_n_execute(self, msg):
         if msg == "w":
             self.__execute_msg(0, 10)
             return "Forward"
@@ -151,27 +151,26 @@ class androidCommander():
 
 
 
-class androidThread(threading.Thread):
-    @Override(threading.Thread)
+class androidThread(AbstractThread):
+    @Override(AbstractThread)
     def __init__(self, name, serial_commander):
         super(androidThread, self).__init__()
         self.commander = androidCommander(serial_commander)
         self.name = name
-        #self.setDaemon(True)
 
-    @Override(threading.Thread)
+
+    @Override(AbstractThread)
     def run(self):
-        print "Starting " + self.name
+        self.print_msg("Starting")
         while True:
-            while not self.commander.is_connect():
+            while True:
                 self.commander.init_bluetooth()
-
-                #self.commander.connect()
-
-
+                if self.commander.is_connect:
+                    break
+                time.sleep(1)
             self.commander.read()
             #self.commander.write()
-        #print "Exiting " + self.name
+        self.print_msg("Ending")
 
 
 
