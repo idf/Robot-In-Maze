@@ -55,7 +55,7 @@ void loop(void)
 {
   //warmingUp();
   //resetPololuTicks();
-  //frontEye->test_readings();
+  frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
@@ -83,7 +83,7 @@ void loop(void)
   //getSensorReadings();
   //obstacle_checkpoint();
   //softwareProjectLabSqure();
-  warmingUp();
+  //warmingUp();
   /*
   for(int i=0; i<15; i++) {
     moveForward(10);
@@ -91,8 +91,8 @@ void loop(void)
   }
   */
 
-  moveForward(10);
-  printCounts();
+  //moveForward(10);
+  //printCounts();
   //softwareProjectLabSqure();
   delay(1000);
 }
