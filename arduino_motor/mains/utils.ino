@@ -135,6 +135,12 @@ void setScale(double scale) {
   rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 }
+void setScaleLeft(double scale) {
+
+}
+void setScaleRight(double scale) {
+  
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Replaced by const TICKS_PER_DEGREE
@@ -165,15 +171,30 @@ void obstacle_checkpoint() {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void goStraightlineCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=15){
+ if (frontEye->output_reading_ultra()!=-1&&frontEye->get_ulra_reading()<=10){
   turnRight(90);
-  moveForward(15);
+  moveForward(20);
   turnLeft(90);
-  moveForward(15);
+  moveForward(40);
   turnLeft(90);
-  moveForward(15);
+  moveForward(20);
   turnRight(90);
   //finish
  }
- moveForward(15);
+ moveForward(10);
+}
+
+
+void extensionCheckpoint(){
+ if (frontEye->output_reading_ultra()!=-1&&frontEye->get_ulra_reading()<=10){
+  turnRight(45);
+  moveForward(20);
+  turnLeft(90);
+  moveForward(40);
+  turnLeft(90);
+  moveForward(20);
+  turnRight(90);
+  //finish
+ }
+ moveForward(10);
 }

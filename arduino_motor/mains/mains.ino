@@ -58,7 +58,7 @@ void loop(void)
   //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
-  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->get_reading_right());
+  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
   //moveForward(150);     
   //goStraightlineCheckpoint();
@@ -73,7 +73,7 @@ void loop(void)
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
-  //serialCommnder->receive_exec_command();
+  serialCommnder->receive_exec_command();
 
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
@@ -83,18 +83,11 @@ void loop(void)
   //getSensorReadings();
   //obstacle_checkpoint();
   //softwareProjectLabSqure();
-  warmingUp();
-  /*
-  for(int i=0; i<15; i++) {
-    moveForward(10);
-    printCounts();
-  }
-  */
+ 
 
-  moveForward(10);
-  printCounts();
   //softwareProjectLabSqure();
-  delay(1000);
+  //goStraightlineCheckpoint();
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +114,7 @@ void warmingUp() {
     moveForward(10);
     delay(100);
     moveForward(10);
-    delay(2000);
+    delay(10000);
     first_time = false;
   }
 }

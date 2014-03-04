@@ -15,8 +15,9 @@ public:
   int output_reading_ir_right();
 
   void test_readings();
+   int get_ulra_reading();
 private: 
-  int get_ulra_reading();
+ 
   int get_ir_reading_left();
   int get_ir_reading_right();
   bool is_within_range(SharpIR* sensor);
