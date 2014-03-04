@@ -4,7 +4,6 @@ import serial
 import json
 import time
 import sys
-from signal import *
 from utils.decorators import *
 from settings import *
 
@@ -13,7 +12,7 @@ FUNCTION = 0
 SENSOR = 1
 
 class SerialCommander(object):
-    def __init__(self, port="/dev/ttyACM0", data_rate=9600,production=True):
+    def __init__(self, port=None, data_rate=9600,production=True):
         self.ready=False
         self.ser = None
 
@@ -28,23 +27,46 @@ class SerialCommander(object):
 
 
     def disconnect(self, *args):
-        print "closing serial"
+        print "Closing serial"
         if self.ser.isOpen():
             self.ser.close()
 
 
 
     def _init_serial(self, port, data_rate):
+        """
+        if the port is specified as None, it automatically tries to find a serial port
+        if the port is specified (usually through command line argument), it open the serial at that port
+        :param port: path to the serial port
+        :param data_rate: int
+        :return: void
+        """
         # Serial port: /dev/ttyACM0
         # The Raspberry Pi may not provide enough power to drive an Arduino, so you might need external power.
         self.ser = serial.Serial()
-        self.ser.port = port
         self.ser.baudrate = data_rate
         self.ser.timeout = 1
 
+        if port!=None:
+            self.ser.port = port
+        else:
+            port = "/dev/ttyACM0"
+            print "Automatically find serial port"
+            for i in range(20):
+                try:
+                    port_auto_find = port[:-1] + str(i)
+                    self.ser.port = port_auto_find
+                    print "Finding port at "+port_auto_find
+                    self.ser.open()
 
-        # self.disconnect()
-        self.ser.open()
+                    return
+                except serial.SerialException as e:
+                    print e.message
+                    continue
+
+            print "Automatically find port fails. Try to reboot the OS"
+            sys.exit(-1)
+
 
 
     def _convert_to_machine_code(self, function_code, parameter):
