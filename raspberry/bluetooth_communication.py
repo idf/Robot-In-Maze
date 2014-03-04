@@ -11,7 +11,7 @@ def goodbye(client_sock, server_sock):
         print "Closing bluetooth server"
         server_sock.close()
 
-class androidCommander():
+class androidCommander(object):
     def __init__(self, serial_commander):
         self.client_sock = None
         self.server_sock = None

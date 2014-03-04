@@ -2,7 +2,7 @@ import socket
 from serial_stub import *
 import exceptions
 
-class pc_interface ():
+class pc_interface (object):
     def __init__(self):
         self.tcp_ip = "192.168.15.15" # Connecting to IP address of MDPGrp 15
         self.port = 50015
