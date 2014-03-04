@@ -12,6 +12,7 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_arena = arena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
+	start = time(0);
 }
 
 PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
@@ -21,6 +22,7 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
+	start = time(0);
 }
 
 PathFinder::~PathFinder()
@@ -31,10 +33,11 @@ PathFinder::~PathFinder()
 bool PathFinder::explore()
 {
 	// explore the map
-	if (!_arena->isExploredFully())
+	if (!_arena->isExploredFully(80) && time(0) - start < 30)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << endl;
+		cout <<"time elapsed: " << time(0) - start << endl;
 #endif
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY )
 		{

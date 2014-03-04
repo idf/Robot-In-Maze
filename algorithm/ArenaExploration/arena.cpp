@@ -67,17 +67,17 @@ GRIDTYPE Arena::getRealGridType(int posX, int posY)
 	return UNEXPLORED;
 }
 
-
 // to be updated to cater to unexplorable area;
-bool Arena::isExploredFully()
+bool Arena::isExploredFully(int percentage)
 {
+	int count = ARENA_X_SIZE*ARENA_Y_SIZE;
 	for(int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
 			if (this->getGridType(i, j) == UNEXPLORED)
-				return false;
+				--count;
 		}
 	}
-	return true;
+	return count >= percentage * 3;
 }

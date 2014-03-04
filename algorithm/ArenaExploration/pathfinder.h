@@ -6,6 +6,7 @@
 #include "Arena.h"
 #include "robot.h"
 #include "sensor.h"
+#include <ctime>
 
 class PathFinder
 {
@@ -24,6 +25,7 @@ private:
 	int _endX, _endY;
 	Robot* _robot;
 	Arena* _arena, *_fullArena;
+	time_t start;
 };
 
 #endif

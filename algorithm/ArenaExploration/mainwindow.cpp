@@ -31,14 +31,14 @@ MainWindow::MainWindow()
 	io->readMapFromFile("testmap.txt");
 	cout << "Map successfully read." << endl;
 #endif
-	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 5);
+	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 500);
 	this->show_all();
 }
 
 bool MainWindow::exploreProcessHandler()
 {
 	bool continueTimer = pathFinder->explore();
-	//this->refreshDisplay();
+	this->refreshDisplay();
 	if (!continueTimer)
 	{
 		io->generateMapDescriptorLevel1();

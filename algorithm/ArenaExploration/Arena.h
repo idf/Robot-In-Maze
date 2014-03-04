@@ -45,7 +45,7 @@ public:
 	void setGridType(int posX, int posY, GRIDTYPE gridType);
 
 	void init();
-	bool isExploredFully();
+	bool isExploredFully(int percentage);
 	GRIDTYPE getRealGridType(int posX, int posY);
 
 private:
