@@ -12,7 +12,6 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_arena = arena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
-	start = time(0);
 }
 
 PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
@@ -22,7 +21,6 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
-	start = time(0);
 }
 
 PathFinder::~PathFinder()
@@ -30,10 +28,10 @@ PathFinder::~PathFinder()
 
 // highest level exploration, find the next step
 // return false when the procedure is completed
-bool PathFinder::explore()
+bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {
 	// explore the map
-	if (!_arena->isExploredFully(80) && time(0) - start < 30)
+	if (!_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << endl;

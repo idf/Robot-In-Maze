@@ -15,8 +15,6 @@ class MainWindow : public Gtk::Window
 public:
 	MainWindow();
 	virtual ~MainWindow();
-	void refreshDisplay();
-	bool exploreProcessHandler();
 protected:
 	Gtk::Table arenaDisplay;
 	Arena* arena;
@@ -25,6 +23,19 @@ protected:
 	MapIO* io;
 	PathFinder* pathFinder;
 	DisplayItem *gridDisplay[ARENA_X_SIZE][ARENA_Y_SIZE];
+	Gtk::VBox vbox;
+	Gtk::HBox hbox;
+	Gtk::Button startExploration, startGoToDestination;
+	Gtk::Entry percentageEntry, timeLimitEntry;
+
+	// signal handler
+	void MainWindow::startExplorationButtonClicked();
+	void MainWindow::startGoToDestinationButtonClicked();
+
+private:
+	void refreshDisplay();
+	bool exploreProcessHandler();
+	bool shortestPathHandler();
 };
 
 #endif

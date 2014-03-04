@@ -5,17 +5,29 @@
 using namespace std;
 
 MainWindow::MainWindow()
-	:arenaDisplay(ARENA_X_SIZE, ARENA_Y_SIZE, true)
+	:arenaDisplay(ARENA_X_SIZE, ARENA_Y_SIZE, false),
+	startExploration("Explore"), startGoToDestination("Destination")
 {
 	arena = new Arena();
 	robot = new Robot(ARENA_START_X, ARENA_START_Y, 0);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
 	pathFinder = new PathFinder(robot, arena, fullArena);
-	// init table
+	
+	// initialize display structure
+	percentageEntry.set_text("Percentage");
+	timeLimitEntry.set_text("Time");
+	this->add(vbox);
+	vbox.pack_start(arenaDisplay);
+	vbox.pack_start(hbox);
+	hbox.pack_start(percentageEntry);
+	hbox.pack_start(timeLimitEntry);
+	hbox.pack_start(startExploration);
+	hbox.pack_start(startGoToDestination);
+
+	// init table contant
 	arenaDisplay.set_row_spacings(2);
 	arenaDisplay.set_col_spacings(2);
-	this->add(arenaDisplay);
 	for (int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0 ; j < ARENA_Y_SIZE; ++j)
@@ -25,19 +37,30 @@ MainWindow::MainWindow()
 			this->arenaDisplay.attach(*gridDisplay[i][j], gridDisplay[i][j]->x, gridDisplay[i][j]->x+1,gridDisplay[i][j]->y, gridDisplay[i][j]->y+1);
 		}
 	}
-	
 
 #ifndef HARDWARE
 	io->readMapFromFile("testmap.txt");
 	cout << "Map successfully read." << endl;
 #endif
-	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 500);
+	startExploration.signal_clicked().connect( sigc::mem_fun(*this,
+              &MainWindow::startExplorationButtonClicked) );
+	
 	this->show_all();
+}
+
+void MainWindow::startExplorationButtonClicked()
+{
+	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 500);
+	pathFinder->start = time(0);
+}
+
+void MainWindow::startGoToDestinationButtonClicked()
+{
 }
 
 bool MainWindow::exploreProcessHandler()
 {
-	bool continueTimer = pathFinder->explore();
+	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 	this->refreshDisplay();
 	if (!continueTimer)
 	{
@@ -45,6 +68,13 @@ bool MainWindow::exploreProcessHandler()
 		io->generateMapDescriptorLevel2();
 	}
 	return continueTimer;
+}
+
+// to be done
+// in hardware level
+bool MainWindow::shortestPathHandler()
+{
+	return true;
 }
 
 // Display the arena based on current information

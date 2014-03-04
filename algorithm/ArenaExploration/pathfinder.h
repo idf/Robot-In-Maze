@@ -14,18 +14,18 @@ public:
 	PathFinder(Robot* robot, Arena* arena);
 	PathFinder(Robot* robot, Arena* arena, Arena* fullArena);
 	~PathFinder();
-	bool explore();
+	bool PathFinder::explore(int percentage, int timeLimitInSeconds);
 	std::vector<Grid*> findPathBetween(int startX, int startY, int endX, int endY);
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);
 	void PathFinder::getRobotToMove(Grid* destination);
 	void PathFinder::getMovementList(std::vector<Grid*>);
 	void selectNextDestination();
+	time_t start;
 private:
 	int _endX, _endY;
 	Robot* _robot;
 	Arena* _arena, *_fullArena;
-	time_t start;
 };
 
 #endif
