@@ -136,7 +136,7 @@ void setScaleLeft(double scale) {
   Config::TARGET_SPEED_LEFT *= scale;
   Config::MIN_SPEED_LEFT *= scale;
 
-  leftPID.SetOutputLimits(Config::PID_UPPER_LIMIT_LEFT, Config::PID_LOWER_LIMIT_LEFT);
+  leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT_LEFT, Config::PID_UPPER_LIMIT_LEFT);
 }
 void setScaleRight(double scale) {
   SetpointRight *= scale;

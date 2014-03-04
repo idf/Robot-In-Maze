@@ -7,13 +7,6 @@ void configureDriftMotor(int isM1Forward, int isM2Forward)
   PCintPort::attachInterrupt(3, leftCounter, CHANGE);
   PCintPort::attachInterrupt(5, rightCounter,CHANGE);
 
-
-  /*
-  if(abs(leftPololuCount - rightPololuCount) > 30000){ // if not too many errors 
-    halt();
-  } 
-
-  else { */
   if(millis() - timing >= Config::SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
   //leftPololuCount = leftCnt();                       
   //rightPololuCount = rightCnt();
@@ -64,17 +57,6 @@ void configureDriftMotor(int isM1Forward, int isM2Forward)
   int m1Speed = isM1Forward * map(OutputLeft, Config::PID_LOWER_LIMIT_LEFT, Config::PID_UPPER_LIMIT_LEFT, Config::MIN_SPEED_LEFT, Config::MAX_SPEED_LEFT);
   int m2Speed = isM2Forward * map(OutputRight, Config::PID_LOWER_LIMIT_RIGHT, Config::PID_UPPER_LIMIT_RIGHT, Config::MIN_SPEED_RIGHT, Config::MAX_SPEED_RIGHT);
 
-  // if(isM1Forward*isM2Forward>0) delay(200); // replace print // move to reachTarget
-  /*
-  Serial.print(F("leftTicks: ")); Serial.println(leftTicks);
-  Serial.print(F("rightTicks: ")); Serial.println(rightTicks);
-  Serial.print(F("InputMid: ")); Serial.println(InputMid);
-  Serial.print(F("SetpointLeft: ")); Serial.println(SetpointLeft);
-  Serial.print(F("SetpointRight: ")); Serial.println(SetpointRight);
-  
-  Serial.print(F("m1: ")); Serial.println(m1Speed);
-  Serial.print(F("m2: ")); Serial.println(m2Speed);
-  */
   motorShield.setSpeeds(m1Speed, m2Speed);
   }
  // }
@@ -103,8 +85,7 @@ double driftToTarget(int isLeftForward, int isRightForward, double target_tick) 
       delay(Config::MIN_SPEED*0.5); // long distance problem
   }
   // fading
- //setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
-  //Serial.println(F("fading"));
+  //setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
 
@@ -142,7 +123,6 @@ void driftRight(double angle) {
   setScaleLeft(1/2.0);
 
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
-  //errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
 }
 
 
