@@ -37,8 +37,8 @@ void setup(void)
   rightPID.SetSampleTime(Config::SAMPLE_TIME); 
   midPID.SetSampleTime(Config::SAMPLE_TIME);
 
-  SetpointLeft = Config::PID_SETPOINT;
-  SetpointRight = Config::PID_SETPOINT;
+  SetpointLeft = Config::PID_SETPOINT_LEFT;
+  SetpointRight = Config::PID_SETPOINT_RIGHT;
   SetpointMid = 0;
 
   // for controlling the speed 
@@ -73,8 +73,11 @@ void loop(void)
   //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
-  serialCommnder->receive_exec_command();
-
+  // serialCommnder->receive_exec_command();
+  
+  driftRight(90);
+  
+  delay(10000);
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
   //delay(5000); //to slow down the serial print
