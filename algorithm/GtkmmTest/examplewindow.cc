@@ -1,45 +1,71 @@
-#include <iostream>
 #include "examplewindow.h"
 
-ExampleWindow::ExampleWindow()
-: m_Table(2, 2, true),
-  m_Button_1("button 1"),
-  m_Button_2("button 2"),
-  m_Button_Quit("Quit")
+IdleExample::IdleExample() :
+  m_Box(false, 5),
+  m_ButtonQuit(Gtk::Stock::QUIT)
 {
-  set_title("Gtk::Table");
-  set_border_width(20);
+  set_border_width(5);
 
-  add(m_Table);
+  // Put buttons into container
 
-  m_Table.attach(m_Button_1, 0, 1, 0, 1);
-  m_Table.attach(m_Button_2, 1, 2, 0, 1);
-  m_Table.attach(m_Button_Quit, 0, 2, 1, 2);
+  // Adding a few widgets:
+  add(m_Box);
+  m_Box.pack_start( *Gtk::manage(new Gtk::Label("Formatting Windows drive C:")));
+  m_Box.pack_start( *Gtk::manage(new Gtk::Label("100 MB")) );
+  m_Box.pack_start(m_ProgressBar_c);
 
-  m_Button_1.signal_clicked().connect(
-          sigc::bind<Glib::ustring>( sigc::mem_fun(*this,
-                  &ExampleWindow::on_button_numbered), "button 1") );
-  m_Button_2.signal_clicked().connect(
-          sigc::bind<Glib::ustring>( sigc::mem_fun(*this,
-                  &ExampleWindow::on_button_numbered), "button 2") );
+  m_Box.pack_start( *Gtk::manage(new Gtk::Label("")) );
 
-  m_Button_Quit.signal_clicked().connect(sigc::mem_fun(*this,
-              &ExampleWindow::on_button_quit) );
+  m_Box.pack_start( *Gtk::manage(new Gtk::Label("Formatting Windows drive D:")));
+  m_Box.pack_start( *Gtk::manage(new Gtk::Label("5000 MB")) );
+  m_Box.pack_start(m_ProgressBar_d);
+
+  Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox(false,10));
+  m_Box.pack_start(*hbox);
+  hbox->pack_start(m_ButtonQuit, Gtk::PACK_EXPAND_PADDING);
+
+  // Connect the signal handlers:
+  m_ButtonQuit.signal_clicked().connect( sigc::mem_fun(*this,
+              &IdleExample::on_button_clicked) );
+
+  // formatting drive c in timeout signal handler - called once every 50ms
+  Glib::signal_timeout().connect( sigc::mem_fun(*this, &IdleExample::on_timer),
+          50 );
+
+  // formatting drive d in idle signal handler - called as quickly as possible
+  Glib::signal_idle().connect( sigc::mem_fun(*this, &IdleExample::on_idle) );
 
   show_all_children();
 }
 
-ExampleWindow::~ExampleWindow()
-{
-}
 
-void ExampleWindow::on_button_quit()
+void IdleExample::on_button_clicked()
 {
   hide();
 }
 
-void
-ExampleWindow::on_button_numbered(Glib::ustring data)
+// this timer callback function is executed once every 50ms (set in connection
+// above).  Use timeouts when speed is not critical. (ie periodically updating
+// something).
+bool IdleExample::on_timer()
 {
-  std::cout << "Hello again - " << data << " was pressed" << std::endl;
+  double value = m_ProgressBar_c.get_fraction();
+
+  // Update progressbar 1/500th each time:
+  m_ProgressBar_c.set_fraction(value + 0.002);
+ 
+  return value < 0.99;  // return false when done
+}
+
+
+// This idle callback function is executed as often as possible, hence it is
+// ideal for processing intensive tasks.
+bool IdleExample::on_idle()
+{
+  double value = m_ProgressBar_d.get_fraction();
+
+  // Update progressbar 1/5000th each time:
+  m_ProgressBar_d.set_fraction(value + 0.0002);
+
+  return value < 0.99;  // return false when done
 }

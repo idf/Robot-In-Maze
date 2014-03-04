@@ -1,4 +1,4 @@
-#include <gtkmm.h>
+#include <gtkmm/main.h>
 #include "mainwindow.h"
 
 using namespace std;

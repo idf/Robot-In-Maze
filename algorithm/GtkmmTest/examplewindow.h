@@ -1,23 +1,25 @@
-#ifndef GTKMM_EXAMPLEWINDOW_H
-#define GTKMM_EXAMPLEWINDOW_H
+#ifndef GTKMM_EXAMPLE_IDLEEXAMPLE_H
+#define GTKMM_EXAMPLE_IDLEEXAMPLE_H
 
 #include <gtkmm.h>
+#include <iostream>
 
-class ExampleWindow : public Gtk::Window
+class IdleExample : public Gtk::Window
 {
 public:
-  ExampleWindow();
-  virtual ~ExampleWindow();
+  IdleExample();
 
 protected:
-  //Signal handlers:
-  void on_button_quit();
-  void on_button_numbered(Glib::ustring data);
+  // Signal Handlers:
+  bool on_timer();
+  bool on_idle();
+  void on_button_clicked();
 
-  //Child widgets:
-  Gtk::Table m_Table;
-  Gtk::Button m_Button_1, m_Button_2, m_Button_Quit;
-
+  // Member data:
+  Gtk::VBox m_Box;
+  Gtk::Button m_ButtonQuit;
+  Gtk::ProgressBar m_ProgressBar_c;
+  Gtk::ProgressBar m_ProgressBar_d;
 };
 
-#endif //GTKMM_EXAMPLEWINDOW_H
+#endif // GTKMM_EXAMPLE_IDLEEXAMPLE_H

@@ -14,12 +14,11 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_endY = ARENA_END_Y;
 }
 
-PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, MainWindow* window)
+PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 {
 	_robot = robot;
 	_arena = arena;
 	_fullArena = fullArena;
-	_window = window;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
 }
@@ -28,21 +27,21 @@ PathFinder::~PathFinder()
 {}
 
 // highest level exploration
-void PathFinder::explore()
+bool PathFinder::explore()
 {
 	// explore the map
-	while (!_arena->isExploredFully())
+	if (!_arena->isExploredFully())
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << endl;
 #endif
-		while (_robot->getPosX() != _endX || _robot->getPosY() != _endY )
+		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY )
 		{
 			// if not reachable, check whether it is detectable, if not, break;
 			if(!pointIsWalkable(_endX, _endY))
 			{
 				if(!substituteNewPoint(_endX, _endY))
-					break;
+					return true;
 			}
 			// move to new place, sense the surrounding
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
@@ -50,14 +49,15 @@ void PathFinder::explore()
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMove(*i);
 			_robot->senseEnvironment(_arena, _fullArena);
-			Sleep(2000);
-			_window->startButton.clicked();
-			cout << "timeout";
+			return true;
 		}
+		else
+		{
 #ifdef DEBUG
 		cout << "old destination: " << _endX << _endY;
 #endif
-		this->selectNextDestination();
+			this->selectNextDestination();
+			return true;
 #ifdef DEBUG
 		cout << "new destination: " << _endX << _endY << endl;
 		// debug
@@ -69,15 +69,19 @@ void PathFinder::explore()
 			}
 		//debug
 #endif
+		}
 	}
 	// go back to start point
-	while (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
+	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
 	{
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
 		vector<Grid*>::reverse_iterator i = result.rbegin();
 		if (result.begin() != result.end()) // list not empty
 			getRobotToMove(*i);
+		return true;
 	}
+	else
+		return false;
 }
 
 // Find the path based on current map
