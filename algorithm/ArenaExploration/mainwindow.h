@@ -16,7 +16,7 @@ public:
 	MainWindow();
 	virtual ~MainWindow();
 	void refreshDisplay();
-	bool explore();
+	bool exploreProcessHandler();
 protected:
 	Gtk::Table arenaDisplay;
 	Arena* arena;

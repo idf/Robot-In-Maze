@@ -16,8 +16,6 @@ MainWindow::MainWindow()
 	arenaDisplay.set_row_spacings(2);
 	arenaDisplay.set_col_spacings(2);
 	this->add(arenaDisplay);
-	
-	// grid initialization
 	for (int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0 ; j < ARENA_Y_SIZE; ++j)
@@ -27,22 +25,26 @@ MainWindow::MainWindow()
 			this->arenaDisplay.attach(*gridDisplay[i][j], gridDisplay[i][j]->x, gridDisplay[i][j]->x+1,gridDisplay[i][j]->y, gridDisplay[i][j]->y+1);
 		}
 	}
+	
 
 #ifndef HARDWARE
 	io->readMapFromFile("testmap.txt");
 	cout << "Map successfully read." << endl;
 #endif
-
-	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::explore), 500);
-
+	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 5);
 	this->show_all();
 }
 
-bool MainWindow::explore()
+bool MainWindow::exploreProcessHandler()
 {
-	bool returnvalue = pathFinder->explore();
-	this->refreshDisplay();
-	return returnvalue;
+	bool continueTimer = pathFinder->explore();
+	//this->refreshDisplay();
+	if (!continueTimer)
+	{
+		io->generateMapDescriptorLevel1();
+		io->generateMapDescriptorLevel2();
+	}
+	return continueTimer;
 }
 
 // Display the arena based on current information
@@ -75,13 +77,11 @@ void MainWindow::refreshDisplay()
 			}
 		}
 	}
-
 	//change robot
 	gridDisplay[robot->getPosX()][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()+1][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()+1][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
-
 }
 
 MainWindow::~MainWindow()

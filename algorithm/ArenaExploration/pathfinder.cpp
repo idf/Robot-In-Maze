@@ -26,7 +26,8 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 PathFinder::~PathFinder()
 {}
 
-// highest level exploration
+// highest level exploration, find the next step
+// return false when the procedure is completed
 bool PathFinder::explore()
 {
 	// explore the map
