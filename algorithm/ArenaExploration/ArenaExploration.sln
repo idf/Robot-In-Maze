@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkConnection", "..\Net
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GtkmmTest", "..\GtkmmTest\GtkmmTest.vcxproj", "{9FE01FF0-5E1A-4C54-AE5C-6B7419E1E3D3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonCpp", "..\JsonCpp\JsonCpp.vcxproj", "{714193D4-7B32-4503-8A11-91149140FF44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,16 @@ Global
 		{9FE01FF0-5E1A-4C54-AE5C-6B7419E1E3D3}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{9FE01FF0-5E1A-4C54-AE5C-6B7419E1E3D3}.Release|Win32.ActiveCfg = Release|Win32
 		{9FE01FF0-5E1A-4C54-AE5C-6B7419E1E3D3}.Release|Win32.Build.0 = Release|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Debug|Win32.ActiveCfg = Debug|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Debug|Win32.Build.0 = Debug|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Release|Any CPU.ActiveCfg = Release|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Release|Win32.ActiveCfg = Release|Win32
+		{714193D4-7B32-4503-8A11-91149140FF44}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
