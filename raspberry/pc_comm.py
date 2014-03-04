@@ -7,6 +7,7 @@ class pc_interface (object):
         self.tcp_ip = "192.168.15.15" # Connecting to IP address of MDPGrp 15
         self.port = 50015
         self.ip_sock = None
+        self.pcaddr = None
         self.is_connect = False
 
         self.commander = SerialCommanderStub()
@@ -20,6 +21,7 @@ class pc_interface (object):
         self.ip_sock.listen(1) # listening for incoming connection to the IP/Port you got with bind
         conn, addr = self.ip_sock.accept()
         print "Connected! Connection address: ", addr
+        self.pcaddr = addr
         self.is_connect = True
 
     def disconnect(self):
@@ -43,7 +45,7 @@ class pc_interface (object):
         if(self.is_connected()):
             try:
                 function, parameter, address = self.ip_sock.recvfrom (1024)
-                print "Read from PC: %s %s" % function, parameter
+                print "Read from PC: %d %d" %(function, parameter)
                 self.commander.command_put(function, parameter) # passing information to Robot
                 while True:
                     lst = self.commander.response_pop() # send acknowledgement to PC
