@@ -46,77 +46,6 @@ void printCounts()
   //Serial.println(PololuWheelEncoders::checkErrorM2());
 
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-float turnAngle(int angle) {
-  float divisibleTicks;
-  if (angle <= 90) {
-    divisibleTicks = 126.7;  // 127.5
-  }
-  
-  else if (angle <= 180) {
-    divisibleTicks = 125.5;  // 64.5
-  }
-
-  else if (angle <= 270) {
-    divisibleTicks = 126.7;
-  } 
-  
-  else if (angle <= 450) {
-    divisibleTicks = 125.6;
-  }
-  
-  else if (angle <= 540) {
-    divisibleTicks = 125;
-  }
-  
-  else if (angle <= 630) {
-    divisibleTicks = 125;
-  }
-  else {
-    divisibleTicks = 125;
-  }
-  
-  float ticksForOneDegree = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
-  float angleToTurn = ticksForOneDegree * angle;
-  return angleToTurn;
-}
-
-float turnAngleR(int angle) {
-  float divisibleTicks;
-  if (angle <= 90) {
-    divisibleTicks = 127.5;  // 127.5
-  }
-  
-  else if (angle <= 180) {
-    divisibleTicks = 125.5;  // 64.5
-  }
-
-  else if (angle <= 270) {
-    divisibleTicks = 126.7;
-  } 
-  
-  else if (angle <= 450) {
-    divisibleTicks = 125.6;
-  }
-  
-  else if (angle <= 540) {
-    divisibleTicks = 125;
-  }
-  
-  else if (angle <= 630) {
-    divisibleTicks = 125;
-  }
-  else {
-    divisibleTicks = 125;
-  }
-  
-  float ticksForOneDegree = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
-  float angleToTurn = ticksForOneDegree * angle;
-  return angleToTurn;
-}
-*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setScale(double scale) {
   SetpointLeft *= scale;
@@ -171,7 +100,7 @@ void obstacle_checkpoint() {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void goStraightlineCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->get_ulra_reading()<=10){
+ if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ // get_ulra_reading
   turnRight(90);
   moveForward(20);
   turnLeft(90);
@@ -186,7 +115,7 @@ void goStraightlineCheckpoint(){
 
 
 void extensionCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->get_ulra_reading()<=10){
+ if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ //get_ulra_reading
   turnRight(45);
   moveForward(20);
   turnLeft(90);

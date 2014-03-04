@@ -37,15 +37,15 @@ int FrontEye::output_reading_ir_right() {
 }
 
 void FrontEye::test_readings() {
-  int dis= this->get_ulra_reading();
+  int dis= this->ultrasound->dist();
   Serial.print("Ultrasound Distance: ");
   Serial.println(dis);
   
-  int dis1 = this->get_ir_reading_left();  // this returns the distance to the object you're measuring
+  int dis1 = this->sharp_left->distance();  // this returns the distance to the object you're measuring
   Serial.print("Left SharpIR distance: ");  // returns it to the serial monitor
   Serial.println(dis1);
 
-  int dis2 = this->get_ir_reading_right();  // this returns the distance to the object you're measuring
+  int dis2 = this->sharp_right->distance(); // this returns the distance to the object you're measuring
   Serial.print("Right SharpIR distance: ");  // returns it to the serial monitor
   Serial.println(dis2);
 
@@ -71,7 +71,7 @@ bool FrontEye::is_within_range(SharpIR* sensor) {
     int distance = sensor->distance();
     if(distance>45 || distance<5) // TODO
       return false;
-    delay(20);
+    delay(RANGE_TEST_DELAY);
   }
   return true;
 }
@@ -81,7 +81,7 @@ bool FrontEye::is_within_range(Ultrasound* sensor) {
     int distance = sensor->dist();
     if(distance>120 || distance<5) // TODO
       return false;
-    delay(20);
+    delay(RANGE_TEST_DELAY);
   }
   return true;
 }

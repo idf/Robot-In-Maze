@@ -46,11 +46,12 @@ PID midPID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);
 
 
 // MotorShiled
-DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1, Pin::INA2, Pin::INB2, Pin::EN2DIAG2, Pin::CS2);
+DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1,  // EN1DIAG1 is not used 
+                                  Pin::INA2, Pin::INB2, Pin::EN2DIAG2, Pin::CS2);   // EN2DIAG2 is not used
 
 SerialCommnder* serialCommnder = new SerialCommnder(); 
 ErrorCumulator* errorCumulator = new ErrorCumulator();
 FrontEye* frontEye = new FrontEye(Pin::ULTRA_1_PWM , Pin::ULTRA_1_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT);
-SideEye* sideEye = new SideEye(Pin::LEFT_IR, Pin::RIGHT_IR_LONG);
+SideEye* sideEye = new SideEye(Pin::LEFT_IR, Pin::RIGHT_IR_LONG, Pin::ULTRA_2_PWM , Pin::ULTRA_2_TRIG);
 //ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);
 #endif

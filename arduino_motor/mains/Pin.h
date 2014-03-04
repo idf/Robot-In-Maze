@@ -30,11 +30,11 @@ public:
   //static double const _PI = 3.14159265359;
   static const unsigned char INA1 = 2; // remapped to 5
   static const unsigned char INB1 = 4;
-  static const unsigned char EN1DIAG1 = 6;
+  static const unsigned char EN1DIAG1 = 6; // not used
   static const unsigned char CS1 = A0;  // not used 
   static const unsigned char INA2 = 7;
   static const unsigned char INB2 = 8;
-  static const unsigned char EN2DIAG2 = 12;
+  static const unsigned char EN2DIAG2 = 12; // not used 
   static const unsigned char CS2 = A1; // not used 
 
   static const unsigned char M1_ENCODER_A = 3; // external interrupt pin 2, 3
@@ -46,6 +46,7 @@ public:
   //static const unsigned char SERVO = 9; // TODO change
   static const unsigned char ULTRA_1_PWM = 11;
   static const unsigned char ULTRA_1_TRIG = 13;
+  
   static const unsigned char ULTRA_2_PWM = 6;
   static const unsigned char ULTRA_2_TRIG = 12;
 
