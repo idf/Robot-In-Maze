@@ -19,3 +19,18 @@ double Config::PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX
 
 double const Config::TICKS_PER_DEGREE = (WHEELS_INTERVAL/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); //8.95463688680154
 double const Config::TICKS_PER_DEGREE_LEFT = (WHEELS_INTERVAL_LEFT/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); 
+
+
+// drift
+double Config::MAX_SPEED_LEFT = Config::MAX_SPEED;
+double Config::TARGET_SPEED_LEFT = Config::TARGET_SPEED;
+double Config::MIN_SPEED_LEFT = Config::MIN_SPEED;
+double Config::PID_UPPER_LIMIT_LEFT = Config::PID_UPPER_LIMIT;
+double Config::PID_LOWER_LIMIT_LEFT = Config::PID_LOWER_LIMIT;
+double Config::PID_SETPOINT_LEFT = Config::PID_SETPOINT;
+double Config::MAX_SPEED_RIGHT = Config::MAX_SPEED;
+double Config::TARGET_SPEED_RIGHT = Config::TARGET_SPEED;
+double Config::MIN_SPEED_RIGHT = Config::MIN_SPEED;
+double Config::PID_UPPER_LIMIT_RIGHT = Config::PID_UPPER_LIMIT;
+double Config::PID_LOWER_LIMIT_RIGHT = Config::PID_LOWER_LIMIT;
+double Config::PID_SETPOINT_RIGHT = Config::PID_SETPOINT;

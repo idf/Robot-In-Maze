@@ -22,5 +22,20 @@ public:
 
   static double const TICKS_PER_DEGREE;
   static double const TICKS_PER_DEGREE_LEFT;
+
+  // drift
+  static double MAX_SPEED_LEFT;
+  static double TARGET_SPEED_LEFT;
+  static double MIN_SPEED_LEFT;
+  static double PID_UPPER_LIMIT_LEFT;
+  static double PID_LOWER_LIMIT_LEFT;
+  static double PID_SETPOINT_LEFT;
+
+  static double MAX_SPEED_RIGHT;
+  static double TARGET_SPEED_RIGHT;
+  static double MIN_SPEED_RIGHT;
+  static double PID_UPPER_LIMIT_RIGHT;
+  static double PID_LOWER_LIMIT_RIGHT;
+  static double PID_SETPOINT_RIGHT;
 };
 #endif

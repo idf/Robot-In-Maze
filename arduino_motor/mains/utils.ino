@@ -119,27 +119,38 @@ float turnAngleR(int angle) {
 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void setScale(double scale) {
-  SetpointLeft *= scale;
-  SetpointRight *= scale;
-  SetpointMid *= scale; // always 0
-
-  Config::PID_SETPOINT *= scale;
-  Config::PID_UPPER_LIMIT *= scale;
-  Config::PID_LOWER_LIMIT *= scale;
-
-  Config::MAX_SPEED *= scale;
-  Config::TARGET_SPEED *= scale;
-  Config::MIN_SPEED *= scale;
-
-  leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
-  rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
+  
+  setScaleRight(scale);
+  setScaleLeft(scale);
+  SetpointMid *= scale; // always 0  
   midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 }
 void setScaleLeft(double scale) {
+  SetpointLeft *= scale;
 
+  Config::PID_SETPOINT_LEFT *= scale;
+  Config::PID_UPPER_LIMIT_LEFT *= scale;
+  Config::PID_LOWER_LIMIT_LEFT *= scale;
+
+  Config::MAX_SPEED_LEFT *= scale;
+  Config::TARGET_SPEED_LEFT *= scale;
+  Config::MIN_SPEED_LEFT *= scale;
+
+  leftPID.SetOutputLimits(Config::PID_UPPER_LIMIT_LEFT, Config::PID_LOWER_LIMIT_LEFT);
 }
 void setScaleRight(double scale) {
-  
+  SetpointRight *= scale;
+
+  Config::PID_SETPOINT_RIGHT *= scale;
+  Config::PID_UPPER_LIMIT_RIGHT *= scale;
+  Config::PID_LOWER_LIMIT_RIGHT *= scale;
+
+
+  Config::MAX_SPEED_RIGHT *= scale;
+  Config::TARGET_SPEED_RIGHT *= scale;
+  Config::MIN_SPEED_RIGHT *= scale;
+
+  rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT_RIGHT, Config::PID_UPPER_LIMIT_RIGHT);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
