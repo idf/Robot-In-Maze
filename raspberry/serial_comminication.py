@@ -91,11 +91,11 @@ class SerialCommander(object):
         function_code = receive_data_dict["function"]
         status_code = receive_data_dict["status"]
 
-        return FUNCTION, {int(function_code): status_code}
+        return {int(function_code): status_code}
 
     def _parse_sensor_readings(self, receive_data_dict):
         """
-        parse {"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30}]}
+        parse {"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30},{"sensor":10,"value":30},{"sensor":11,"value":30}]}
         :param receive_data_dict:
         :return:
         """
@@ -104,7 +104,7 @@ class SerialCommander(object):
         for element in sensor_lst:
             reading_dic[element["sensor"]] = element["value"]
 
-        return SENSOR, reading_dic
+        return reading_dic
 
     ########################################################################################################################
     def write(self, function_code, parameter):
@@ -137,9 +137,9 @@ class SerialCommander(object):
         try:
             receive_data_dict = json.loads(receive_data)
             if "sensors" in receive_data_dict:
-                return self._parse_sensor_readings(receive_data_dict)
+                return SENSOR, receive_data # return raw data
             elif "function" in receive_data_dict:
-                return self._parse_function_status(receive_data_dict)
+                return FUNCTION, receive_data # return raw data
             else:
                 return None, None
         except ValueError:
@@ -182,21 +182,19 @@ class SerialCommander(object):
         Parse the response from the serial
         :return: ack:bool, type_data: int, data:dict
         """
-        ack = False
         print "waiting for ack"
         type_data, data = self.read()
 
 
         # sensor data
         if type_data==SENSOR:
-            ack = False
+            return False, type_data, data
 
-        # ack
-        if data.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
-            ack = True
+        data_parsed = self._parse_function_status(data)
+        if data_parsed.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
             self.outstanding_command_pair = None
+            return True, type_data, data
 
-        return ack, type_data, data
 
     def response_put(self, ack, type_data, data):
         self.responses_outgoing.put([ack, type_data, data])
