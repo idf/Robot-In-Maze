@@ -10,7 +10,7 @@ void FrontEye::init() {
 }
 
 int FrontEye::output_reading_ultra() {
-  int dis = this->get_ulra_reading();
+  int dis = this->get_ultra_reading();
   if(this->is_within_range(this->ultrasound)) 
     dis = (dis+5)/10*10;
   else 
@@ -52,7 +52,7 @@ void FrontEye::test_readings() {
 }
 
 // private
-int FrontEye::get_ulra_reading() {
+int FrontEye::get_ultra_reading() {
   const int ULTRA_OFFSET = 4; 
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
