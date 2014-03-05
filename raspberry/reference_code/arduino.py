@@ -70,7 +70,7 @@ serConnect.flushInput()
 '''
 def getDistanceMoved():#this doesnt work
     print "request distanceTravelled"
-    serConnect.write('9/')
+    serConnect.write_to_pc('9/')
 '''
 def moveForward(distCm):
     global robotMotorMoving, waitingToMove, waitingToMoveVar

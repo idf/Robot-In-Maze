@@ -109,12 +109,12 @@ class SerialCommander(object):
     ########################################################################################################################
     def write(self, function_code, parameter):
         """
-        write to the serial
+        write_to_pc to the serial
         :param function_code: int
         :param parameter: double
         """
         # if self.ready==True:
-        self.ser.write(self._convert_to_machine_code(function_code, parameter))
+        self.ser.write_to_pc(self._convert_to_machine_code(function_code, parameter))
 
     def read(self):
         """

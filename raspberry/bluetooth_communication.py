@@ -74,7 +74,7 @@ class androidCommander(object):
 
     def write(self,msg):
         """
-        write to nexus
+        write_to_pc to nexus
         :status + msg
         """
         try:
@@ -113,7 +113,7 @@ class androidCommander(object):
             self.disconnect()
 
     def __execute_msg(self, function_code, parameter):
-        #self.write("Forward")
+        #self.write_to_pc("Forward")
         self.serial_commander.command_put(function_code, parameter)
         while True:
             lst = self.serial_commander.response_pop()
@@ -142,10 +142,10 @@ class androidCommander(object):
             self.__execute_msg(2, 90)
             return "Turn Right"
         elif msg == "run":#shortest path
-            #self.write("run")
+            #self.write_to_pc("run")
             return ""
         elif msg == "explore":#explore maze
-            #self.write("explore")
+            #self.write_to_pc("explore")
             return ""
 
 
@@ -169,7 +169,7 @@ class androidThread(AbstractThread):
                     break
                 time.sleep(1)
             self.commander.read()
-            #self.commander.write()
+            #self.serial_commander.write_to_pc()
         self.print_msg("Ending")
 
 
