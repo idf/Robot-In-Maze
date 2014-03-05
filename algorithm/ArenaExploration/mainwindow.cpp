@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "MapIO.h"
+#include "connector.h"
 #include <iostream>
 
 using namespace std;
@@ -9,7 +10,7 @@ MainWindow::MainWindow()
 	startExploration("Explore"), startGoToDestination("Destination")
 {
 	arena = new Arena();
-	robot = new Robot(ARENA_START_X, ARENA_START_Y, 0);
+	robot = new Robot(ARENA_START_X, ARENA_START_Y, DOWN);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
 	pathFinder = new PathFinder(robot, arena, fullArena);

@@ -11,7 +11,7 @@
 
 #include <cstdlib>
 
-enum GRIDTYPE{UNOCCUPIED = 0, OBSTACLE = 1, START = 2, GOAL = 3, UNEXPLORED = 4};
+enum GRIDTYPE{UNOCCUPIED = 0, OBSTACLE = 1, START = 2, GOAL = 3, UNEXPLORED = 4, UNSAFE = 5};
 
 class Grid
 {

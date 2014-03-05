@@ -13,7 +13,6 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
 }
-
 PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 {
 	_robot = robot;
@@ -22,11 +21,10 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
 }
-
 PathFinder::~PathFinder()
 {}
 
-// highest level exploration, find the next step
+// highest level exploration, find the next step and make a move
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {
@@ -50,6 +48,8 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			vector<Grid*>::reverse_iterator i = result.rbegin();
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMove(*i);
+			else
+				_robot->rotateClockwise(90); // sense other areas
 			_robot->senseEnvironment(_arena, _fullArena);
 			return true;
 		}
@@ -265,16 +265,31 @@ bool PathFinder::substituteNewPoint(int x, int y)
 	return false;
 }
 
-// to be changed
 void PathFinder::getRobotToMove(Grid* destination)
 {
 #ifdef HARDWARE
-
+	int xDiff = destination->getX() - _robot->getPosX();
+	int yDiff = destination->getY() - _robot->getPosY();
+	DIRECTION dir = RIGHT, robotDir = _robot->getDirection();
+	if (xDiff == 0 && yDiff == 1)
+		dir = DOWN;
+	else if (xDiff == -1 && yDiff == 0)
+		dir = LEFT;
+	else if (xDiff = 0 && yDiff == -1)
+		dir = UP;
+	if (dir == robotDir)
+	{
+		_robot->moveForward(10);
+	}
+	else if (dir > robotDir)
+		_robot->rotateClockwise(90);
+	else
+		_robot->rotateCounterClockwise(90);
 #else
 	this->_robot->setLocation(destination->getX(), destination->getY());
 #endif
 }
-
+// to be changed
 void PathFinder::getMovementList(std::vector<Grid*>)
 {
 

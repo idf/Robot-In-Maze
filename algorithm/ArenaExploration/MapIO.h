@@ -17,11 +17,11 @@ public:
 	void readMapFromFile(std::string filename);
 	void generateMapDescriptorLevel1();
 	void generateMapDescriptorLevel2();
-	std::string convertToHex(std::string binaryStr);
-	char MapIO::toHexDigit(int value);
 private:
 	Arena* _arena;
 	Arena* _fullArena;
+	std::string convertToHex(std::string binaryStr);
+	char MapIO::toHexDigit(int value);
 };
 
 #endif

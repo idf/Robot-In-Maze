@@ -16,12 +16,15 @@ public:
 	MainWindow();
 	virtual ~MainWindow();
 protected:
-	Gtk::Table arenaDisplay;
+	// identity members
 	Arena* arena;
 	Robot* robot;
 	Arena* fullArena;
 	MapIO* io;
 	PathFinder* pathFinder;
+
+	// display members
+	Gtk::Table arenaDisplay;
 	DisplayItem *gridDisplay[ARENA_X_SIZE][ARENA_Y_SIZE];
 	Gtk::VBox vbox;
 	Gtk::HBox hbox;

@@ -13,7 +13,7 @@ public:
 	// sending data
 	bool sendMovement();
 	bool sendRotation();
-	std::map<int, float>* requestForSensorInformation();
+	std::map<int, int>* requestForSensorInformation();
 	bool sendLocation();
 
 	// receiving data

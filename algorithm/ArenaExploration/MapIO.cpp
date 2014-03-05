@@ -68,8 +68,7 @@ void MapIO::readMapFromFile(std::string filename)
 	mapFile.close();
 }
 
-// generate level 1 map descriptor
-// covered and uncovered
+// generate level 1 map descriptor: covered and uncovered
 void MapIO::generateMapDescriptorLevel1()
 {
 	ofstream mapDescriptor1("descriptor1.txt");
@@ -98,8 +97,7 @@ void MapIO::generateMapDescriptorLevel1()
 	mapDescriptor1.close();
 }
 
-
-
+// level 2 map descriptor: obstacle and unoccupied
 void MapIO::generateMapDescriptorLevel2()
 {
 	ofstream mapDescriptor2("descriptor2.txt");
@@ -195,5 +193,7 @@ char MapIO::toHexDigit(int value)
 		return 'E'; break;	
 	case 1111:
 		return 'F'; break;	
+	default:
+		return 'X';
 	}
 }
