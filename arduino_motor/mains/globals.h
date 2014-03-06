@@ -52,6 +52,6 @@ DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1
 SerialCommnder* serialCommnder = new SerialCommnder(); 
 ErrorCumulator* errorCumulator = new ErrorCumulator();
 FrontEye* frontEye = new FrontEye(Pin::ULTRA_1_PWM , Pin::ULTRA_1_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT);
-SideEye* sideEye = new SideEye(Pin::LEFT_IR, Pin::RIGHT_IR_LONG, Pin::ULTRA_2_PWM , Pin::ULTRA_2_TRIG);
+SideEye* sideEye = new SideEye(Pin::LEFT_IR, Pin::RIGHT_IR, Pin::ULTRA_2_PWM , Pin::ULTRA_2_TRIG);
 //ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);
 #endif
