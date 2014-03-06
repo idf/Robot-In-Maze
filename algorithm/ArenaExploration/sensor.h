@@ -1,6 +1,13 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
+#define USFRONT_ID 0
+#define IRFRONTL_ID 1
+#define IRFRONTR_ID 2
+#define IRLEFT_ID 10
+#define IRRIGHT_ID 11
+#define USSIDE_ID 12
+
 class Sensor
 {
 public:

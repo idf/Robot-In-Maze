@@ -16,6 +16,8 @@ Turn Right: { "function" : "right",
 Turn Left: { "function" : "left",
 			 "parameter" : "*degree*"}
 Request for sensor data : { "function" : "sensor" }
+Sending Map information and Robot location to Android: { "map" : "000211002003000040002" , "location" : "x,y" }
+0: free, 1: obstacle, 2: start, 3: goal, 4: unexplored
 ```
 Receiving:
 ```json

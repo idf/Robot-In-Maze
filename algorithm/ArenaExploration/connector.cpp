@@ -1,6 +1,4 @@
 #include "connector.h"
-#include <winsock2.h>
-#include <Windows.h>
 #include <map>
 #include <json/json.h>
 
@@ -92,30 +90,15 @@ map<int, int>* Connector::requestForSensorInformation()
 	Json::Value root;
 	Json::Reader reader;
 	reader.parse(buf, root);
-
-	int sensor1 = root["sensor"]["sensor_code1"].asInt();
-	int value1 = root["sensor"]["return_value1"].asInt();
-	
-	int sensor2 = root["sensor"]["sensor_code2"].asInt();
-	int value2 = root["sensor"]["return_value2"].asInt();
-
-	int sensor3 = root["sensor"]["sensor_code3"].asInt();
-	int value3 = root["sensor"]["return_value3"].asInt();
-
-	int sensor4 = root["sensor"]["sensor_code4"].asInt();
-	int value4 = root["sensor"]["return_value4"].asInt();
-
-	int sensor5 = root["sensor"]["sensor_code5"].asInt();
-	int value5 = root["sensor"]["return_value5"].asInt();
-
+	Json::Value sensorInfoList = root["sensors"];
 	std::map<int,int>* mymap = new std::map<int,int>();
 
-	mymap->insert ( std::pair<int,int>(sensor1,value1) );
-	mymap->insert ( std::pair<int,int>(sensor2,value2) );
-	mymap->insert ( std::pair<int,int>(sensor3,value3) );
-	mymap->insert ( std::pair<int,int>(sensor4,value4) );
-	mymap->insert ( std::pair<int,int>(sensor5,value5) );
-
+	for (int i = 0; i < 6; ++i)
+	{
+		int sensor1 = sensorInfoList[i]["sensor"].asInt();
+		int value1 = sensorInfoList[i]["value"].asInt();
+		mymap->insert ( std::pair<int,int>(sensor1,value1) );
+	}
 	return mymap;
 }
 bool Connector::sendLocation(){ return false; }

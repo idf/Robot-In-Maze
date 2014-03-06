@@ -55,17 +55,18 @@ Robot::Robot(int x, int y, DIRECTION direction):
 	_posX(x), _posY(y), _direction(direction)
 {
 	// initialize sensor configuration
-	Sensor* IRFrontL = new Sensor(1, 0, Sensor::IR);
-	Sensor* IRFrontR = new Sensor(2, 0, Sensor::IR);
-	Sensor* IRLeft = new Sensor(3, 90, Sensor::IR);
-	Sensor* IRRight = new Sensor(4, 270, Sensor::IR);
-	Sensor* USFront = new Sensor(5, 0, Sensor::US);
-	getSensors().push_back(IRFrontL);
-	getSensors().push_back(IRFrontR);
-	getSensors().push_back(IRLeft);
-	getSensors().push_back(IRRight);
-	getSensors().push_back(USFront);
-	delete IRFrontL, IRFrontR, IRLeft, IRRight, USFront;
+	Sensor* IRFrontL = new Sensor(IRFRONTL_ID, 0, Sensor::IR);
+	Sensor* IRFrontR = new Sensor(IRFRONTR_ID, 0, Sensor::IR);
+	Sensor* IRLeft = new Sensor(IRLEFT_ID, 90, Sensor::IR);
+	Sensor* IRRight = new Sensor(IRRIGHT_ID, 270, Sensor::IR);
+	Sensor* USFront = new Sensor(USFRONT_ID, 0, Sensor::US);
+	Sensor* USSide = new Sensor(USSIDE_ID, 0, Sensor::US);
+	_sensors.push_back(IRFrontL);
+	_sensors.push_back(IRFrontR);
+	_sensors.push_back(IRLeft);
+	_sensors.push_back(IRRight);
+	_sensors.push_back(USFront);
+	_sensors.push_back(USSide);
 	conn = new Connector();
 }
 
@@ -116,9 +117,7 @@ void Robot::moveForward(int dist)
 map<Sensor*, int>* Robot::getDataFromSensor()
 {
 	map<Sensor*, int>* returnData = new map<Sensor*, int>();
-	Connector* conn = new Connector();
 	map<int, int>* sensorData = conn->requestForSensorInformation();
-	delete conn;
 
 	for (vector<Sensor*>::iterator iter = _sensors.begin(); iter != _sensors.end(); ++iter)
 	{
