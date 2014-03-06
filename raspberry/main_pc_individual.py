@@ -1,4 +1,4 @@
-from pc_comm import PcThread
+from pc_communication import PcThread
 from serial_comminication import *
 
 __author__ = 'Danyang'

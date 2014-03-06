@@ -206,6 +206,11 @@ class SerialCommander(object):
 
 
     def response_put(self, ack, type_data, data):
+        """
+        :param ack: bool
+        :param type_data: int
+        :param data: String
+        """
         self.responses_outgoing.put([ack, type_data, data])
 
     def response_pop(self):

@@ -1,5 +1,5 @@
 from bluetooth_communication import *
-from pc_comm import PcThread
+from pc_communication import PcThread
 from serial_comminication import *
 
 __author__ = 'Danyang'
@@ -18,4 +18,3 @@ if __name__=="__main__":
     serial_thread.start()
     pc_thread.start()
     android_thread.start()
-    print "Existing main flow"
