@@ -8,10 +8,10 @@ if __name__=="__main__":
     print "Starting main flow"
     # shared resources
     serial_commander = SerialCommander()
-    andorid_commander = None
+    android_commander = None
 
     # threads
-    pc_thread = PcThread("pc_thread", serial_commander, andorid_commander, production=True)
+    pc_thread = PcThread("pc_thread", serial_commander, android_commander, production=True)
     serial_thread = SerialExecutionThread("serial", serial_commander, production=True)
 
 

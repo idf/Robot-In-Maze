@@ -47,13 +47,25 @@ List of function codes currently available:
 00: void moveForward(double dist);  
 01: void turnLeft(double angle);  
 02: void turnRight(double angle);  
+
 10: void getSensorReadings(); // ad-hoc request for sensor readings (ad-hoc).
+
+20: moveForward with Sensor Reading (returns two packages of data)
+21: turnLeft with Sensor Reading
+22: turnRight with Sensor Reading
 ```
 NOTICE: In python each json serial command at very end must end with 
 ```python
 '\n'
 ```
 NOTICE: incoming serial buffer size of Arduino is limited, thus only 7 concurrent machine code command is allowed  
+###PC Message
+```json
+{  
+  "function": function_code,  
+  "parameter": parameter  
+}  
+```
 ###Feedback  
 Json format ([Python Reference](http://docs.python.org/2/library/json.html))  
 ```json

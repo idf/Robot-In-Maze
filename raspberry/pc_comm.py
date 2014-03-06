@@ -15,7 +15,7 @@ class PcInterfacing (object):
 
         # shared resources
         self.serial_commander = serial_commander
-        self.android_commander = andorid_commander
+        self.android_commander = android_commander
 
         
     def connect(self):
@@ -80,7 +80,7 @@ class PcInterfacing (object):
                     print_msg(self.name, "Received acknowledgement")
                     ack, type_data, data = lst[0], lst[1], lst[2]
                     print_msg(self.name, "Acknowledgement: "+str(ack)+str(type_data)+str(data))
-                    
+
                     sending_msg = data
                     self.__response_to_pc(sending_msg)
                     # TODO new thread
@@ -110,7 +110,7 @@ if __name__=="__main__":
     # stub testing
     print "Starting main flow"
     serial_commander = SerialCommanderStub()
-    andorid_commander = None
-    pc_thread = PcThread("pc_thread", serial_commander, andorid_commander, production=False)
+    android_commander = None
+    pc_thread = PcThread("pc_thread", serial_commander, android_commander, production=False)
     pc_thread.start()
     print "Existing main flow"

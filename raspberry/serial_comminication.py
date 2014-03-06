@@ -123,7 +123,7 @@ class SerialCommander(object):
         :param parameter: double
         """
         # if self.ready==True:
-        self.ser.write_to_pc(self._convert_to_machine_code(function_code, parameter))
+        self.ser.write(self._convert_to_machine_code(function_code, parameter))
 
     def read(self):
         """
@@ -198,8 +198,8 @@ class SerialCommander(object):
         # sensor data
         if type_data==SENSOR:
             return False, type_data, data
-
-        data_parsed = self._parse_function_status(data)
+        data_dict = json.loads(data)
+        data_parsed = self._parse_function_status(data_dict)
         if data_parsed.get(self.outstanding_command_pair[0], None)==200:  # use the function_code to get the status
             self.outstanding_command_pair = None
             return True, type_data, data
