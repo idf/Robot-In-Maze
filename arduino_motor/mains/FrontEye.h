@@ -3,7 +3,7 @@
 #include <SharpIR.h>
 #include <Ultrasound.h>
 #define SHORT 1080
-#define LONG 20150
+//#define LONG 20150
 #define RANGE_TEST_DELAY 20
 class FrontEye{
 public:
