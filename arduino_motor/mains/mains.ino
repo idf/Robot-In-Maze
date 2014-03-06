@@ -55,7 +55,7 @@ void loop(void)
 {
   warmingUp();
   //resetPololuTicks();
-  //frontEye->test_readings();
+  frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());

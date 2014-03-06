@@ -15,7 +15,7 @@ int SideEye::output_reading_left() {
 }
 
 int SideEye::output_reading_right() {
-  return this->output_reading(this->sharp_right, LONG);
+  return this->output_reading(this->sharp_right, SHORT);
 }
 
 int SideEye::output_reading_ultra() {
