@@ -2,7 +2,7 @@ import socket
 from abstract import print_msg
 from serial_stub import *
 import json
-
+import time
 
 class PcInterfacing (object):
     def __init__(self, serial_commander, android_commander):
@@ -54,7 +54,7 @@ class PcInterfacing (object):
             #try:
             print_msg(self.name, "Writing to PC: %s" % msg)  # passing function code to PC
             self.conn.sendto(msg, self.pc_addr)
-            time.sleep(0.0001)  # adjusts thread scheduling and allows the socket I/O to finish
+            time.sleep(0.0001)  # adjusts thread scheduling and allows the socket I/O to finish FLUSH
 
     def read_from_pc(self):
         """
@@ -67,14 +67,14 @@ class PcInterfacing (object):
             msg = msg[msg.find("{"):] # cleaning data
 
             msg_dict = json.loads(msg)
-            function_code = msg_dict["function"]
+            function_code = int(msg_dict["function"])
             parameter = int(msg_dict["parameter"])
 
             self.serial_commander.command_put(function_code, parameter)  # passing information to Robot
-            # TODO write to android
             while True:
                 lst = self.serial_commander.response_pop() # send acknowledgement to PC
                 if lst==None:
+                    time.sleep(0.05) # 50 ms
                     continue
                 else:
                     print_msg(self.name, "Received acknowledgement")
@@ -83,7 +83,11 @@ class PcInterfacing (object):
 
                     sending_msg = data
                     self.__response_to_pc(sending_msg)
-                    # TODO new thread
+
+                    if self.android_commander!=None:
+                        # TODO write map to android
+                        pass
+
                     if ack:
                         break
         else:

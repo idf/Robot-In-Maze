@@ -235,7 +235,7 @@ class SerialExecutionThread(AbstractThread):
         self.print_msg("Starting")
         while True:
             if self.commander.is_command_empty():
-                self.print_msg("Waiting for enqueuing command")
+                # self.print_msg("Waiting for enqueuing command")
                 if self.production:
                     # waiting for request_command to be called
                     time.sleep(1)

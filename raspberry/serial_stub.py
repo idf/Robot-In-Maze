@@ -13,7 +13,7 @@ class SerialCommanderStub(SerialCommander):
         if function==10:
             self.responses_outgoing.put([False, SENSOR, json.dumps({
                 "sensors": [{"sensor": 0, "value": 100}, {"sensor": 1, "value": 30}, {"sensor": 2, "value": 30},
-                            {"sensor": 10, "value": 30}, {"sensor": 11, "value": 30}]})])
+                            {"sensor": 10, "value": 30}, {"sensor": 11, "value": 30}, {"sensor": 12, "value": 30}]})])
             self.responses_outgoing.put([True, FUNCTION, json.dumps({"function": function, "status": 200})])
         else:
             self.responses_outgoing.put([True, FUNCTION, json.dumps({"function": function, "status": 200})])

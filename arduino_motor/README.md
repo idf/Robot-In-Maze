@@ -80,10 +80,11 @@ example:
 ```
 status_code is the HTTP status code as in [this](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).  
 The most common status code is 200 (i.e. OK).  
+@Deprecated
 ```json
 {"function": 99, "status": 200}  
 ```
-99 denotes the Arduino is ready to do serial communication  
+@Deprecated 99 denotes the Arduino is ready to do serial communication  
 ###Sensor Readings  
 In the case you don't know json array, refer to [this](http://stackoverflow.com/questions/10973614/convert-json-array-to-python-list) and [this](http://www.w3schools.com/json/json_syntax.asp).  
 ```json
@@ -110,6 +111,6 @@ List of sensor codes currently available:
 2: front right sensor;  // 10 - 40 cm
 10: sided left sensor;  // 10 - 40 cm
 11: sided right sensor; // 10 - 40 cm
-12: sided ultra sensor;  // 10 - 120 cm
+12: sided ultra sensor; // 10 - 120 cm
 ```
 Notice: if the distance is beyond the sensor's range, it will return -1;  
