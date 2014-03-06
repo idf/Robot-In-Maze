@@ -2,7 +2,7 @@
 //public
 SideEye::SideEye(unsigned char left_pin, unsigned char right_pin, unsigned char ultra_pin_1, unsigned ultra_pin_2) {
   this->sharp_left = new SharpIR(left_pin, 250, 95, SHORT);//left side
-  this->sharp_right = new SharpIR(right_pin, 250, 95, LONG);//right front
+  this->sharp_right = new SharpIR(right_pin, 250, 95, SHORT);//right front
 
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
 }
