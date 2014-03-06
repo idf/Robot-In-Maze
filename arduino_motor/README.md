@@ -93,6 +93,7 @@ In the case you don't know json array, refer to [this](http://stackoverflow.com/
     {"sensor": sensor_code,  "value": return_value},
     {"sensor": sensor_code,  "value": return_value},
     {"sensor": sensor_code,  "value": return_value},
+    {"sensor": sensor_code,  "value": return_value},
     {"sensor": sensor_code,  "value": return_value}
   ]
 }  
@@ -100,7 +101,7 @@ In the case you don't know json array, refer to [this](http://stackoverflow.com/
 This json array indicates obstacle distances (in cm) from front, left, right. The distances are from periphery of the robot.  
 Example  
 ```json
-{"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30},{"sensor":10,"value":30},{"sensor":11,"value":30}]}
+{"sensors":[{"sensor":0,"value":100},{"sensor":1,"value":30},{"sensor":2,"value":30},{"sensor":10,"value":30},{"sensor":11,"value":30},{"sensor":12,"value":30}]}
 ```
 List of sensor codes currently available:  
 ```
@@ -108,6 +109,7 @@ List of sensor codes currently available:
 1: front left sensor;   // 10 - 40 cm
 2: front right sensor;  // 10 - 40 cm
 10: sided left sensor;  // 10 - 40 cm
-11: sided right sensor; // 30 - 120 cm
+11: sided right sensor; // 10 - 40 cm
+12: sided ultra sensor;  // 10 - 120 cm
 ```
 Notice: if the distance is beyond the sensor's range, it will return -1;  

@@ -84,7 +84,8 @@ void getSensorReadings() {
     frontEye->output_reading_ir_left(),
     frontEye->output_reading_ir_right(),
     sideEye->output_reading_left(),
-    sideEye->output_reading_right()
+    sideEye->output_reading_right(),
+    sideEye->output_reading_ultra()
     );
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////

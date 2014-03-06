@@ -52,7 +52,13 @@ void SerialCommnder::send_ready_signal() {
   }
 }
 
-void SerialCommnder::send_sensor_readings(int front_value, int front_left_value, int front_right_value, int left_value, int right_value) {
+void SerialCommnder::send_sensor_readings(
+                                          int front_value, 
+                                          int front_left_value, 
+                                          int front_right_value, 
+                                          int left_value, 
+                                          int right_value,
+                                          int side_ultra_value) {
   Serial.print(F("{\"sensors\":["));
   // front 
   Serial.print(F("{\"sensor\":")); Serial.print(0);
@@ -68,7 +74,10 @@ void SerialCommnder::send_sensor_readings(int front_value, int front_left_value,
   Serial.print(F(",\"value\":")); Serial.print(left_value); Serial.print(F("}")); Serial.print(F(","));
   // right
   Serial.print(F("{\"sensor\":")); Serial.print(11);
-  Serial.print(F(",\"value\":")); Serial.print(right_value); Serial.print(F("}"));
+  Serial.print(F(",\"value\":")); Serial.print(right_value); Serial.print(F("}")); Serial.print(F(","));
+  // right ultra
+  Serial.print(F("{\"sensor\":")); Serial.print(12);
+  Serial.print(F(",\"value\":")); Serial.print(side_ultra_value); Serial.print(F("}"));
   //end
   Serial.println(F("]}"));
    
