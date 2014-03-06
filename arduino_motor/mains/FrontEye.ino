@@ -69,7 +69,7 @@ int FrontEye::get_ir_reading_right() {
 bool FrontEye::is_within_range(SharpIR* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
-    if(distance>45 || distance<5) // TODO
+    if(distance>40 || distance<10) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }
@@ -79,7 +79,7 @@ bool FrontEye::is_within_range(SharpIR* sensor) {
 bool FrontEye::is_within_range(Ultrasound* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
-    if(distance>120 || distance<5) // TODO
+    if(distance>90 || distance<5) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }

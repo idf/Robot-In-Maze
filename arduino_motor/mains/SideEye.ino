@@ -2,7 +2,7 @@
 //public
 SideEye::SideEye(unsigned char left_pin, unsigned char right_pin, unsigned char ultra_pin_1, unsigned ultra_pin_2) {
   this->sharp_left = new SharpIR(left_pin, 250, 95, SHORT);//left side
-  this->sharp_right = new SharpIR(right_pin, 250, 95, LONG);//right front
+  this->sharp_right = new SharpIR(right_pin, 250, 95, SHORT);//right front
 
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
 }
@@ -15,7 +15,7 @@ int SideEye::output_reading_left() {
 }
 
 int SideEye::output_reading_right() {
-  return this->output_reading(this->sharp_right, LONG);
+  return this->output_reading(this->sharp_right, SHORT);
 }
 
 int SideEye::output_reading_ultra() {
@@ -42,8 +42,8 @@ void SideEye::test_readings() {
 bool SideEye::is_within_range(SharpIR* sensor, int model) {
   int upper, lower;
   if(model==SHORT){
-    upper = 52;
-    lower = 4;
+    upper = 40;
+    lower = 10;
   }
   else {
     upper = 65;
@@ -61,10 +61,10 @@ bool SideEye::is_within_range(SharpIR* sensor, int model) {
 int SideEye::output_reading(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
-    OFFSET = 7;
+    OFFSET = 8;
   }
   else {
-    OFFSET = 4;
+    OFFSET = 4  ;
   }
 
   int dis = sensor->distance() - OFFSET;
@@ -85,7 +85,7 @@ int SideEye::get_ultra_reading() {
 bool SideEye::is_within_range(Ultrasound* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
-    if(distance>120 || distance<5) // TODO
+    if(distance>90 || distance<5) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }
