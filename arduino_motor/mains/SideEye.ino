@@ -19,7 +19,7 @@ int SideEye::output_reading_right() {
 }
 
 int SideEye::output_reading_ultra() {
-  int dis = this->get_ulra_reading();
+  int dis = this->get_ultra_reading();
   if(this->is_within_range(this->ultrasound)) 
     dis = (dis+5)/10*10;
   else 
@@ -77,8 +77,8 @@ int SideEye::output_reading(SharpIR* sensor, int model) {
   return dis;
 }
 
-int SideEye::get_ulra_reading() {
-  const int ULTRA_OFFSET = 4; 
+int SideEye::get_ultra_reading() {
+  const int ULTRA_OFFSET = 2;// need to be verified 
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
 

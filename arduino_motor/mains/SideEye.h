@@ -21,7 +21,7 @@ private:
 
   bool is_within_range(SharpIR* sensor, int model);
   int output_reading(SharpIR* sensor, int model);
-  int get_ulra_reading();
+  int get_ultra_reading();
   bool is_within_range(Ultrasound* sensor);
 };
 #endif

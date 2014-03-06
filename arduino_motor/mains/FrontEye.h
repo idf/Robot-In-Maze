@@ -20,7 +20,7 @@ private:
  
   int get_ir_reading_left();
   int get_ir_reading_right();
-  int get_ulra_reading(); // to clear the check list
+  int get_ultra_reading(); // to clear the check list
   bool is_within_range(SharpIR* sensor);
   bool is_within_range(Ultrasound* sensor);
 
