@@ -53,13 +53,13 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-  warmingUp();
+  //warmingUp();
   //resetPololuTicks();
-  frontEye->test_readings();
+  //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-  //sideEye->test_readings();
+  sideEye->test_readings();
   //moveForward(150);     
   //goStraightlineCheckpoint();
   //printCounts();
