@@ -10,12 +10,12 @@ MainWindow::MainWindow()
 	startExploration("Explore"), startGoToDestination("Destination")
 {
 	arena = new Arena();
-	robot = new Robot(ARENA_START_X, ARENA_START_Y, DOWN);
+	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
 	pathFinder = new PathFinder(robot, arena, fullArena);
 	
-	// initialize display structure
+	// initialize display structure5
 	percentageEntry.set_text("Percentage");
 	timeLimitEntry.set_text("Time");
 	this->add(vbox);
@@ -39,7 +39,7 @@ MainWindow::MainWindow()
 		}
 	}
 
-#ifndef HARDWARE
+#ifdef HARDWARE
 	io->readMapFromFile("testmap.txt");
 	cout << "Map successfully read." << endl;
 #endif
@@ -51,7 +51,11 @@ MainWindow::MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
+#ifdef HARDWARE
+	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));
+#else
 	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 500);
+#endif
 	pathFinder->start = time(0);
 }
 

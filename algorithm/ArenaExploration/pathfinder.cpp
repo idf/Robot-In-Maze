@@ -29,10 +29,11 @@ PathFinder::~PathFinder()
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {
 	// explore the map
-	if (!_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds)
+	// && time(0) - start < timeLimitInSeconds
+	if (!_arena->isExploredFully(percentage))
 	{
 #ifdef DEBUG
-		cout << _robot->getPosX() << ", " << _robot->getPosY() << endl;
+		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 #endif
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY )
@@ -56,21 +57,21 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		else
 		{
 #ifdef DEBUG
-		cout << "old destination: " << _endX << _endY;
+			cout << "old destination: " << _endX << _endY;
 #endif
 			this->selectNextDestination();
-			return true;
 #ifdef DEBUG
-		cout << "new destination: " << _endX << _endY << endl;
+			cout << "new destination: " << _endX << _endY << endl;
 		// debug
-		for (int i = 0; i < ARENA_Y_SIZE; ++i)
-			{
-				for (int j = 0; j < ARENA_X_SIZE; ++j)
-					cout << _arena->getGridType(j, i);
-				cout << endl;
-			}
+			for (int i = 0; i < ARENA_Y_SIZE; ++i)
+				{
+					for (int j = 0; j < ARENA_X_SIZE; ++j)
+						cout << _arena->getGridType(j, i);
+					cout << endl;
+				}
 		//debug
 #endif
+			return true;
 		}
 	}
 	// go back to start point
@@ -258,6 +259,7 @@ bool PathFinder::substituteNewPoint(int x, int y)
 	if (pointIsWalkable(_endX-2, _endY)) {_endX=_endX-2; return true;}
 	if (pointIsWalkable(_endX-1, _endY+1)) {_endX--; _endY++; return true;}
 	if (pointIsWalkable(_endX, _endY+1)) {_endY++; return true;}
+	if (pointIsWalkable(_endX+1, _endY)) {_endY++; return true;}
 	if (pointIsWalkable(_endX+1, _endY+1)) {_endX++; _endY++; return true;}
 	if (pointIsWalkable(_endX+1, _endY-1)) {_endX++; _endY--; return true;}
 	if (pointIsWalkable(_endX-1, _endY-2)) {_endX--; _endY = _endY-2; return true;}
@@ -265,6 +267,7 @@ bool PathFinder::substituteNewPoint(int x, int y)
 	return false;
 }
 
+// rotate or move forward
 void PathFinder::getRobotToMove(Grid* destination)
 {
 #ifdef HARDWARE
@@ -275,12 +278,14 @@ void PathFinder::getRobotToMove(Grid* destination)
 		dir = DOWN;
 	else if (xDiff == -1 && yDiff == 0)
 		dir = LEFT;
-	else if (xDiff = 0 && yDiff == -1)
+	else if (xDiff == 0 && yDiff == -1)
 		dir = UP;
 	if (dir == robotDir)
-	{
 		_robot->moveForward(10);
-	}
+	else if (robotDir == DOWN && dir == RIGHT)
+		_robot->rotateCounterClockwise(90);
+	else if (robotDir == RIGHT && dir == DOWN)
+		_robot->rotateClockwise(90);
 	else if (dir > robotDir)
 		_robot->rotateClockwise(90);
 	else

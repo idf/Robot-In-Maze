@@ -3,6 +3,7 @@
 
 #include "sensor.h"
 #include "Arena.h"
+#include "connector.h"
 
 #include <iostream>
 #include <vector>
@@ -45,6 +46,7 @@ private:
 	int _posX, _posY;
 	DIRECTION _direction;
 	std::vector<Sensor*> _sensors;
+	Connector* conn;
 	void Robot::openHorizon(Arena* arena, int x, int y, DIRECTION direction, int range);
 	void Robot::determineSensorLocation(int& sensorX, int& sensorY);
 };

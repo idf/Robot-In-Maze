@@ -4,8 +4,8 @@
 #define ARENA_X_SIZE 20
 #define ARENA_Y_SIZE 15
 #define ARENA_UNIT_DISTANCE 10
-#define ARENA_START_X 0
-#define ARENA_START_Y 0
+#define ARENA_START_X 1
+#define ARENA_START_Y 1
 #define ARENA_END_X 18
 #define ARENA_END_Y 13
 

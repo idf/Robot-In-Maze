@@ -2,6 +2,7 @@
 #define CONNECTOR_H
 
 #include <map>
+#include <ClientGame.h>
 
 class Connector
 {
@@ -11,14 +12,14 @@ public:
 	bool init();
 	
 	// sending data
-	bool sendMovement();
-	bool sendRotation();
+	bool sendMovement(int dist);
+	bool sendRotationClockwise(int deg);
+	bool sendRotationCounterClockwise(int deg);
 	std::map<int, int>* requestForSensorInformation();
 	bool sendLocation();
 
-	// receiving data
-	bool receiveData();
 private:
+	ClientNetwork* network;
 };
 
 #endif

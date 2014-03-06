@@ -53,8 +53,8 @@ void Arena::init()
 		}
 	}
 	// set start and end
-	for(int i = ARENA_START_X; i < ARENA_START_X + 3; ++i)
-		for (int j = ARENA_START_Y; j < ARENA_START_Y + 3; ++j)
+	for(int i = 0; i < 3; ++i)
+		for (int j = 0; j < 3; ++j)
 			setGridType(i, j, START);
 
 	for(int i = ARENA_X_SIZE - 3; i < ARENA_X_SIZE; ++i)

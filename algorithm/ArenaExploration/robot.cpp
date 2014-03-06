@@ -1,7 +1,6 @@
 #include "robot.h"	
 #include "sensor.h"
 #include "Arena.h"
-#include "connector.h"
 
 #include <map>
 
@@ -67,6 +66,7 @@ Robot::Robot(int x, int y, DIRECTION direction):
 	getSensors().push_back(IRRight);
 	getSensors().push_back(USFront);
 	delete IRFrontL, IRFrontR, IRLeft, IRRight, USFront;
+	conn = new Connector();
 }
 
 Robot::~Robot(){}
@@ -74,8 +74,8 @@ Robot::~Robot(){}
 void Robot::rotateClockwise(int deg)
 {
 #ifdef HARDWARE
-	Connector* conn = new Connector();
-	if (!conn->sendRotation())
+	//Connector* conn = new Connector();
+	if (!conn->sendRotationClockwise(90))
 		return;
 #endif
 	++_direction;
@@ -84,8 +84,8 @@ void Robot::rotateClockwise(int deg)
 void Robot::rotateCounterClockwise(int deg)
 {
 #ifdef HARDWARE
-	Connector* conn = new Connector();
-	if (!conn->sendRotation())
+	//Connector* conn = new Connector();
+	if (!conn->sendRotationCounterClockwise(90))
 		return;
 #endif
 	--_direction;
@@ -95,20 +95,20 @@ void Robot::moveForward(int dist)
 {
 #ifdef HARDWARE
 	// hardware control
-	Connector* conn = new Connector();
-	if (!conn->sendMovement())
+	//Connector* conn = new Connector();
+	if (!conn->sendMovement(10))
 		return;
 #endif
 	// update location
 	switch(_direction)
 	{
-		case 0:  // down
+		case DOWN:  // down
 			++_posY; break;
-		case 90: // left
+		case LEFT: // left
 			--_posX; break;
-		case 180: // up
+		case UP: // up
 			--_posY; break;
-		case 270: // right
+		case RIGHT: // right
 			++_posX; break;
 	}
 }
@@ -130,7 +130,7 @@ map<Sensor*, int>* Robot::getDataFromSensor()
 // collect sensor information and update the arena information
 void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
 {
-#ifdef HARDWARE
+#ifndef HARDWARE
 	map<Sensor*, int>* sensorData = getDataFromSensor();
 
 	// go through each sensor
