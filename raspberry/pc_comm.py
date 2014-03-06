@@ -1,4 +1,5 @@
 import socket
+from abstract import print_msg
 from serial_stub import *
 import exceptions
 import json
@@ -9,8 +10,9 @@ class PcInterfacing (object):
         self.tcp_ip = "192.168.15.15" # Connecting to IP address of MDPGrp 15
         self.port = 50015
         self.conn = None
-        self.pcaddr = None
+        self.pc_addr = None
         self.is_connect = False
+        self.name = "Pc Interfacing"
 
         # shared resources
         self.serial_commander = serial_commander
@@ -26,11 +28,11 @@ class PcInterfacing (object):
         self.conn.setsockopt (socket.SOL_SOCKET, socket.SO_REUSEADDR,1) # To reuse local socket in Time-Wait state
         self.conn.setsockopt (socket.SOL_SOCKET, socket.SO_BROADCAST,1) # Sending broadcast message
         self.conn.bind((self.tcp_ip, self.port))
-        self.conn.listen(1) # listening for incoming connection to the IP/Port you got with bind
+        self.conn.listen(1)  # listening for incoming connection to the IP/Port you got with bind
         client, addr = self.conn.accept()
-        print "Connected! Connection address: ", addr
+        print_msg(self.name, "Connected! Connection address: %s"%addr)
         self.conn = client
-        self.pcaddr = addr
+        self.pc_addr = addr
         self.is_connect = True
 
     def disconnect(self):
@@ -43,56 +45,51 @@ class PcInterfacing (object):
     def __is_connected(self):
         return self.is_connect
 
-    def write_to_pc(self, msg): # taking function code from Robot
+    def __response_to_pc(self, msg):  # taking function code from Robot
         """
         Write response to PC
         :param msg: String
         """
-        if(self.__is_connected()):
+        # add \0
+        msg += "\0"  # talking to C
+        if self.__is_connected():
             #try:
-            print "Writing to PC: %s" % msg # passing function code to PC
-            self.conn.sendto(msg, self.pcaddr)
-            time.sleep(0.0001) # adjusts thread scheduling and allows the socket I/O to finish
-
-            # except Exception as e:
-             #   print e.message
-              #  print "Unable to write_to_pc"
-              #  self.is_connect = False
+            print_msg(self.name, "Writing to PC: %s" % msg)  # passing function code to PC
+            self.conn.sendto(msg, self.pc_addr)
+            time.sleep(0.0001)  # adjusts thread scheduling and allows the socket I/O to finish
 
     def read_from_pc(self):
         """
         Main Flow
         """
-        if(self.__is_connected()):
+        if self.__is_connected():
             msg = self.conn.recvfrom(1024)
             msg = msg[0]
-            print "Message received: ", msg
+            print_msg(self.name, "Message received: %s"%msg)
             msg = msg[msg.find("{"):] # cleaning data
 
             msg_dict = json.loads(msg)
             function_code = msg_dict["function"]
             parameter = int(msg_dict["parameter"])
 
-            self.serial_commander.command_put(function_code, parameter) # passing information to Robot
+            self.serial_commander.command_put(function_code, parameter)  # passing information to Robot
             # TODO write to android
             while True:
                 lst = self.serial_commander.response_pop() # send acknowledgement to PC
                 if lst==None:
                     continue
                 else:
-                    print "Received acknowledgement"
+                    print_msg(self.name, "Received acknowledgement")
                     ack, type_data, data = lst[0], lst[1], lst[2]
-                    print "Acknowledgement: "
+                    print_msg(self.name, "Acknowledgement: ")
                     print ack, type_data, data
-                    sending_msg = data  # TODO
-                    self.write_to_pc(sending_msg)
-
-            #except Exception as e:
-             #   print e.message
-              #  print "Unable to read_from_pc"
-              #  self.is_connect = False
+                    sending_msg = data
+                    self.__response_to_pc(sending_msg)
+                    # TODO new thread
+                    if ack:
+                        break
         else:
-            print "not connected"
+            print_msg(self.name, "Not connected")
 
 class PcThread(AbstractThread):
     @Override(AbstractThread)
@@ -102,16 +99,16 @@ class PcThread(AbstractThread):
 
     @Override(AbstractThread)
     def run(self):
-        print "connecting"
+        self.print_msg("connecting")
         self.pc_interfacing.connect()
         
-
         while True:
-            print "reading"
+            self.print_msg("Reading...")
             self.pc_interfacing.read_from_pc()
-            time.sleep(0.5)
+            time.sleep(0.05)
 
-if __name__ == "__main__":
+
+if __name__=="__main__":
     print "Executing main flow"
     serial_commander = SerialCommanderStub()
     andorid_commander = None

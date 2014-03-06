@@ -4,6 +4,7 @@ import serial
 import json
 import time
 import sys
+from abstract import AbstractThread
 from utils.decorators import *
 from settings import *
 
@@ -213,17 +214,6 @@ class SerialCommander(object):
 
 
 # serialCommander is the shared resources
-class AbstractThread(threading.Thread):
-    @Override(threading.Thread)
-    def __init__(self, name, production=False):
-        super(AbstractThread, self).__init__()
-        self.name = name
-        self.production = production
-
-    def print_msg(self, msg):
-        print "%s says: %s"%(self.name, msg)
-
-
 class SerialExecutionThread(AbstractThread):
     @Override(AbstractThread)
     def __init__(self, name, serialCommander, production=False):
