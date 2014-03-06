@@ -223,10 +223,10 @@ class SerialCommander(object):
 # serialCommander is the shared resources
 class SerialExecutionThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serialCommander, production):
+    def __init__(self, name, serial_commander, production):
         super(SerialExecutionThread, self).__init__(name, production)
 
-        self.commander = serialCommander
+        self.commander = serial_commander
         # daemon thread
         self.setDaemon(True)
 

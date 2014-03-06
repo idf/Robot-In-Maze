@@ -11,7 +11,7 @@ def goodbye(client_sock, server_sock):
         print_msg("goodbye", "Closing bluetooth server")
         server_sock.close()
 
-class androidCommander(object):
+class AndroidCommander(object):
     def __init__(self, serial_commander):
         self.client_sock = None
         self.server_sock = None
@@ -187,13 +187,13 @@ class androidCommander(object):
     def __decode_n_execute(self, msg):
         if msg == "w":
             self.__execute_msg(0, 10)
-            return "Forward"
+            return "Robot moved Forward"
         elif msg == "a":
             self.__execute_msg(1, 90)
-            return "Turn Left"
+            return "Robot Turned Left"
         elif msg == "d":
             self.__execute_msg(2, 90)
-            return "Turn Right"
+            return "Robot Turned Right"
         elif msg == "run":#shortest path
             #self.write("run")
             return ""
@@ -216,17 +216,17 @@ class androidCommander(object):
         return self.map_outgoing.empty()
 
 
-class androidThread(AbstractThread):
+class AndroidThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serial_commander, mode, production):
+    def __init__(self, name, android_commander, mode, production):
         """
         :param name: name for the thread
-        :param serial_commander: Shared resoureces
+        :param serial_commander: Shared resources
         :param mode: either "auto" or "control"
         :param production: Boolean, if false, use __test_run_pipeline_style rather than waiting for PC
         """
-        super(androidThread, self).__init__(name)
-        self.android_commander = androidCommander(serial_commander)
+        super(AndroidThread, self).__init__(name)
+        self.android_commander = android_commander
         self.mode = mode
         self.production = production
 
@@ -238,7 +238,8 @@ class androidThread(AbstractThread):
             self.print_msg("In remote control mode")
             self.__remote_control_mode()
         else:
-            self.production("In auto mode")
+            #self.production("In auto mode")
+            self.print_msg("In auto mode")
             self.__auto_mode()
         self.print_msg("Ending")
 
@@ -256,14 +257,16 @@ class androidThread(AbstractThread):
             if self.android_commander.is_map_empty():
                 if self.production:
                     self.print_msg("Waiting for map update")
-                    time.sleep(1)
+                    time.sleep(2)
                     continue
                 else:
                     self.__test_run_pipeline_style()
 
+
             else:
                 self.print_msg("Updating map")
                 self.android_commander.map_pop_n_exe()
+                time.sleep(1)
 
 
 
@@ -285,7 +288,7 @@ class androidThread(AbstractThread):
     def __test_run_pipeline_style(self):
         loc = ""
         for i in range(300): #300
-            loc = loc+str(i%2)
+            loc = loc+str(i%1)
         msg_received = "{\"map\":\"%s\", \"location\":\"1,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
@@ -301,12 +304,27 @@ class androidThread(AbstractThread):
         location = msg_json["location"]
         map_grid = msg_json["map"]
         self.android_commander.map_put(map_grid, location)
-        msg_received = "{\"map\":\"%s\", \"location\":\"3,2\"}"%loc
+        msg_received = "{\"map\":\"%s\", \"location\":\"4,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
         self.android_commander.map_put(map_grid, location)
-        msg_received = "{\"map\":\"%s\", \"location\":\"3,3\"}"%loc
+        msg_received = "{\"map\":\"%s\", \"location\":\"5,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_commander.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"6,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_commander.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"6,2\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_commander.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"6,3\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
@@ -317,5 +335,7 @@ class androidThread(AbstractThread):
 if __name__=="__main__":
     print "Executing main flow"
     serial_commander = SerialCommanderStub()
-    androidT = androidThread("android", serial_commander, mode="auto", production=True)
+    android_commander = AndroidCommander(serial_commander)
+
+    androidT = AndroidThread("android", android_commander, mode="auto", production=False)
     androidT.start()
