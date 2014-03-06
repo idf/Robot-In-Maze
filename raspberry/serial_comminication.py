@@ -14,22 +14,28 @@ SENSOR = 1
 
 class SerialCommander(object):
     def __init__(self, port=None, data_rate=9600,production=True):
+        self.name = "SerialCommander"
         self.ready=False
         self.ser = None
 
         if production:
             self._init_serial(port, data_rate)
 
-        self.commands_outgoing = Queue() # synchronized, queue of [function_code, parameter]
-        self.responses_outgoing = Queue() # queue of [ack, type_data, data]
+        self.commands_outgoing = Queue()  # synchronized, queue of [function_code, parameter]
+        self.responses_outgoing = Queue()  # queue of [ack, type_data, data]
 
         # stop n wait
         self.outstanding_command_pair = None
 
-        self.name = "SerialCommander"
+
 
 
     def disconnect(self, *args):
+        """
+        Waiting for the Progress Terminate signal to close the port
+        Not used yet
+        :param args:
+        """
         print_msg(self.name, "Closing serial")
         if self.ser.isOpen():
             self.ser.close()
@@ -126,7 +132,7 @@ class SerialCommander(object):
         :return: parsed json
         """
         receive_data = ""
-        while True: # keep fetching until found json
+        while True:  # keep fetching until found json
             data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
 
             if "{" in data: # only check for starting "{" # naive type checking
@@ -140,9 +146,9 @@ class SerialCommander(object):
         try:
             receive_data_dict = json.loads(receive_data)
             if "sensors" in receive_data_dict:
-                return SENSOR, receive_data # return raw data
+                return SENSOR, receive_data  # return raw data
             elif "function" in receive_data_dict:
-                return FUNCTION, receive_data # return raw data
+                return FUNCTION, receive_data  # return raw data
             else:
                 return None, None
         except ValueError:
@@ -194,7 +200,7 @@ class SerialCommander(object):
             return False, type_data, data
 
         data_parsed = self._parse_function_status(data)
-        if data_parsed.get(self.outstanding_command_pair[0], None)==200: # use the function_code to get the status
+        if data_parsed.get(self.outstanding_command_pair[0], None)==200:  # use the function_code to get the status
             self.outstanding_command_pair = None
             return True, type_data, data
 
@@ -212,18 +218,17 @@ class SerialCommander(object):
             return None
         return self.responses_outgoing.get()
 
-    ########################################################################################################################
 
 
 # serialCommander is the shared resources
 class SerialExecutionThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serialCommander, production=False):
+    def __init__(self, name, serialCommander, production):
         super(SerialExecutionThread, self).__init__(name, production)
 
         self.commander = serialCommander
         # daemon thread
-        # self.setDaemon(True)
+        self.setDaemon(True)
 
     @Override(AbstractThread)
     def run(self):

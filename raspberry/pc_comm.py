@@ -29,7 +29,7 @@ class PcInterfacing (object):
         self.conn.bind((self.tcp_ip, self.port))
         self.conn.listen(1)  # listening for incoming connection to the IP/Port you got with bind
         client, addr = self.conn.accept()
-        print_msg(self.name, "Connected! Connection address: %s"%addr)
+        print_msg(self.name, "Connected! Connection address: "+str(addr))
         self.conn = client
         self.pc_addr = addr
         self.is_connect = True
@@ -49,8 +49,7 @@ class PcInterfacing (object):
         Write response to PC
         :param msg: String
         """
-        # add \0
-        msg += "\0"  # talking to C
+        msg += "\0"  # talking to C thus adding \0
         if self.__is_connected():
             #try:
             print_msg(self.name, "Writing to PC: %s" % msg)  # passing function code to PC
@@ -80,8 +79,8 @@ class PcInterfacing (object):
                 else:
                     print_msg(self.name, "Received acknowledgement")
                     ack, type_data, data = lst[0], lst[1], lst[2]
-                    print_msg(self.name, "Acknowledgement: ")
-                    print ack, type_data, data
+                    print_msg(self.name, "Acknowledgement: "+str(ack)+str(type_data)+str(data))
+                    
                     sending_msg = data
                     self.__response_to_pc(sending_msg)
                     # TODO new thread
@@ -92,7 +91,7 @@ class PcInterfacing (object):
 
 class PcThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serial_commander, android_commander, production=False):
+    def __init__(self, name, serial_commander, android_commander, production):
         super(PcThread, self).__init__(name, production)
         self.pc_interfacing = PcInterfacing(serial_commander, android_commander)
 
@@ -108,9 +107,10 @@ class PcThread(AbstractThread):
 
 
 if __name__=="__main__":
-    print "Executing main flow"
+    # stub testing
+    print "Starting main flow"
     serial_commander = SerialCommanderStub()
     andorid_commander = None
-    pc_thread = PcThread("pc_thread", serial_commander, andorid_commander)
-    pc_thread.run()
-    print "Executing main flow"
+    pc_thread = PcThread("pc_thread", serial_commander, andorid_commander, production=False)
+    pc_thread.start()
+    print "Existing main flow"

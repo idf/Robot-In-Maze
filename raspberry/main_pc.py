@@ -5,13 +5,16 @@ __author__ = 'Danyang'
 
 
 if __name__=="__main__":
-    print "Executing main flow"
+    print "Starting main flow"
+    # shared resources
     serial_commander = SerialCommander()
     andorid_commander = None
-    pc_thread = PcThread("pc_thread", serial_commander, andorid_commander)
-    serial_thread = SerialExecutionThread("serial", serial_commander, production = True)
+
+    # threads
+    pc_thread = PcThread("pc_thread", serial_commander, andorid_commander, production=True)
+    serial_thread = SerialExecutionThread("serial", serial_commander, production=True)
 
 
     serial_thread.start()
-    pc_thread.run()
-    print "Executing main flow"
+    pc_thread.start()
+    print "Existing main flow"
