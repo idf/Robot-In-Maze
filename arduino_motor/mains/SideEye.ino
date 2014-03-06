@@ -64,7 +64,7 @@ int SideEye::output_reading(SharpIR* sensor, int model) {
     OFFSET = 7;
   }
   else {
-    OFFSET = 4;
+    OFFSET = 4  ;
   }
 
   int dis = sensor->distance() - OFFSET;

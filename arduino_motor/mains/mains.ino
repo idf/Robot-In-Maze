@@ -77,7 +77,7 @@ void loop(void)
 
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
-  //delay(5000); //to slow down the serial print
+  delay(500); //to slow down the serial print
 
 
   //getSensorReadings();
