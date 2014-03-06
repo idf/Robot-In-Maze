@@ -4,7 +4,7 @@ import serial
 import json
 import time
 import sys
-from abstract import AbstractThread
+from abstract import AbstractThread, print_msg
 from utils.decorators import *
 from settings import *
 
@@ -26,9 +26,11 @@ class SerialCommander(object):
         # stop n wait
         self.outstanding_command_pair = None
 
+        self.name = "SerialCommander"
+
 
     def disconnect(self, *args):
-        print "Closing serial"
+        print_msg(self.name, "Closing serial")
         if self.ser.isOpen():
             self.ser.close()
 
@@ -52,12 +54,12 @@ class SerialCommander(object):
             self.ser.port = port
         else:
             port = "/dev/ttyACM0"
-            print "Automatically find serial port"
+            print_msg(self.name, "Automatically find serial port")
             for i in range(20):
                 try:
                     port_auto_find = port[:-1] + str(i)
                     self.ser.port = port_auto_find
-                    print "Finding port at "+port_auto_find
+                    print_msg(self.name, "Finding port at %s"%port_auto_find)
                     self.ser.open()
 
                     return
@@ -65,7 +67,7 @@ class SerialCommander(object):
                     print e.message
                     continue
 
-            print "Automatically find port fails. Try to reboot the OS"
+            print_msg(self.name, "Automatically find port fails. Try to reboot the OS")
             sys.exit(-1)
 
 
@@ -134,7 +136,7 @@ class SerialCommander(object):
                 # if no json, wait
                 continue
 
-        debug_print("received serial data: "+receive_data)
+        print_msg(self.name, "received serial data: %s"%receive_data)
         try:
             receive_data_dict = json.loads(receive_data)
             if "sensors" in receive_data_dict:
@@ -144,7 +146,7 @@ class SerialCommander(object):
             else:
                 return None, None
         except ValueError:
-            print "json mal-formatted"
+            print_msg(self.name, "json mal-formatted")
             return None, None
 
 
@@ -159,7 +161,7 @@ class SerialCommander(object):
             return
 
         if dic.get(99, None)==200:
-            print "robot ready"
+            print_msg(self.name, "robot ready")
             self.ready = True
 
     ########################################################################################################################
@@ -169,7 +171,7 @@ class SerialCommander(object):
             command_pair = self.commands_outgoing.get()
             self.write(command_pair[0], command_pair[1])
             self.outstanding_command_pair = command_pair
-            debug_print("Executing command"+str(command_pair))
+            print_msg(self.name, "Executing command"+str(command_pair))
 
     def command_put(self, function, parameter):
         self.commands_outgoing.put([function, parameter])
@@ -183,7 +185,7 @@ class SerialCommander(object):
         Parse the response from the serial
         :return: ack:bool, type_data: int, data:dict
         """
-        print "waiting for ack"
+        print_msg(self.name, "waiting for ack")
         type_data, data = self.read()
 
 
@@ -249,35 +251,3 @@ class SerialExecutionThread(AbstractThread):
                         break
 
         self.print_msg("Exiting")
-
-
-# Alternative Design, other thread writing to Shared Queue
-class SerialMessagingThread(AbstractThread):
-    @Override(AbstractThread)
-    def __init__(self, name, serialCommander, production=False):
-        super(SerialMessagingThread, self).__init__(name, production)
-
-        self.commander = serialCommander
-
-    @Override(AbstractThread)
-    def run(self):
-        self.print_msg("Starting")
-        self.run_pipeline_style()
-        self.print_msg("Exiting")
-
-    def run_pipeline_style(self):
-        self.commander.command_put(0, 10)
-        self.commander.command_put(1, 90)
-        self.commander.command_put(2, 90)
-
-        print self.commander.response_pop()
-        print self.commander.response_pop()
-        print self.commander.response_pop()
-
-    def run_wait_style(self):
-        self.commander.command_put(0, 10)
-        print self.commander.response_pop()
-        self.commander.command_put(1, 90)
-        print self.commander.response_pop()
-        self.commander.command_put(2, 90)
-        print self.commander.response_pop()

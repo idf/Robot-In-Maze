@@ -1,7 +1,6 @@
 import socket
 from abstract import print_msg
 from serial_stub import *
-import exceptions
 import json
 
 

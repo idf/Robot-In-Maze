@@ -15,4 +15,4 @@ class AbstractThread(threading.Thread):
         self.production = production
 
     def print_msg(self, msg):
-        print_msg(self.name, msg)
+        print_msg(self.name, msgk)
