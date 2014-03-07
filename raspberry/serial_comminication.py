@@ -12,9 +12,9 @@ __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
 
-class SerialCommander(object):
+class SerialAPI(object):
     def __init__(self, port=None, data_rate=9600,production=True):
-        self.name = "SerialCommander"
+        self.name = "SerialAPI"
         self.ready=False
         self.ser = None
 
@@ -225,13 +225,13 @@ class SerialCommander(object):
 
 
 
-# serialCommander is the shared resources
+# serial_api is the shared resources
 class SerialExecutionThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serial_commander, production):
+    def __init__(self, name, serial_api, production):
         super(SerialExecutionThread, self).__init__(name, production)
 
-        self.commander = serial_commander
+        self.serial_api = serial_api
         # daemon thread
         self.setDaemon(True)
 
@@ -239,7 +239,7 @@ class SerialExecutionThread(AbstractThread):
     def run(self):
         self.print_msg("Starting")
         while True:
-            if self.commander.is_command_empty():
+            if self.serial_api.is_command_empty():
                 # self.print_msg("Waiting for enqueuing command")
                 if self.production:
                     # waiting for request_command to be called
@@ -248,13 +248,13 @@ class SerialExecutionThread(AbstractThread):
                 else:
                     function_code = int(raw_input("function code: "))
                     parameter = float(raw_input("parameter: "))
-                    self.commander.command_put(function_code, parameter)
+                    self.serial_api.command_put(function_code, parameter)
             else:
-                self.commander.command_pop_n_exe()
+                self.serial_api.command_pop_n_exe()
                 # stop and wait for ack
                 while True:
-                    ack, type_data, data = self.commander.response()
-                    self.commander.response_put(ack, type_data, data)
+                    ack, type_data, data = self.serial_api.response()
+                    self.serial_api.response_put(ack, type_data, data)
 
                     print data
                     if ack:

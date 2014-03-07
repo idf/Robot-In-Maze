@@ -53,12 +53,9 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-  //warmingUp();
-  //serialCommnder->receive_exec_command();
-  moveForward(10);
-  printCounts();
-  turnRight(90);
-  printCounts();
+  warmingUp();
+  serialCommnder->receive_exec_command();
+  //getSensorReadings();
   //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();

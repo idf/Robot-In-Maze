@@ -4,8 +4,8 @@ from serial_stub import *
 import json
 import time
 
-class PcInterfacing (object):
-    def __init__(self, serial_commander, android_commander):
+class PcAPI (object):
+    def __init__(self, serial_api, android_api):
         self.tcp_ip = "192.168.15.15" # Connecting to IP address of MDPGrp 15
         self.port = 50015
         self.conn = None
@@ -14,8 +14,8 @@ class PcInterfacing (object):
         self.name = "Pc Interfacing"
 
         # shared resources
-        self.serial_commander = serial_commander
-        self.android_commander = android_commander
+        self.serial_api = serial_api
+        self.android_api = android_api
 
         # explore start signal
         self.__explore_sent = False
@@ -72,8 +72,9 @@ class PcInterfacing (object):
         msg = self.conn.recvfrom(1024)
         msg = msg[0]
         print_msg(self.name, "Message received: %s" % msg)
+        
         msg = msg[msg.find("{"):] # cleaning data
-        msg = msg.replace("}\n{", ",")
+        msg = msg.replace("}\n{", ",") # in case of combined socket  
 
         msg_dict = json.loads(msg)
         return msg_dict
@@ -85,20 +86,20 @@ class PcInterfacing (object):
         if self._is_connected():
             msg_dict = self.__read()
             if "map" in msg_dict:
-                if self.android_commander!=None:
+                if self.android_api!=None:
                     print_msg(self.name, "Updating Android's map")
-                    self.android_commander.map_put(msg_dict["map"], msg_dict["location"])
+                    self.android_api.map_put(msg_dict["map"], msg_dict["location"])
 
             if "function" in msg_dict:
                 # executing function with parameter
                 function_code = int(msg_dict["function"])
                 parameter = int(msg_dict["parameter"])
                 print_msg(self.name, "Executing robot command")
-                self.serial_commander.command_put(function_code, parameter)  # passing information to Robot
+                self.serial_api.command_put(function_code, parameter)  # passing information to Robot
 
                 # waiting for ack
                 while True:
-                    lst = self.serial_commander.response_pop() # send acknowledgement to PC
+                    lst = self.serial_api.response_pop() # send acknowledgement to PC
                     if lst==None:
                         time.sleep(0.05) # 50 ms
                         continue
@@ -118,13 +119,13 @@ class PcInterfacing (object):
 
     def explore_run_signal(self):
         if not self.__explore_sent:
-            if self.android_commander.explore_start:
+            if self.android_api.explore_start:
                 print_msg(self.name, "Sending \"explore\" signal")
                 self.__response_to_pc("explore")
                 self.__explore_sent = True
 
         if not self.__run_sent:
-            if self.android_commander.run_start:
+            if self.android_api.run_start:
                 print_msg(self.name, "Sending \"start\" signal")
                 self.__response_to_pc("start")
                 self.__run_sent = True
@@ -132,41 +133,41 @@ class PcInterfacing (object):
 
 class PcThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serial_commander, android_commander):
+    def __init__(self, name, serial_api, android_api):
         super(PcThread, self).__init__(name, production=True)
-        self.pc_interfacing = PcInterfacing(serial_commander, android_commander)
+        self.pc_api = PcAPI(serial_api, android_api)
 
     @Override(AbstractThread)
     def run(self):
         self.print_msg("Connecting")
-        self.pc_interfacing.connect()
+        self.pc_api.connect()
         
         while True:
             self.print_msg("Reading...")
-            self.pc_interfacing.communicate_with_pc()
+            self.pc_api.communicate_with_pc()
             time.sleep(0.05)
 
 
 class PcExploreRunThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, pc_interfacing):
+    def __init__(self, name, pc_api):
         super(PcExploreRunThread, self).__init__(name, True)
-        self.pc_commander = pc_interfacing
+        self.pc_api = pc_api
 
     @Override(AbstractThread)
     def run(self):
-        while not self.pc_commander._is_connected():
+        while not self.pc_api._is_connected():
             time.sleep(1)
 
         while True:
-            self.pc_commander.explore_run_signal()
+            self.pc_api.explore_run_signal()
             time.sleep(1)
 
 if __name__=="__main__":
     # stub testing
-    serial_commander = SerialCommanderStub()
-    android_commander = None
-    pc_thread = PcThread("pc_thread", serial_commander, android_commander)
+    serial_api = SerialAPIStub()
+    android_api = None
+    pc_thread = PcThread("pc_thread", serial_api, android_api)
     pc_thread.start()
 
 

@@ -11,13 +11,13 @@ def goodbye(client_sock, server_sock):
         print_msg("goodbye", "Closing bluetooth server")
         server_sock.close()
 
-class AndroidCommander(object):
-    def __init__(self, serial_commander):
+class AndroidAPI(object):
+    def __init__(self, serial_api):
         self.client_sock = None
         self.server_sock = None
         self.is_connected = False
-        #self.serial_commander = SerialCommanderStub()
-        self.serial_commander = serial_commander
+        #self.serial_api = SerialAPIStub()
+        self.serial_api = serial_api
 
         self.map_outgoing = Queue()
         self.name = "Android Commander"
@@ -188,9 +188,9 @@ class AndroidCommander(object):
 
     def __execute_msg(self, function_code, parameter):
         #self.write("Forward")
-        self.serial_commander.command_put(function_code, parameter)
+        self.serial_api.command_put(function_code, parameter)
         while True:
-            lst = self.serial_commander.response_pop()
+            lst = self.serial_api.response_pop()
             print_msg(self.name, "Waiting for response")
             print lst
             if lst==None:
@@ -239,15 +239,15 @@ class AndroidCommander(object):
 
 class AndroidThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, android_commander, mode, production):
+    def __init__(self, name, android_api, mode, production):
         """
         :param name: name for the thread
-        :param serial_commander: Shared resoureces
+        :param serial_api: Shared resoureces
         :param mode: either "auto" or "control"
         :param production: Boolean, if false, use __test_run_pipeline_style rather than waiting for PC
         """
         super(AndroidThread, self).__init__(name)
-        self.android_commander = android_commander
+        self.android_api = android_api
         self.mode = mode
         self.production = production
 
@@ -272,13 +272,13 @@ class AndroidThread(AbstractThread):
         while True:
             # establish connection
             while True:
-                if self.android_commander.is_connect():
+                if self.android_api.is_connect():
                     break
-                self.android_commander.init_bluetooth()
+                self.android_api.init_bluetooth()
                 time.sleep(1)
 
 
-            if self.android_commander.is_map_empty():
+            if self.android_api.is_map_empty():
                 if self.production:
                     # self.print_msg("Waiting for map update")
                     time.sleep(1)
@@ -287,7 +287,7 @@ class AndroidThread(AbstractThread):
                     self.__test_run_pipeline_style()
             else:
                 self.print_msg("Updating map")
-                self.android_commander.map_pop_n_exe()
+                self.android_api.map_pop_n_exe()
                 time.sleep(1)
 
 
@@ -298,12 +298,12 @@ class AndroidThread(AbstractThread):
         """
         while True:
             while True:
-                if self.android_commander.is_connect():
+                if self.android_api.is_connect():
                     break
-                self.android_commander.init_bluetooth()
+                self.android_api.init_bluetooth()
                 time.sleep(1)
 
-            self.android_commander.read_for_remote_control()
+            self.android_api.read_for_remote_control()
             time.sleep(1)
 
 
@@ -315,68 +315,68 @@ class AndroidThread(AbstractThread):
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"2,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"3,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"4,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"5,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"6,1\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"6,2\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
         msg_received = "{\"map\":\"%s\", \"location\":\"6,3\"}"%loc
         msg_json = json.loads(msg_received)
         location = msg_json["location"]
         map_grid = msg_json["map"]
-        self.android_commander.map_put(map_grid, location)
+        self.android_api.map_put(map_grid, location)
 
 class AndroidExploreRunThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, android_commander):
+    def __init__(self, name, android_api):
         super(AndroidExploreRunThread, self).__init__(name, production=True)
-        self.android_commander = android_commander
+        self.android_api = android_api
         self.setDaemon(True)
 
     @Override(AbstractThread)
     def run(self):
         while True:
-            if self.android_commander.is_connect():
+            if self.android_api.is_connect():
                 break
             time.sleep(1)
 
-        while not self.android_commander.explore_start or not self.android_commander.run_start:
-            self.android_commander.read_for_explore_run()
+        while not self.android_api.explore_start or not self.android_api.run_start:
+            self.android_api.read_for_explore_run()
 
 # testing only bluetoot
 if __name__=="__main__":
     print "Executing main flow"
-    serial_commander = SerialCommanderStub()
-    android_commander = AndroidCommander(serial_commander)
+    serial_api = SerialAPIStub()
+    android_api = AndroidAPI(serial_api)
 
-    android_thread = AndroidThread("android", android_commander, mode="auto", production=False)
-    explore_run_thread = AndroidExploreRunThread("explore_run", android_commander)
+    android_thread = AndroidThread("android", android_api, mode="auto", production=False)
+    explore_run_thread = AndroidExploreRunThread("explore_run", android_api)
 
     android_thread.start()
     explore_run_thread.start()

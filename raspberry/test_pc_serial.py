@@ -8,12 +8,12 @@ __author__ = 'Danyang'
 if __name__=="__main__":
     print "Starting main flow"
     # shared resources
-    serial_commander = SerialCommander()
-    android_commander = None
+    serial_api = SerialAPI()
+    android_api = None
 
     # threads
-    pc_thread = PcThread("pc_thread", serial_commander, android_commander, production=True)
-    serial_thread = SerialExecutionThread("serial", serial_commander, production=True)
+    pc_thread = PcThread("pc_thread", serial_api, android_api, production=True)
+    serial_thread = SerialExecutionThread("serial", serial_api, production=True)
 
 
     serial_thread.start()

@@ -1,6 +1,6 @@
 from bluetooth_communication import AndroidThread
-from serial_comminication import SerialCommander, SerialExecutionThread
-from serial_stub import SerialCommanderStub
+from serial_comminication import SerialAPI, SerialExecutionThread
+from serial_stub import SerialAPIStub
 
 __author__ = 'Yanl56'
 
@@ -8,12 +8,12 @@ __author__ = 'Yanl56'
 # test bluetooth and serial
 if __name__=="__main__":
     print "Executing main flow"
-    serial_commander = SerialCommander()
-    androidT = AndroidThread("android", serial_commander, mode="control", production=False)
-    # serialExecutionThread = SerialExecutionThread("serial", serial_commander, production=True)
+    serial_api = SerialAPI()
+    androidThread = AndroidThread("android", serial_api, mode="control", production=False)
+    # serialExecutionThread = SerialExecutionThread("serial", serial_api, production=True)
 
     # serialExecutionThread.start()
-    androidT.start()
+    androidThread.start()
 
 
 

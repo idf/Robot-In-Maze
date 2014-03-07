@@ -4,11 +4,11 @@ from utils.decorators import Override
 __author__ = 'Danyang'
 
 
-class SerialCommanderStub(SerialCommander):
-    @Override(SerialCommander)
+class SerialAPIStub(SerialAPI):
+    @Override(SerialAPI)
     def __init__(self):
-        super(SerialCommanderStub, self).__init__(production=False)
-    @Override(SerialCommander)
+        super(SerialAPIStub, self).__init__(production=False)
+    @Override(SerialAPI)
     def command_put(self, function, parameter):
         if function==10:
             self.responses_outgoing.put([False, SENSOR, json.dumps({
@@ -18,10 +18,10 @@ class SerialCommanderStub(SerialCommander):
         else:
             self.responses_outgoing.put([True, FUNCTION, json.dumps({"function": function, "status": 200})])
 
-    @Override(SerialCommander)
+    @Override(SerialAPI)
     def response_pop(self):
         """
         :return: [ack, type_data, data] : [bool, int, json_str]
         """
-        return super(SerialCommanderStub, self).response_pop()
+        return super(SerialAPIStub, self).response_pop()
 
