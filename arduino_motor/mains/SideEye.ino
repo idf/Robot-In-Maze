@@ -42,8 +42,8 @@ void SideEye::test_readings() {
 bool SideEye::is_within_range(SharpIR* sensor, int model) {
   int upper, lower;
   if(model==SHORT){
-    upper = 45;
-    lower = 10;
+    upper = 43;
+    lower = 8;
   }
   else {
     upper = 65;
@@ -64,7 +64,7 @@ int SideEye::output_reading(SharpIR* sensor, int model) {
     OFFSET = 8;
   }
   else {
-    OFFSET = 4  ;
+    OFFSET = 4  ; // for LONG
   }
 
   int dis = sensor->distance() - OFFSET;
