@@ -22,6 +22,11 @@ class AndroidCommander(object):
         self.map_outgoing = Queue()
         self.name = "Android Commander"
 
+        # explore and run signal
+        self.explore_start = False
+        self.run_start = False
+
+
 
     def is_connect(self):
         return self.is_connected
@@ -119,15 +124,12 @@ class AndroidCommander(object):
         :param y: int
         :return: String
         """
-        c1 = str(x)+str(y)
-        c2 = str(x+1)+str(y)
-        #c1 = ("0"+str(x))[-2:]+("0"+str(y))[-2:]
-        #c2 = ("0"+str(x+1))[-2:]+("0"+str(y))[-2:]
-        #c3 = ("0"+str(x))[-2:]+("0"+str(y+1))[-2:]
-        #c4 = ("0"+str(x+1))[-2:]+("0"+str(y+1))[-2:]
-        #print "Robot Location: " + c1+c2+c3+c4
-        print_msg(self.name, "Robot Location: " + c1+c2)
-        return c1+c2
+        # android starts from 1 1
+        x+=1
+        y+=1
+
+        coordinates = "%d %d %d %d"%(x, y, x+1, y)
+        return coordinates
 
 
 
@@ -140,8 +142,8 @@ class AndroidCommander(object):
         #map_x, map_y = map_coordinate.split(",")
         robot_coordinate = self.__translate_robot_location(int(robot_x), int(robot_y))
         #robot_coord = str(robot_coordinate)+str(map_coordinate)
-        final_coordinate = " ".join(str(robot_coordinate)+str(map_coordinate))
-        self.write_map(str(final_coordinate))
+        final_coordinate = robot_coordinate+" "+" ".join(str(map_coordinate))
+        self.write_map(final_coordinate)
         #return final_coordinate
 
 
@@ -164,6 +166,25 @@ class AndroidCommander(object):
             self.is_connected = False
             self.client_sock.close()
             self.disconnect()
+
+    def read_for_explore_run(self):
+        """
+        listen from nexus
+        Main Flow of Auto mode
+        """
+        b_data = self.client_sock.recv(1024)
+        if b_data!=None and len(b_data)!=0:
+            if b_data!="GRID": # AUTO mode in android, to avoid flush cmd
+                print "Received from Android: %s" % b_data
+            if b_data=="explore":
+                print_msg(self.name, "Setting \"explore\" flag")
+                self.explore_start = True
+            elif b_data=="run":
+                print_msg(self.name, "Setting \"run\" flag")
+                self.run_start = True
+            else:
+                pass
+
 
     def __execute_msg(self, function_code, parameter):
         #self.write("Forward")
@@ -221,7 +242,7 @@ class AndroidThread(AbstractThread):
     def __init__(self, name, android_commander, mode, production):
         """
         :param name: name for the thread
-        :param serial_commander: Shared resources
+        :param serial_commander: Shared resoureces
         :param mode: either "auto" or "control"
         :param production: Boolean, if false, use __test_run_pipeline_style rather than waiting for PC
         """
@@ -249,20 +270,21 @@ class AndroidThread(AbstractThread):
         Auto run mode. Android update the map
         """
         while True:
+            # establish connection
             while True:
                 if self.android_commander.is_connect():
                     break
                 self.android_commander.init_bluetooth()
                 time.sleep(1)
+
+
             if self.android_commander.is_map_empty():
                 if self.production:
-                    self.print_msg("Waiting for map update")
-                    time.sleep(2)
+                    # self.print_msg("Waiting for map update")
+                    time.sleep(1)
                     continue
                 else:
                     self.__test_run_pipeline_style()
-
-
             else:
                 self.print_msg("Updating map")
                 self.android_commander.map_pop_n_exe()
@@ -330,12 +352,31 @@ class AndroidThread(AbstractThread):
         map_grid = msg_json["map"]
         self.android_commander.map_put(map_grid, location)
 
+class ExploreRunThread(AbstractThread):
+    @Override(AbstractThread)
+    def __init__(self, name, android_commander):
+        super(ExploreRunThread, self).__init__(name, production=True)
+        self.android_commander = android_commander
+        self.setDaemon(True)
 
-# testing
+    @Override(AbstractThread)
+    def run(self):
+        while True:
+            if self.android_commander.is_connect():
+                break
+            time.sleep(1)
+
+        while not self.android_commander.explore_start or not self.android_commander.run_start:
+            self.android_commander.read_for_explore_run()
+
+# testing only bluetoot
 if __name__=="__main__":
     print "Executing main flow"
     serial_commander = SerialCommanderStub()
     android_commander = AndroidCommander(serial_commander)
 
-    androidT = AndroidThread("android", android_commander, mode="auto", production=False)
-    androidT.start()
+    android_thread = AndroidThread("android", android_commander, mode="auto", production=False)
+    explore_run_thread = ExploreRunThread("explore_run", android_commander)
+
+    android_thread.start()
+    explore_run_thread.start()

@@ -17,6 +17,9 @@ class PcInterfacing (object):
         self.serial_commander = serial_commander
         self.android_commander = android_commander
 
+        # explore start signal
+        self.__explore_sent = False
+        self.__run_sent = False
         
     def connect(self):
         """
@@ -41,7 +44,7 @@ class PcInterfacing (object):
         self.conn.close()
         self.is_connect = False
 
-    def __is_connected(self):
+    def _is_connected(self):
         return self.is_connect
 
     def __response_to_pc(self, msg):  # taking function code from Robot
@@ -50,21 +53,27 @@ class PcInterfacing (object):
         :param msg: String
         """
         msg += "\0"  # talking to C thus adding \0
-        if self.__is_connected():
+        if self._is_connected():
             #try:
             print_msg(self.name, "Writing to PC: %s" % msg)  # passing function code to PC
             self.conn.sendto(msg, self.pc_addr)
             time.sleep(0.0001)  # adjusts thread scheduling and allows the socket I/O to finish FLUSH
 
+    def __index_json_msg(self, msg):
+        import re
+        return [m.start() for m in re.finditer(r"{", msg)]
+
+
     def __read(self):
         """
-        Read from the socket
+        Read from the socket (json needed)
         :return: dictionary
         """
         msg = self.conn.recvfrom(1024)
         msg = msg[0]
         print_msg(self.name, "Message received: %s" % msg)
         msg = msg[msg.find("{"):] # cleaning data
+        msg = msg.replace("}\n{", ",")
 
         msg_dict = json.loads(msg)
         return msg_dict
@@ -73,8 +82,13 @@ class PcInterfacing (object):
         """
         Main Flow
         """
-        if self.__is_connected():
+        if self._is_connected():
             msg_dict = self.__read()
+            if "map" in msg_dict:
+                if self.android_commander!=None:
+                    print_msg(self.name, "Updating Android's map")
+                    self.android_commander.map_put(msg_dict["map"], msg_dict["location"])
+
             if "function" in msg_dict:
                 # executing function with parameter
                 function_code = int(msg_dict["function"])
@@ -97,18 +111,29 @@ class PcInterfacing (object):
                         self.__response_to_pc(sending_msg)
                         if ack:
                             break
-            elif "map" in msg_dict:
-                if self.android_commander!=None:
-                    print_msg(self.name, "Updating Android's map")
-                    self.android_commander.map_put(msg_dict["map"], msg_dict["location"])
+
 
         else:
             print_msg(self.name, "Not connected")
 
+    def explore_run_signal(self):
+        if not self.__explore_sent:
+            if self.android_commander.explore_start:
+                print_msg(self.name, "Sending \"explore\" signal")
+                self.__response_to_pc("explore")
+                self.__explore_sent = True
+
+        if not self.__run_sent:
+            if self.android_commander.run_start:
+                print_msg(self.name, "Sending \"start\" signal")
+                self.__response_to_pc("start")
+                self.__run_sent = True
+
+
 class PcThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serial_commander, android_commander, production):
-        super(PcThread, self).__init__(name, production)
+    def __init__(self, name, serial_commander, android_commander):
+        super(PcThread, self).__init__(name, production=True)
         self.pc_interfacing = PcInterfacing(serial_commander, android_commander)
 
     @Override(AbstractThread)
@@ -122,9 +147,26 @@ class PcThread(AbstractThread):
             time.sleep(0.05)
 
 
+class PcExploreRunThread(AbstractThread):
+    @Override(AbstractThread)
+    def __init__(self, name, pc_interfacing):
+        super(PcExploreRunThread, self).__init__(name, True)
+        self.pc_commander = pc_interfacing
+
+    @Override(AbstractThread)
+    def run(self):
+        while not self.pc_commander._is_connected():
+            time.sleep(1)
+
+        while True:
+            self.pc_commander.explore_run_signal()
+            time.sleep(1)
+
 if __name__=="__main__":
     # stub testing
     serial_commander = SerialCommanderStub()
     android_commander = None
-    pc_thread = PcThread("pc_thread", serial_commander, android_commander, production=False)
+    pc_thread = PcThread("pc_thread", serial_commander, android_commander)
     pc_thread.start()
+
+

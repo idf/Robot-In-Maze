@@ -1,16 +1,14 @@
-from bluetooth_communication import *
+from bluetooth_communication import AndroidCommander, AndroidThread, ExploreRunThread
 from pc_communication import PcThread, PcExploreRunThread
-from serial_comminication import *
+from serial_stub import SerialCommanderStub
 
 __author__ = 'Danyang'
 
 if __name__=="__main__":
-
-    # shared resources
-    serial_commander = SerialCommander()
+    print "Executing main flow"
+    serial_commander = SerialCommanderStub()
     android_commander = AndroidCommander(serial_commander)
 
-    # threads
     android_thread = AndroidThread("android", android_commander, mode="auto", production=True)
     explore_run_thread = ExploreRunThread("explore_run_bluetooth", android_thread.android_commander)
     pc_thread = PcThread("pc_thread", serial_commander, android_commander)

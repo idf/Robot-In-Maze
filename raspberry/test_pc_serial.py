@@ -4,6 +4,7 @@ from serial_comminication import *
 __author__ = 'Danyang'
 
 
+# PC and Serial
 if __name__=="__main__":
     print "Starting main flow"
     # shared resources
