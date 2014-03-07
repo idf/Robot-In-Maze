@@ -22,18 +22,18 @@ protected:
 	Arena* fullArena;
 	MapIO* io;
 	PathFinder* pathFinder;
-
+	Connector* conn;
 	// display members
 	Gtk::Table arenaDisplay;
 	DisplayItem *gridDisplay[ARENA_X_SIZE][ARENA_Y_SIZE];
 	Gtk::VBox vbox;
 	Gtk::HBox hbox;
-	Gtk::Button startExploration, startGoToDestination;
+	Gtk::Button startExploration;
 	Gtk::Entry percentageEntry, timeLimitEntry;
 
 	// signal handler
 	void MainWindow::startExplorationButtonClicked();
-	void MainWindow::startGoToDestinationButtonClicked();
+	bool MainWindow::startGoToDestination();
 
 private:
 	void refreshDisplay();

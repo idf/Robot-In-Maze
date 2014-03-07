@@ -1,8 +1,5 @@
 #include "pathfinder.h"
 #include <list>
-#include <string>
-#include <math.h>
-#include <Windows.h>
 
 using namespace std;
 
@@ -27,17 +24,17 @@ PathFinder::~PathFinder()
 // highest level exploration, find the next step and make a move
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
-{
-	// explore the map
-	// && time(0) - start < timeLimitInSeconds
-	if (!_arena->isExploredFully(percentage))
+{   
+	_robot->senseEnvironment(_arena, _fullArena);
+	if (!_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 #endif
-		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY )
+		if (_arena->getGridType(_endX, _endY) != UNEXPLORED )
 		{
+			// TODO CHANGE TO CHECK EXPLORABLE
 			// if not reachable, check whether it is detectable, if not, break;
 			if(!pointIsWalkable(_endX, _endY))
 			{
@@ -51,7 +48,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				getRobotToMove(*i);
 			else
 				_robot->rotateClockwise(90); // sense other areas
-			_robot->senseEnvironment(_arena, _fullArena);
+			
 			return true;
 		}
 		else
@@ -75,6 +72,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		}
 	}
 	// go back to start point
+	// TODO CHANGE TO FASTEST PATH RUN!
 	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
 	{
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
@@ -294,10 +292,58 @@ void PathFinder::getRobotToMove(Grid* destination)
 	this->_robot->setLocation(destination->getX(), destination->getY());
 #endif
 }
-// to be changed
-void PathFinder::getMovementList(std::vector<Grid*>)
+
+bool PathFinder::runOnePath(vector<Grid*> path)
 {
 
+}
+
+
+// TODO CHANGE
+vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path)
+{
+	vector<pair<std::string, int>*>* movementList = new vector<pair<std::string, int>*>();
+	pair<std::string, int>* singleMovement = new pair<std::string, int>("", 0);
+	// variables for simulation of robot movement
+	Grid* destination = *path.rbegin();
+	int currentX = _robot->getPosX(), currentY = _robot->getPosY();
+	DIRECTION currentDir = _robot->getDirection();
+	int xDiff = destination->getX() - currentX;
+	int yDiff = destination->getY() - currentY;
+	DIRECTION dir = RIGHT;
+	// set robot direction first
+	if (xDiff == 0 && yDiff == 1)
+		dir = DOWN;
+	else if (xDiff == -1 && yDiff == 0)
+		dir = LEFT;
+	else if (xDiff == 0 && yDiff == -1)
+		dir = UP;
+
+	while (dir != currentDir)
+	{
+		if (currentDir == DOWN && dir == RIGHT)
+		{
+			singleMovement->first = "rotateCounterClockwise";
+			singleMovement->second += 90;
+		}
+		else if (currentDir == RIGHT && dir == DOWN)
+		{
+			singleMovement->first = "rotateClockwise";
+			singleMovement->second += 90;
+		}
+		else if (dir > currentDir)
+		{
+			singleMovement->first = "rotateClockwise";
+			singleMovement->second += 90;
+		}
+		else
+		{
+			singleMovement->first = "rotateCounterClockwise";
+			singleMovement->second += 90;
+		}
+	}
+	if (singleMovement->second != 0)
+		movementList->push_back(singleMovement);
 }
 
 void PathFinder::selectNextDestination()

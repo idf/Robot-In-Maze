@@ -30,7 +30,6 @@ bool Connector::sendMovement(int dist)
 		;
 	return true;
 } 
-
 bool Connector::sendRotationClockwise(int deg)
 { 
 	Json::Value root;
@@ -49,7 +48,6 @@ bool Connector::sendRotationClockwise(int deg)
 		;
 	return true;
 }
-
 bool Connector::sendRotationCounterClockwise(int deg)
 { 
 	Json::Value root;
@@ -83,10 +81,14 @@ map<int, int>* Connector::requestForSensorInformation()
 	char* temp = (char*)outputConfig.c_str();
 	NetworkServices::sendMessage(network->ConnectSocket, (char*)outputConfig.c_str(), strlen(temp));
 
+	//data
 	char buf[1000];
 	while(NetworkServices::receiveMessage(network->ConnectSocket, buf, 1000) <= 0)
 		;
-
+	// ack
+	char ack[1000];
+	while(NetworkServices::receiveMessage(network->ConnectSocket, ack, 1000) <= 0)
+		;
 	Json::Value root;
 	Json::Reader reader;
 	reader.parse(buf, root);
@@ -101,4 +103,45 @@ map<int, int>* Connector::requestForSensorInformation()
 	}
 	return mymap;
 }
-bool Connector::sendLocation(){ return false; }
+
+bool Connector::waitForAndroidExplore()
+{
+	char buf[1000];
+	while(NetworkServices::receiveMessage(network->ConnectSocket, buf, 1000) <= 0)
+		;
+	cout << buf << endl;
+	if(buf == "explore")
+		return true;
+	else 
+		return false;
+}
+
+bool Connector::waitForAndroidRun()
+{
+	char buf[1000];
+	while(NetworkServices::receiveMessage(network->ConnectSocket, buf, 1000) <= 0)
+		;
+	cout << buf << endl;
+	if(buf == "run")
+		return true;
+	else 
+		return false;
+}
+
+bool Connector::sendMapInformationToAndroid(std::string map, std::string location)
+{
+	Json::Value roots;
+	Json::Value mapV( map.c_str() );
+	Json::Value locationV( location.c_str() );
+
+	roots["map"] = mapV;
+	roots["location"] = locationV;
+
+	Json::StyledWriter writer;
+	std::string output = writer.write(roots);
+
+	char* temp = (char*)output.c_str();
+	NetworkServices::sendMessage(network->ConnectSocket, (char*)output.c_str(), strlen(temp));
+
+	return true;
+}

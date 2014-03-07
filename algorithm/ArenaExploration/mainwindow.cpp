@@ -6,11 +6,11 @@
 using namespace std;
 
 MainWindow::MainWindow()
-	:arenaDisplay(ARENA_X_SIZE, ARENA_Y_SIZE, false),
-	startExploration("Explore"), startGoToDestination("Destination")
+	:arenaDisplay(ARENA_X_SIZE, ARENA_Y_SIZE, false), startExploration("Explore")
 {
+	conn = new Connector();
 	arena = new Arena();
-	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT);
+	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT, conn);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
 	pathFinder = new PathFinder(robot, arena, fullArena);
@@ -24,7 +24,6 @@ MainWindow::MainWindow()
 	hbox.pack_start(percentageEntry);
 	hbox.pack_start(timeLimitEntry);
 	hbox.pack_start(startExploration);
-	hbox.pack_start(startGoToDestination);
 
 	// init table contant
 	arenaDisplay.set_row_spacings(2);
@@ -39,7 +38,7 @@ MainWindow::MainWindow()
 		}
 	}
 
-#ifdef HARDWARE
+#ifndef HARDWARE
 	io->readMapFromFile("testmap.txt");
 	cout << "Map successfully read." << endl;
 #endif
@@ -51,6 +50,7 @@ MainWindow::MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
+	conn->waitForAndroidExplore();
 #ifdef HARDWARE
 	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));
 #else
@@ -59,18 +59,25 @@ void MainWindow::startExplorationButtonClicked()
 	pathFinder->start = time(0);
 }
 
-void MainWindow::startGoToDestinationButtonClicked()
+bool MainWindow::startGoToDestination()
 {
+	cout << "running";
+	return true;
 }
 
 bool MainWindow::exploreProcessHandler()
 {
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 	this->refreshDisplay();
+	io->printArena(arena);
+	while(!robot->sendItselfAndArena(arena))
+		;
 	if (!continueTimer)
 	{
 		io->generateMapDescriptorLevel1();
 		io->generateMapDescriptorLevel2();
+		conn->waitForAndroidRun();
+		Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::startGoToDestination));
 	}
 	return continueTimer;
 }

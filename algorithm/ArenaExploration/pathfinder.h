@@ -7,6 +7,9 @@
 #include "robot.h"
 #include "sensor.h"
 #include <ctime>
+#include <vector>
+#include <string>
+#include <math.h>
 
 class PathFinder
 {
@@ -19,7 +22,8 @@ public:
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);
 	void PathFinder::getRobotToMove(Grid* destination);
-	void PathFinder::getMovementList(std::vector<Grid*>);
+	bool PathFinder::runOnePath(std::vector<Grid*> path);
+	std::vector<std::pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path);
 	void selectNextDestination();
 	time_t start;
 private:

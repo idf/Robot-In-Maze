@@ -3,6 +3,7 @@
 
 #include <map>
 #include <ClientGame.h>
+#include <string>
 
 class Connector
 {
@@ -16,8 +17,9 @@ public:
 	bool sendRotationClockwise(int deg);
 	bool sendRotationCounterClockwise(int deg);
 	std::map<int, int>* requestForSensorInformation();
-	bool sendLocation();
-
+	bool Connector::waitForAndroidExplore();
+	bool Connector::waitForAndroidRun();
+	bool Connector::sendMapInformationToAndroid(std::string map, std::string location);
 private:
 	ClientNetwork* network;
 };
