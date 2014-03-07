@@ -28,7 +28,7 @@ public:
 	inline int getY() { return y; }
 
 	inline int Grid::getDistanceTravelled(Grid *p) { return p->distanceTravelled + ((x == p->x || y == p->y) ? 10 : 14); }
-	inline int Grid::getDistanceEstimated(Grid *p) { return (abs(p->x - x) + abs(p->y - y)) * 10; }
+	int Grid::getDistanceEstimated(Grid *p);
 	inline bool Grid::hasParent() { return parent != NULL; }
 	void Grid::computeScores(Grid *end);
 };

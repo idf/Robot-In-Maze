@@ -1,5 +1,10 @@
 #include "Arena.h"
 
+int Grid::getDistanceEstimated(Grid *p)
+{ 
+	return (abs(p->x - x) + abs(p->y - y)) * 10; 
+}
+
 // region grid class
 void Grid::computeScores(Grid *end)
 {
