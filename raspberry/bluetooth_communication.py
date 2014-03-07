@@ -352,10 +352,10 @@ class AndroidThread(AbstractThread):
         map_grid = msg_json["map"]
         self.android_commander.map_put(map_grid, location)
 
-class ExploreRunThread(AbstractThread):
+class AndroidExploreRunThread(AbstractThread):
     @Override(AbstractThread)
     def __init__(self, name, android_commander):
-        super(ExploreRunThread, self).__init__(name, production=True)
+        super(AndroidExploreRunThread, self).__init__(name, production=True)
         self.android_commander = android_commander
         self.setDaemon(True)
 
@@ -376,7 +376,7 @@ if __name__=="__main__":
     android_commander = AndroidCommander(serial_commander)
 
     android_thread = AndroidThread("android", android_commander, mode="auto", production=False)
-    explore_run_thread = ExploreRunThread("explore_run", android_commander)
+    explore_run_thread = AndroidExploreRunThread("explore_run", android_commander)
 
     android_thread.start()
     explore_run_thread.start()

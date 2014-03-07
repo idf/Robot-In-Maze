@@ -56,7 +56,9 @@ void loop(void)
   //warmingUp();
   //serialCommnder->receive_exec_command();
   moveForward(10);
+  printCounts();
   turnRight(90);
+  printCounts();
   //frontEye->test_readings();
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
@@ -85,6 +87,7 @@ void loop(void)
   //getSensorReadings();
   //obstacle_checkpoint();
   //softwareProjectLabSqure();
+  delay(1000);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,4 +1,4 @@
-from bluetooth_communication import AndroidCommander, AndroidThread, ExploreRunThread
+from bluetooth_communication import AndroidCommander, AndroidThread, AndroidExploreRunThread
 from pc_communication import PcThread, PcExploreRunThread
 from serial_stub import SerialCommanderStub
 
@@ -10,7 +10,7 @@ if __name__=="__main__":
     android_commander = AndroidCommander(serial_commander)
 
     android_thread = AndroidThread("android", android_commander, mode="auto", production=True)
-    explore_run_thread = ExploreRunThread("explore_run_bluetooth", android_thread.android_commander)
+    explore_run_thread = AndroidExploreRunThread("explore_run_bluetooth", android_thread.android_commander)
     pc_thread = PcThread("pc_thread", serial_commander, android_commander)
     pc_explore_run_thread = PcExploreRunThread("explore_run_pc", pc_thread.pc_interfacing)
 
