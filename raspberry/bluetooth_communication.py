@@ -1,23 +1,32 @@
-import threading
 from bluetooth import *
 from serial_stub import *
 from serial_comminication import *
+import json
 
 def goodbye(client_sock, server_sock):
     if client_sock:
-        print "Closing bluetooth client"
+        print_msg("goodbye", "Closing bluetooth client")
         client_sock.close()
     if server_sock:
-        print "Closing bluetooth server"
+        print_msg("goodbye", "Closing bluetooth server")
         server_sock.close()
 
-class androidCommander(object):
-    def __init__(self, serial_commander):
+class AndroidAPI(object):
+    def __init__(self, serial_api):
         self.client_sock = None
         self.server_sock = None
         self.is_connected = False
-        #self.serial_commander = SerialCommanderStub()
-        self.serial_commander = serial_commander
+        #self.serial_api = SerialAPIStub()
+        self.serial_api = serial_api
+
+        self.map_outgoing = Queue()
+        self.name = "Android Commander"
+
+        # explore and run signal
+        self.explore_start = False
+        self.run_start = False
+
+
 
     def is_connect(self):
         return self.is_connected
@@ -40,12 +49,12 @@ class androidCommander(object):
         )
         import atexit
         atexit.register(goodbye, None, self.server_sock)
-        print "atexit registered 1"
-        print "waiting for connection on RFCOMM channel %d" % port
+        #print "atexit registered 1"
+        print_msg(self.name, "waiting for connection on RFCOMM channel %d" % port)
         self.client_sock, client_info = self.server_sock.accept() # blocking
         atexit.register(goodbye, self.client_sock, self.server_sock)
-        print "atexit registered 2"
-        # print "Accepted connection from ", client_info
+        #print "atexit registered 2"
+        print_msg(self.name, "Accepted connection from "+str(client_info))
         self.is_connected = True
 
 
@@ -57,7 +66,7 @@ class androidCommander(object):
         """
         auto connect to nexus
         """
-        print "Connecting..."
+        print_msg(self.name, "Connecting...")
         self.client_sock = BluetoothSocket( RFCOMM )
         uuid = "00001101-0000-1000-8000-00805F9B34FB"
         btaddr = "08:60:6E:A5:90:50"
@@ -69,55 +78,120 @@ class androidCommander(object):
         port = first_match["port"]
         host = first_match["host"]
         self.client_sock.connect((host,port))
-        print "Connected to ",host
+        print_msg(self.name, "Connected to "+str(host))
         self.is_connected = True
 
     def write(self,msg):
         """
-        write_to_pc to nexus
+        write to nexus
         :status + msg
         """
         try:
             while self.is_connect():
             #while self.is_connect():
                 self.client_sock.send("status "+str(msg))
-                print "Write to Android: %s" % msg
+                print_msg(self.name, "Write to Android: %s" % msg)
                 return True
 
         except IOError:
-            print "disconnected"
+            print_msg(self.name, "disconnected")
             self.is_connected = False
             self.client_sock.close()
             self.disconnect()
 
+    def write_map(self,msg):
+        """
+        write to nexus
+        :status + msg
+        """
+        try:
+            while self.is_connect():
+            #while self.is_connect():
+                #self.client_sock.send("GRID 5 5 2 2 3 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0")#str(msg))
+                self.client_sock.send("GRID 15 20 "+str(msg))
+                print_msg(self.name, "Write to Android: %s" % msg[:15])
+                return True
+
+        except IOError:
+            print_msg(self.name, "disconnected")
+            self.is_connected = False
+            self.client_sock.close()
+            self.disconnect()
+
+    def __translate_robot_location(self, x, y):
+        """
+        :param x: int
+        :param y: int
+        :return: String
+        """
+        # android starts from 1 1
+        x+=1
+        y+=1
+
+        coordinates = "%d %d %d %d"%(x, y, x+1, y)
+        return coordinates
 
 
 
-    def read(self):
+    def update_android(self, map_coordinate, location_coordinate):
+        """
+        Main Flow of Auto
+        Send: F1, L90, R90
+        """
+        robot_x, robot_y = location_coordinate.split(",")
+        #map_x, map_y = map_coordinate.split(",")
+        robot_coordinate = self.__translate_robot_location(int(robot_x), int(robot_y))
+        #robot_coord = str(robot_coordinate)+str(map_coordinate)
+        final_coordinate = robot_coordinate+" "+" ".join(str(map_coordinate))
+        self.write_map(final_coordinate)
+        #return final_coordinate
+
+
+    def read_for_remote_control(self):
         """
         listen from nexus
+        Main Flow of Remote Control
         """
         try:
             if self.is_connect():
-                print "Receiving socket package"
+                print_msg(self.name, "Receiving socket package")
                 b_data = self.client_sock.recv(1024)
                 print "Received from Android: %s" % b_data
                 if len(b_data) != 0:
-                    print "decoding"
-                    message =  self.decode_n_execute(b_data)
+                    print_msg(self.name, "decoding")
+                    message =  self.__decode_n_execute(b_data)
                     self.write(message)
         except IOError:
-            print "disconnected"
+            print_msg(self.name, "disconnected")
             self.is_connected = False
             self.client_sock.close()
             self.disconnect()
 
+    def read_for_explore_run(self):
+        """
+        listen from nexus
+        Main Flow of Auto mode
+        """
+        b_data = self.client_sock.recv(1024)
+        if b_data!=None and len(b_data)!=0:
+            if b_data!="GRID": # AUTO mode in android, to avoid flush cmd
+                print "Received from Android: %s" % b_data
+            if b_data=="explore":
+                print_msg(self.name, "Setting \"explore\" flag")
+                self.explore_start = True
+            elif b_data=="run":
+                print_msg(self.name, "Setting \"run\" flag")
+                self.run_start = True
+            else:
+                pass
+
+
     def __execute_msg(self, function_code, parameter):
-        #self.write_to_pc("Forward")
-        self.serial_commander.command_put(function_code, parameter)
+        #self.write("Forward")
+        self.serial_api.command_put(function_code, parameter)
         while True:
-            lst = self.serial_commander.response_pop()
-            print "Waiting for response"
+            lst = self.serial_api.response_pop()
+            print_msg(self.name, "Waiting for response")
             print lst
             if lst==None:
                 time.sleep(2)
@@ -131,50 +205,178 @@ class androidCommander(object):
                     continue
 
 
-    def decode_n_execute(self, msg):
+    def __decode_n_execute(self, msg):
         if msg == "w":
             self.__execute_msg(0, 10)
-            return "Forward"
+            return "Robot moved Forward"
         elif msg == "a":
             self.__execute_msg(1, 90)
-            return "Turn Left"
+            return "Robot Turned Left"
         elif msg == "d":
             self.__execute_msg(2, 90)
-            return "Turn Right"
+            return "Robot Turned Right"
         elif msg == "run":#shortest path
-            #self.write_to_pc("run")
+            #self.write("run")
             return ""
         elif msg == "explore":#explore maze
-            #self.write_to_pc("explore")
+            #self.write("explore")
             return ""
 
+    ########################################################################################################################
+    def map_pop_n_exe(self):
+        if not self.map_outgoing.empty():
+            #self.ack = False
+            command_pair = self.map_outgoing.get()
+            self.update_android(str(command_pair[0]), str(command_pair[1]))
+            #self.write_map(str(command_pair[0])+str(command_pair[1]))
+
+    def map_put(self, map_grid, location):
+        self.map_outgoing.put([map_grid, location])
+
+    def is_map_empty(self):
+        return self.map_outgoing.empty()
 
 
-
-class androidThread(AbstractThread):
+class AndroidThread(AbstractThread):
     @Override(AbstractThread)
-    def __init__(self, name, serial_commander):
-        super(androidThread, self).__init__()
-        self.commander = androidCommander(serial_commander)
-        self.name = name
+    def __init__(self, name, android_api, mode, production):
+        """
+        :param name: name for the thread
+        :param serial_api: Shared resoureces
+        :param mode: either "auto" or "control"
+        :param production: Boolean, if false, use __test_run_pipeline_style rather than waiting for PC
+        """
+        super(AndroidThread, self).__init__(name)
+        self.android_api = android_api
+        self.mode = mode
+        self.production = production
 
 
     @Override(AbstractThread)
     def run(self):
         self.print_msg("Starting")
-        while True:
-            while True:
-                self.commander.init_bluetooth()
-                if self.commander.is_connect:
-                    break
-                time.sleep(1)
-            self.commander.read()
-            #self.serial_commander.write_to_pc()
+        if self.mode=="control":
+            self.print_msg("In remote control mode")
+            self.__remote_control_mode()
+        else:
+            #self.production("In auto mode")
+            self.print_msg("In auto mode")
+            self.__auto_mode()
         self.print_msg("Ending")
 
 
+    def __auto_mode(self):
+        """
+        Auto run mode. Android update the map
+        """
+        while True:
+            # establish connection
+            while True:
+                if self.android_api.is_connect():
+                    break
+                self.android_api.init_bluetooth()
+                time.sleep(1)
+
+
+            if self.android_api.is_map_empty():
+                if self.production:
+                    # self.print_msg("Waiting for map update")
+                    time.sleep(1)
+                    continue
+                else:
+                    self.__test_run_pipeline_style()
+            else:
+                self.print_msg("Updating map")
+                self.android_api.map_pop_n_exe()
+                time.sleep(1)
 
 
 
+    def __remote_control_mode(self):
+        """
+        Android remotely control the robot
+        """
+        while True:
+            while True:
+                if self.android_api.is_connect():
+                    break
+                self.android_api.init_bluetooth()
+                time.sleep(1)
+
+            self.android_api.read_for_remote_control()
+            time.sleep(1)
 
 
+    def __test_run_pipeline_style(self):
+        loc = ""
+        for i in range(300): #300
+            loc = loc+str(i%1)
+        msg_received = "{\"map\":\"%s\", \"location\":\"1,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"2,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"3,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"4,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"5,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"6,1\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"6,2\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+        msg_received = "{\"map\":\"%s\", \"location\":\"6,3\"}"%loc
+        msg_json = json.loads(msg_received)
+        location = msg_json["location"]
+        map_grid = msg_json["map"]
+        self.android_api.map_put(map_grid, location)
+
+class AndroidExploreRunThread(AbstractThread):
+    @Override(AbstractThread)
+    def __init__(self, name, android_api):
+        super(AndroidExploreRunThread, self).__init__(name, production=True)
+        self.android_api = android_api
+        self.setDaemon(True)
+
+    @Override(AbstractThread)
+    def run(self):
+        while True:
+            if self.android_api.is_connect():
+                break
+            time.sleep(1)
+
+        while not self.android_api.explore_start or not self.android_api.run_start:
+            self.android_api.read_for_explore_run()
+
+# testing only bluetoot
+if __name__=="__main__":
+    print "Executing main flow"
+    serial_api = SerialAPIStub()
+    android_api = AndroidAPI(serial_api)
+
+    android_thread = AndroidThread("android", android_api, mode="auto", production=False)
+    explore_run_thread = AndroidExploreRunThread("explore_run", android_api)
+
+    android_thread.start()
+    explore_run_thread.start()

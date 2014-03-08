@@ -42,7 +42,7 @@ void SideEye::test_readings() {
 bool SideEye::is_within_range(SharpIR* sensor, int model) {
   int upper, lower;
   if(model==SHORT){
-    upper = 40;
+    upper = 45;
     lower = 10;
   }
   else {
@@ -85,7 +85,7 @@ int SideEye::get_ultra_reading() {
 bool SideEye::is_within_range(Ultrasound* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
-    if(distance>90 || distance<5) // TODO
+    if(distance>95 || distance<5) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }
