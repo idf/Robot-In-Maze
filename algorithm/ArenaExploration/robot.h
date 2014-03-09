@@ -50,7 +50,7 @@ private:
 	std::vector<Sensor*> _sensors;
 	Connector* _conn;
 	void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int range);
-	
+	void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int range);
 };
 
 #endif

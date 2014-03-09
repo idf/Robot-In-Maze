@@ -194,6 +194,7 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			default:
 				break;
 			}
+			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 			break;
 		case IRRIGHT_ID: // IRRight
 			sensorDir++;
@@ -215,15 +216,75 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			default: 
 				break;
 			}
+			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 			break;
-		case USFRONT_ID: // USFrontR
-		case USSIDE_ID:
-			continue;  // currently ignore US sensor
+		case USFRONT_ID: // USFront
+			switch(this->_direction)
+			{
+			case DOWN:
+				sensorX = this->_posX; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX+1; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			case LEFT:
+				sensorX = this->_posX; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			case UP:
+				sensorX = this->_posX+1; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			case RIGHT:
+				sensorX = this->_posX+1; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX+1; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			default: 
+				break;
+			}
+			break;
+		case USSIDE_ID:  // right ur sensor
+			switch(this->_direction)
+			{
+			case DOWN:
+				sensorX = this->_posX; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			case LEFT:
+				sensorX = this->_posX; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX+1; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			case UP:
+				sensorX = this->_posX+1; sensorY = this->_posY;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX+1; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			case RIGHT:
+				sensorX = this->_posX+1; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX; sensorY = this->_posY+1;
+				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				break;
+			default: 
+				break;
+			}
+			break;
 		default:
 			break;
 		}
-		cout << sensorX << ", " << sensorY << ", " << sensorID << ", " << sensorDir << ", " << iter->second << endl;
-		openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+		//cout << sensorX << ", " << sensorY << ", " << sensorID << ", " << sensorDir << ", " << iter->second << endl;
+		
 	}
 }
 
@@ -277,4 +338,26 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 	cout <<", " <<i << endl;
 	if (!isFree)
 		arena->setGridType(x, y, OBSTACLE);
+}
+
+void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int range)
+{
+	if (range == -1) // to far to detect
+		range = US_RANGE;
+	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
+	for (int i = 0; i <= range/10; ++i)
+	{
+		cout << x << ", " << y;
+		// prevent overriding obstacle as free due to conflict sensor information
+		if (arena->getGridType(x, y) == OBSTACLE)
+			return;
+		switch (direction)
+		{
+		case DOWN: ++y; break;
+		case LEFT: --x; break;
+		case UP: --y; break;
+		case RIGHT: ++x; break;
+		}
+		arena->setGridType(x, y, UNOCCUPIED);
+	}
 }
