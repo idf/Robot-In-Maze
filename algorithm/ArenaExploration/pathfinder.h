@@ -22,7 +22,7 @@ public:
 	std::vector<Grid*> findPathBetween(int startX, int startY, int endX, int endY);
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);
-	void PathFinder::getRobotToMove(Grid* destination);
+	void PathFinder::getRobotToMoveAndSense(Grid* destination);
 	bool PathFinder::runOnePath(std::vector<Grid*> path);
 	std::vector<std::pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path);
 	void selectNextDestination();

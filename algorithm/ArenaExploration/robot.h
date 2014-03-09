@@ -31,7 +31,13 @@ public:
 	void moveForward(int dist);
 	std::map<Sensor*, int>* getDataFromSensor();
 	bool sendItselfAndArena(Arena* arena);
+	std::map<Sensor*, int>* Robot::mapDataWithSensor(std::map<int, int>* data);
 
+	void rotateClockwiseAndSense(int deg, Arena* arena);
+	void rotateCounterClockwiseAndSense(int deg, Arena* arena);
+	void moveForwardAndSense(int dist, Arena* arena);
+
+	void Robot::openArenaWithSensorData(std::map<Sensor*, int>* sensorData, Arena* arena);
 	void senseEnvironment(Arena* arena, Arena* fullArena);
 
 #ifndef HARDWARE

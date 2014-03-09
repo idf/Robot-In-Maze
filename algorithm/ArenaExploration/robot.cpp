@@ -105,14 +105,8 @@ void Robot::moveForward(int dist)
 }
 map<Sensor*, int>* Robot::getDataFromSensor()
 {
-	map<Sensor*, int>* returnData = new map<Sensor*, int>();
 	map<int, int>* sensorData = _conn->requestForSensorInformation();
-
-	for (vector<Sensor*>::iterator iter = _sensors.begin(); iter != _sensors.end(); ++iter)
-	{
-		returnData->insert(pair<Sensor*, int>(*iter,  (*sensorData)[(*iter)->getID()]));
-	}
-	return returnData;
+	return mapDataWithSensor(sensorData);
 }
 bool Robot::sendItselfAndArena(Arena* arena)
 {
@@ -127,12 +121,50 @@ bool Robot::sendItselfAndArena(Arena* arena)
 	return _conn->sendMapInformationToAndroid(map.str(), location.str());
 }
 
-// collect sensor information and update the arena information
-void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
+void Robot::rotateClockwiseAndSense(int deg, Arena* arena)
 {
 #ifdef HARDWARE
-	map<Sensor*, int>* sensorData = getDataFromSensor();
+	openArenaWithSensorData(mapDataWithSensor(_conn->sendRotationClockwiseAndSense(deg)), arena);
+#endif
+	++_direction;
+}
+void Robot::rotateCounterClockwiseAndSense(int deg, Arena* arena)
+{
+#ifdef HARDWARE
+	openArenaWithSensorData(mapDataWithSensor(_conn->sendRotationCounterClockwiseAndSense(deg)), arena);
+#endif
+	--_direction;
+}
+void Robot::moveForwardAndSense(int dist, Arena* arena)
+{
+#ifdef HARDWARE
+	openArenaWithSensorData(mapDataWithSensor(_conn->sendMovementAndSense(dist)), arena);
+#endif
+	switch(_direction)
+	{
+		case DOWN:  // down
+			++_posY; break;
+		case LEFT: // left
+			--_posX; break;
+		case UP: // up
+			--_posY; break;
+		case RIGHT: // right
+			++_posX; break;
+	}
+}
 
+map<Sensor*, int>* Robot::mapDataWithSensor(map<int, int>* data)
+{
+	map<Sensor*, int>* returnData = new map<Sensor*, int>();
+	for (vector<Sensor*>::iterator iter = _sensors.begin(); iter != _sensors.end(); ++iter)
+	{
+		returnData->insert(pair<Sensor*, int>(*iter,  (*data)[(*iter)->getID()]));
+	}
+	return returnData;
+}
+
+void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
+{
 	// determine sensor location (x,y), and sensor direction (enum)
 	for (map<Sensor*, int>::iterator iter = sensorData->begin(); iter != sensorData->end(); ++iter)
 	{
@@ -193,6 +225,14 @@ void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
 		cout << sensorX << ", " << sensorY << ", " << sensorID << ", " << sensorDir << ", " << iter->second << endl;
 		openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 	}
+}
+
+// collect sensor information and update the arena information
+void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
+{
+#ifdef HARDWARE
+	map<Sensor*, int>* sensorData = getDataFromSensor();
+	openArenaWithSensorData(sensorData, arena);
 #else
 	// open up surrounding areas
 	int x = this->getPosX(), y = this->getPosY();

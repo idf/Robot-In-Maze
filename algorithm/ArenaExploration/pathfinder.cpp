@@ -25,7 +25,6 @@ PathFinder::~PathFinder()
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
-	_robot->senseEnvironment(_arena, _fullArena);
 	if (!_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
@@ -45,9 +44,9 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
 			vector<Grid*>::reverse_iterator i = result.rbegin();
 			if (result.begin() != result.end()) // list not empty
-				getRobotToMove(*i);
+				getRobotToMoveAndSense(*i);
 			else
-				_robot->rotateClockwise(90); // sense other areas
+				_robot->rotateClockwiseAndSense(90, _arena); // sense other areas
 			
 			return true;
 		}
@@ -78,13 +77,13 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
 		vector<Grid*>::reverse_iterator i = result.rbegin();
 		if (result.begin() != result.end()) // list not empty
-			getRobotToMove(*i);
+			getRobotToMoveAndSense(*i);
 		return true;
 	}
 	else
 		return false;
 }
-
+// used to avoid obstacle and provide safety distance
 int PathFinder::addWeight(Grid* grid)
 {
 	int x = grid->getX(), y = grid->getY();
@@ -237,29 +236,14 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 bool PathFinder::pointIsWalkable(int x, int y)
 {
 	// obstacle case
-	if (_arena->getGridType(x, y) == OBSTACLE)
+	if (_arena->getGridType(x, y) == OBSTACLE ||
+		_arena->getGridType(x + 1, y) == OBSTACLE ||
+		_arena->getGridType(x, y + 1) == OBSTACLE ||
+		_arena->getGridType(x + 1, y + 1) == OBSTACLE)
 		return false;
-	if (_arena->getGridType(x + 1, y) == OBSTACLE)
-		return false;
-	if (_arena->getGridType(x, y + 1) == OBSTACLE)
-		return false;
-	if (_arena->getGridType(x + 1, y + 1) == OBSTACLE)
-		return false;
-
 	// border case
 	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_Y_SIZE)
 		return false;
-	
-	// unexplored case
-	/*if (_arena->getGridType(x, y) == UNEXPLORED)
-		return false;
-	if (_arena->getGridType(x + 1, y) == UNEXPLORED)
-		return false;
-	if (_arena->getGridType(x, y + 1) == UNEXPLORED)
-		return false;
-	if (_arena->getGridType(x + 1, y + 1) == UNEXPLORED)
-		return false;*/
-
 	return true;
 }
 
@@ -278,7 +262,7 @@ bool PathFinder::substituteNewPoint(int x, int y)
 }
 
 // rotate or move forward
-void PathFinder::getRobotToMove(Grid* destination)
+void PathFinder::getRobotToMoveAndSense(Grid* destination)
 {
 #ifdef HARDWARE
 	int xDiff = destination->getX() - _robot->getPosX();
@@ -291,15 +275,15 @@ void PathFinder::getRobotToMove(Grid* destination)
 	else if (xDiff == 0 && yDiff == -1)
 		dir = UP;
 	if (dir == robotDir)
-		_robot->moveForward(10);
+		_robot->moveForwardAndSense(10, _arena);
 	else if (robotDir == DOWN && dir == RIGHT)
-		_robot->rotateCounterClockwise(90);
+		_robot->rotateCounterClockwiseAndSense(90, _arena);
 	else if (robotDir == RIGHT && dir == DOWN)
-		_robot->rotateClockwise(90);
+		_robot->rotateClockwiseAndSense(90, _arena);
 	else if (dir > robotDir)
-		_robot->rotateClockwise(90);
+		_robot->rotateClockwiseAndSense(90, _arena);
 	else
-		_robot->rotateCounterClockwise(90);
+		_robot->rotateCounterClockwiseAndSense(90, _arena);
 #else
 	this->_robot->setLocation(destination->getX(), destination->getY());
 #endif
@@ -309,8 +293,6 @@ bool PathFinder::runOnePath(vector<Grid*> path)
 {
 
 }
-
-
 // TODO CHANGE
 vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path)
 {
@@ -361,15 +343,11 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 void PathFinder::selectNextDestination()
 {
 	for (int i = 0; i < ARENA_X_SIZE; ++i)
-	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
-		{
 			if (_arena->getGridType(i, j) == UNEXPLORED)
 			{
 				this->_endX = i;
 				this->_endY = j;
 				return;
 			}
-		}
-	}
 }
