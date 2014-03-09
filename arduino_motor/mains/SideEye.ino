@@ -85,7 +85,7 @@ int SideEye::get_ultra_reading() {
 bool SideEye::is_within_range(Ultrasound* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
-    if(distance>95 || distance<5) // TODO
+    if(distance>107 || distance<7) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }
