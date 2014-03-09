@@ -18,6 +18,7 @@ public:
 	PathFinder(Robot* robot, Arena* arena, Arena* fullArena);
 	~PathFinder();
 	bool PathFinder::explore(int percentage, int timeLimitInSeconds);
+	int PathFinder::addWeight(Grid* grid);
 	std::vector<Grid*> findPathBetween(int startX, int startY, int endX, int endY);
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);

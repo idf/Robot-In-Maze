@@ -32,7 +32,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 #endif
-		if (_arena->getGridType(_endX, _endY) != UNEXPLORED )
+		if (_robot->getPosX() != _endX && _robot->getPosY() != _endY)
 		{
 			// TODO CHANGE TO CHECK EXPLORABLE
 			// if not reachable, check whether it is detectable, if not, break;
@@ -85,6 +85,18 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		return false;
 }
 
+int PathFinder::addWeight(Grid* grid)
+{
+	int x = grid->getX(), y = grid->getY();
+	if (!pointIsWalkable(x+1, y) ||
+		!pointIsWalkable(x, y+1) ||
+		!pointIsWalkable(x-1, y) ||
+		!pointIsWalkable(x, y-1))
+		return 10;
+	else 
+		return 0;
+}
+
 // Find the path based on current map
 // astar, not the shortest path
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
@@ -104,7 +116,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
     openList.push_back(start);
     start->opened = true;
 
-    while (n == 0 || (current != end && n < 50))
+    while (n == 0 || current != end)
     {
 		// stop if the point is unreachable
 		// this part may have problem
@@ -114,7 +126,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
         // Look for the smallest F value in the openList and make it the current point
         for (i = openList.begin(); i != openList.end(); ++ i)
         {
-            if (i == openList.begin() || (*i)->heuristic <= current->heuristic)
+            if (i == openList.begin() || (*i)->heuristic + addWeight(*i) <= current->heuristic + addWeight(current))
             {
                 current = (*i);
             }
@@ -161,7 +173,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
                 // If it's closed or not walkable then pass
 				if (child->closed || !pointIsWalkable(child->x, child->y))
                     continue;
-
+#ifndef STRAIGHT_MODE
                 // If we are at a corner
                 if (x != 0 && y != 0)
                 {
@@ -176,7 +188,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
                         continue;
                     }
                 }
-
+#endif
                 // If it's already in the openList
                 if (child->opened)
                 {
