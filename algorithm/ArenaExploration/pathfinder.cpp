@@ -126,7 +126,8 @@ int PathFinder::addSafeWeight(Grid* grid)
 		_arena->getGridType(x-1, y) == OBSTACLE ||
 		_arena->getGridType(x-1, y+1) == OBSTACLE)
 		return 10;
-
+	else
+		return 0;
 }
 
 // Find the path based on current map
@@ -337,7 +338,7 @@ bool PathFinder::runOnePath(vector<Grid*> path)
 			_robot->moveForward((*i)->second);
 	}
 }
-// TODO CHANGE
+
 vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path)
 {
 	vector<pair<std::string, int>*>* movementList = new vector<pair<std::string, int>*>();
@@ -365,21 +366,25 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 		{
 			singleMovement->first = "rotateCounterClockwise";
 			singleMovement->second += 90;
+			currentDir--;
 		}
 		else if (currentDir == RIGHT && dir == DOWN)
 		{
 			singleMovement->first = "rotateClockwise";
 			singleMovement->second += 90;
+			currentDir++;
 		}
 		else if (dir > currentDir)
 		{
 			singleMovement->first = "rotateClockwise";
 			singleMovement->second += 90;
+			currentDir++;
 		}
 		else
 		{
 			singleMovement->first = "rotateCounterClockwise";
 			singleMovement->second += 90;
+			currentDir--;
 		}
 	}
 	if (singleMovement->second != 0)
@@ -387,7 +392,8 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 	singleMovement = new pair<string, int>("moveForward", 0);
 	previousDir = dir;
 	currentLocation = _arena->getGrid(_robot->getPosX(), _robot->getPosY());
-	for (vector<Grid*>::reverse_iterator i = path.rbegin(); i != path.rend(); ++i)
+	vector<Grid*>::reverse_iterator i = path.rbegin();
+	while (i != path.rend())
 	{
 		destination = *i;
 		xDiff = destination->getX() - currentLocation->getX();
@@ -403,25 +409,43 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 			dir = RIGHT;
 
 		if(previousDir == dir)
+		{
 			singleMovement->second += 10;
+			currentLocation = destination;
+			++i;
+		}
 		else
 		{
-			if (previousDir == DOWN && dir == RIGHT ||
-				dir < previousDir) // turn counterclockwise
+			if (previousDir == DOWN && dir == RIGHT) // turn counterclockwise
 			{
 				movementList->push_back(singleMovement);
 				movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
 				singleMovement = new pair<string, int>("moveForward", 0);
 			}
-			else if (previousDir == RIGHT && dir == DOWN ||
-				dir > previousDir) // turn clockwise
+			else if (previousDir == RIGHT && dir == DOWN) // turn clockwise
 			{
 				movementList->push_back(singleMovement);
 				movementList->push_back(new pair<string, int>("rotateClockwise", 90));
 				singleMovement = new pair<string, int>("moveForward", 0);
 			}
+			else if (dir < previousDir)
+			{
+				movementList->push_back(singleMovement);
+				movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+				singleMovement = new pair<string, int>("moveForward", 0);
+			}
+			else
+			{
+				movementList->push_back(singleMovement);
+				movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+				singleMovement = new pair<string, int>("moveForward", 0);
+			}
+			previousDir = dir;
 		}
 	}
+	if (singleMovement->second != 0)
+		movementList->push_back(singleMovement);
+	return movementList;
 }
 
 void PathFinder::selectNextDestination()
