@@ -1,3 +1,5 @@
+#include <Ultrasound.h>
+
 #ifndef FRONTEYE_H
 #define FRONTEYE_H
 #include <SharpIR.h>

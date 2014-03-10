@@ -37,18 +37,18 @@ public:
   static const unsigned char EN2DIAG2 = 12; // not used 
   static const unsigned char CS2 = A1; // not used 
 
-  static const unsigned char M1_ENCODER_A = 3; // external interrupt pin 2, 3
+  static const unsigned char M1_ENCODER_A = 3; // left motor, external interrupt pin 2, 3
   //static const unsigned char M1_ENCODER_B = 5; 
-  static const unsigned char M2_ENCODER_A = 5; 
+  static const unsigned char M2_ENCODER_A = 5;  // right motor
   //static const unsigned char M2_ENCODER_B = 13; 
 
 
   //static const unsigned char SERVO = 9; // TODO change
-  static const unsigned char ULTRA_1_PWM = 11;
-  static const unsigned char ULTRA_1_TRIG = 13;
+  static const unsigned char ULTRA_1_PWM = 11;  //front ultrasound
+  static const unsigned char ULTRA_1_TRIG = 13; //front ultrasound
   
-  static const unsigned char ULTRA_2_PWM = 6;
-  static const unsigned char ULTRA_2_TRIG = 12;
+  static const unsigned char ULTRA_2_PWM = 6;   //side ultrasound
+  static const unsigned char ULTRA_2_TRIG = 12; //side ultrasound
 
   static const unsigned char FRONT_IR_LEFT = A0;
   static const unsigned char FRONT_IR_RIGHT = A1;

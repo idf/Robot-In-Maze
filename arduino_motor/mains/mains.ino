@@ -53,6 +53,10 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
+
+  //warmingUp();
+  //resetPololuTicks();
+
   warmingUp();
   //motorShield.setSpeeds(100, 100);
   serialCommnder->receive_exec_command();
@@ -65,6 +69,14 @@ void loop(void)
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
   //moveForward(10);     
+
+
+  //frontEye->test_readings();
+  //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
+  //sideEye->test_readings();
+  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
+  //sideEye->test_readings();
+  //goStraightlineCheckpoint();
   //printCounts();
   //turnLeft(90);
   //printCounts();
@@ -73,7 +85,6 @@ void loop(void)
   //turnLeft(90);
   //moveForward(80);
   //turnLeft(90);
-  //motorShield.setSpeeds(-400, -400);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
   
