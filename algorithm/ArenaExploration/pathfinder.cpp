@@ -69,14 +69,11 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		}
 	}
 	// go back to start point
-	// TODO CHANGE TO FASTEST PATH RUN!
 	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
 	{
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
-		vector<Grid*>::reverse_iterator i = result.rbegin();
-		if (result.begin() != result.end()) // list not empty
-			getRobotToMoveAndSense(*i);
-		return true;
+		runOnePath(result);
+		return false;
 	}
 	else
 		return false;
