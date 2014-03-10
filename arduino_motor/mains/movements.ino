@@ -139,8 +139,8 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   }
   setScale(1/0.35);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
-  //motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); // 
   delay(40);
+  motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); 
   return avgTicksForAngleOrDist;
 }
 
@@ -157,6 +157,16 @@ void moveForward(double dist)
   errorCumulator->change_to_forward_mode();
   const int isLeftForward = 1;
   const int isRightForward = 1;
+
+  double noOfTicksForDist = distCentimeter(dist);
+  double realNoOfTicksForDist = reachTickTarget(isLeftForward, isRightForward, noOfTicksForDist);
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void moveBackward(double dist) 
+{  
+  errorCumulator->change_to_forward_mode();
+  const int isLeftForward = -1;
+  const int isRightForward = -1;
 
   double noOfTicksForDist = distCentimeter(dist);
   double realNoOfTicksForDist = reachTickTarget(isLeftForward, isRightForward, noOfTicksForDist);

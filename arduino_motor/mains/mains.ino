@@ -53,12 +53,11 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-
-  //warmingUp();
-  //resetPololuTicks();
-
-  //warmingUp();
-  //serialCommnder->receive_exec_command();
+  // integration mode
+  
+  warmingUp();
+  serialCommnder->receive_exec_command();
+  
   //sideEye->test_readings();
   //getSensorReadings();
   
@@ -76,12 +75,16 @@ void loop(void)
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
   //goStraightlineCheckpoint();
-  //printCounts();
+  /*
+  moveForward(10);
+  printCounts();
   turnRight(90);
   printCounts();
   //delay(1000);
-  moveForward(10);
-  printCounts();
+  */
+  
+  //moveForward(10);
+  //printCounts();
   //delay(1000);
   //errorCumulator->compass->printAxis();
   
