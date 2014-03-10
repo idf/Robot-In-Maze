@@ -108,15 +108,18 @@ Example
 ```
 List of sensor codes currently available:  
 ```
-0: front ultra sensor;  // sensor range 10 - 120 cm
+0: front ultra sensor;  // sensor range 10 - 90 cm
 1: front left sensor;   // 10 - 40 cm
 2: front right sensor;  // 10 - 40 cm
-10: sided left sensor;  // 10 - 40 cm
-11: sided right sensor; // 10 - 40 cm
-12: sided ultra sensor; // 10 - 120 cm
+10: sided left sensor;  // 0 - 30 cm
+11: sided right sensor; // 0 - 30 cm
+12: sided ultra sensor; // 10 - 90 cm
 ```
 Notice: if the distance is beyond the sensor's range, it will return -1;  
 ###Calibration
 98: void calibrate(int situation);  
 ####To determine the situation
-![](./images/calibration_illustration.jpg =350x)
+![](./images/calibration_illustration.jpg)  
+Wall vs. Robot Orientation.  
+The situation is numbering as above to invoke function void calibrate(int situation)  
+
