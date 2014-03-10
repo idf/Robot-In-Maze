@@ -156,6 +156,21 @@ void Robot::moveForwardAndSense(int dist, Arena* arena)
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 
+void Robot::calibrateAtGoal()
+{
+	switch(this->_direction)
+	{
+	case DOWN:
+		_conn->calibrate(5);
+		break;
+	case RIGHT:
+		_conn->calibrate(6);
+		break;
+	default:
+		return; // cannot calibrate
+	}
+}
+
 map<Sensor*, int>* Robot::mapDataWithSensor(map<int, int>* data)
 {
 	map<Sensor*, int>* returnData = new map<Sensor*, int>();

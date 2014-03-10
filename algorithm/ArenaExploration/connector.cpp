@@ -154,6 +154,24 @@ map<int, int>* Connector::sendRotationCounterClockwiseAndSense(int deg)
 	return parseSensorInfoWithAck();
 }
 
+void Connector::calibrate(int situation)
+{
+	Json::Value root;
+	Json::Value value1( 98 );
+	Json::Value value2( situation );
+
+	root["function"] = value1;
+	root["parameter"] = value2;
+
+	Json::StyledWriter writer;
+	std::string outputConfig = writer.write(root);
+	char* temp = (char*)outputConfig.c_str();
+	NetworkServices::sendMessage(network->ConnectSocket, (char*)outputConfig.c_str(), strlen(temp));
+	char buf[1000];
+	while(NetworkServices::receiveMessage(network->ConnectSocket, buf, 1000) <= 0)
+		;
+}
+
 // Android communication
 bool Connector::waitForAndroidExplore()
 {

@@ -22,6 +22,8 @@ public:
 	std::map<int, int>* sendRotationClockwiseAndSense(int deg);
 	std::map<int, int>* sendRotationCounterClockwiseAndSense(int deg);
 
+	void calibrate(int situation);
+
 	bool Connector::waitForAndroidExplore();
 	bool Connector::waitForAndroidRun();
 	bool Connector::sendMapInformationToAndroid(std::string map, std::string location);

@@ -37,7 +37,9 @@ public:
 	void rotateCounterClockwiseAndSense(int deg, Arena* arena);
 	void moveForwardAndSense(int dist, Arena* arena);
 
-	void Robot::openArenaWithSensorData(std::map<Sensor*, int>* sensorData, Arena* arena);
+	void calibrateAtGoal();
+
+	void openArenaWithSensorData(std::map<Sensor*, int>* sensorData, Arena* arena);
 	void senseEnvironment(Arena* arena, Arena* fullArena);
 
 #ifndef HARDWARE
