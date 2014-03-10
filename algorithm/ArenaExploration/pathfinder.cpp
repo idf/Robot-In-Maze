@@ -31,7 +31,9 @@ PathFinder::~PathFinder()
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
-	if (!_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds)
+	// explore one: !_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds
+	// unelegent redundant code LOL. but NVM.
+	if (_robot->getPosX() != _endX && _robot->getPosY() != _endY)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
@@ -71,6 +73,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 	// go back to start point
 	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
 	{
+		_robot->calibrateAtGoal();
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
 		runOnePath(result);
 		return false;
