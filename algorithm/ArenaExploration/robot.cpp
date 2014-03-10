@@ -124,21 +124,23 @@ bool Robot::sendItselfAndArena(Arena* arena)
 void Robot::rotateClockwiseAndSense(int deg, Arena* arena)
 {
 #ifdef HARDWARE
-	openArenaWithSensorData(mapDataWithSensor(_conn->sendRotationClockwiseAndSense(deg)), arena);
+	map<int, int>* sensorData = _conn->sendRotationClockwiseAndSense(deg);
 #endif
 	++_direction;
+	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 void Robot::rotateCounterClockwiseAndSense(int deg, Arena* arena)
 {
 #ifdef HARDWARE
-	openArenaWithSensorData(mapDataWithSensor(_conn->sendRotationCounterClockwiseAndSense(deg)), arena);
+	map<int, int>* sensorData = _conn->sendRotationCounterClockwiseAndSense(deg);
 #endif
 	--_direction;
+	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 void Robot::moveForwardAndSense(int dist, Arena* arena)
 {
 #ifdef HARDWARE
-	openArenaWithSensorData(mapDataWithSensor(_conn->sendMovementAndSense(dist)), arena);
+	map<int, int>* sensorData = _conn->sendMovementAndSense(dist);
 #endif
 	switch(_direction)
 	{
@@ -151,6 +153,7 @@ void Robot::moveForwardAndSense(int dist, Arena* arena)
 		case RIGHT: // right
 			++_posX; break;
 	}
+	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 
 map<Sensor*, int>* Robot::mapDataWithSensor(map<int, int>* data)
@@ -170,7 +173,7 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 	{
 		DIRECTION sensorDir = this->_direction;
 		int sensorX = this->_posX, sensorY = this->_posY, sensorID = iter->first->getID();
-		//cout << sensorX << ", " << sensorY << ", " << sensorID << ", " << sensorDir << ", " << iter->second << endl;
+		cout << "current sensor: " << sensorX << ", " << sensorY << ", " << sensorID << ", " << sensorDir << ", " << iter->second << endl;
 		// fall through cases to minimize code repetition
 		switch (sensorID)
 		{
@@ -250,6 +253,7 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			}
 			break;
 		case USSIDE_ID:  // right ur sensor
+			sensorDir++;
 			switch(this->_direction)
 			{
 			case DOWN:
@@ -283,8 +287,6 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 		default:
 			break;
 		}
-		//cout << sensorX << ", " << sensorY << ", " << sensorID << ", " << sensorDir << ", " << iter->second << endl;
-		
 	}
 }
 
@@ -312,20 +314,13 @@ void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
 // whenever a range is given, there is an obstacle in front, otherwise 0 will be given
 void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int range)
 {
+	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	int i;
-	bool isFree = false;
-	if (range == -1) // to far to detect
-	{
-		isFree = true;
-		range = SMALL_IR_RANGE;
-	}
+	if (range == -1) // to far or too near to detect. Dont open for safety reason
+		return;
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
-	for (i = 0; i <= range/10; ++i)
+	for (i = 0; i <= range/10; ++i)  // NOTE: DIFFERENT
 	{
-		cout << x << ", " << y;
-		// prevent overriding obstacle as free due to conflict sensor information
-		if (arena->getGridType(x, y) == OBSTACLE)
-			return;
 		switch (direction)
 		{
 		case DOWN: ++y; break;
@@ -333,24 +328,25 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
+		cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" <<endl;
+		// prevent overriding obstacle as free due to conflict sensor information
+		if (arena->getGridType(x, y) == OBSTACLE)
+			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
-	cout <<", " <<i << endl;
-	if (!isFree)
-		arena->setGridType(x, y, OBSTACLE);
+	cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
+	arena->setGridType(x, y, OBSTACLE);
 }
 
+// US will only set free. It will not set obstacle.
 void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int range)
 {
+	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	if (range == -1) // to far to detect
 		range = US_RANGE;
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
-	for (int i = 0; i <= range/10; ++i)
+	for (int i = 0; i < range/10; ++i)  // NOTE: DIFFERENT
 	{
-		cout << x << ", " << y;
-		// prevent overriding obstacle as free due to conflict sensor information
-		if (arena->getGridType(x, y) == OBSTACLE)
-			return;
 		switch (direction)
 		{
 		case DOWN: ++y; break;
@@ -358,6 +354,10 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
+		cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" << endl;
+		// prevent overriding obstacle as free due to conflict sensor information
+		if (arena->getGridType(x, y) == OBSTACLE)
+			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
 }

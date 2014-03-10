@@ -50,7 +50,7 @@ MainWindow::MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
-	conn->waitForAndroidExplore();
+	//conn->waitForAndroidExplore();
 	robot->senseEnvironment(arena, fullArena);
 #ifdef HARDWARE
 	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));

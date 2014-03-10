@@ -9,6 +9,9 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_arena = arena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
+	previous = new Grid();
+	previous->x = ARENA_START_X;
+	previous->y = ARENA_START_Y;
 }
 PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 {
@@ -17,6 +20,9 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
+	previous = new Grid();
+	previous->x = ARENA_START_X;
+	previous->y = ARENA_START_Y;
 }
 PathFinder::~PathFinder()
 {}
@@ -47,7 +53,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				getRobotToMoveAndSense(*i);
 			else
 				_robot->rotateClockwiseAndSense(90, _arena); // sense other areas
-			
+
 			return true;
 		}
 		else
@@ -58,14 +64,6 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			this->selectNextDestination();
 #ifdef DEBUG
 			cout << "new destination: " << _endX << _endY << endl;
-		// debug
-			for (int i = 0; i < ARENA_Y_SIZE; ++i)
-				{
-					for (int j = 0; j < ARENA_X_SIZE; ++j)
-						cout << _arena->getGridType(j, i);
-					cout << endl;
-				}
-		//debug
 #endif
 			return true;
 		}
@@ -83,75 +81,112 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 	else
 		return false;
 }
-// used to avoid obstacle and provide safety distance
-int PathFinder::addWeight(Grid* grid)
+
+int PathFinder::addTurnWeight(Grid* grid)
 {
-	int x = grid->getX(), y = grid->getY();
-	if (!pointIsWalkable(x+1, y) ||
-		!pointIsWalkable(x, y+1) ||
-		!pointIsWalkable(x-1, y) ||
-		!pointIsWalkable(x, y-1))
-		return 10;
+	// check future move direction
+	bool isPreviousTurn = false;
+	int xDiff, yDiff;
+	xDiff = grid->getX() - _robot->getPosX();
+	yDiff = grid->getY() - _robot->getPosY();
+	DIRECTION futureDir = RIGHT, previousDir = RIGHT;
+	if (xDiff == 0 && yDiff == 1)
+		futureDir = DOWN;
+	else if (xDiff == -1 && yDiff == 0)
+		futureDir = LEFT;
+	else if (xDiff == 0 && yDiff == -1)
+		futureDir = UP;
+	// check previous move direction
+	xDiff = _robot->getPosX() - previous->getX();
+	yDiff = _robot->getPosY() - previous->getY();
+	if (xDiff == 0 && yDiff == 1)
+		previousDir = DOWN;
+	else if (xDiff == -1 && yDiff == 0)
+		previousDir = LEFT;
+	else if (xDiff == 0 && yDiff == -1)
+		previousDir = UP;
+	else if (xDiff == 0 && yDiff == 0)
+		isPreviousTurn = true;
+
+	if (!isPreviousTurn && futureDir != previousDir)
+		return 1;
 	else 
 		return 0;
+}
+// used to avoid obstacle and provide safety distance
+int PathFinder::addSafeWeight(Grid* grid)
+{
+	int x = grid->getX(), y = grid->getY();
+	if (_arena->getGridType(x, y-1) == OBSTACLE ||
+		_arena->getGridType(x+1, y-1) == OBSTACLE ||
+		_arena->getGridType(x+2, y) == OBSTACLE ||
+		_arena->getGridType(x+2, y) == OBSTACLE ||
+		_arena->getGridType(x, y+2) == OBSTACLE ||
+		_arena->getGridType(x+1, y+2) == OBSTACLE ||
+		_arena->getGridType(x-1, y) == OBSTACLE ||
+		_arena->getGridType(x-1, y+1) == OBSTACLE)
+		return 10;
+
 }
 
 // Find the path based on current map
 // astar, not the shortest path
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
 {
-    vector<Grid*> path;
-    Grid *current, *child, *start, *end;
+	vector<Grid*> path;
+	Grid *current, *child, *start, *end;
 	start = _arena->getGrid(startX, startY);
 	end = _arena->getGrid(endX, endY);
 	current = start;
 
-    list<Grid*> openList;
-    list<Grid*> closedList;
-    list<Grid*>::iterator i;
-    unsigned int n = 0;
+	list<Grid*> openList;
+	list<Grid*> closedList;
+	list<Grid*>::iterator i;
+	unsigned int n = 0;
 
-    // Add the start point to the openList
-    openList.push_back(start);
-    start->opened = true;
+	// Add the start point to the openList
+	openList.push_back(start);
+	start->opened = true;
 
-    while (n == 0 || current != end)
-    {
+	while (n == 0 || current != end)
+	{
 		// stop if the point is unreachable
 		// this part may have problem
 		if (_arena->getGridType(endX, endY) == OBSTACLE)
 			break;
 
-        // Look for the smallest F value in the openList and make it the current point
-        for (i = openList.begin(); i != openList.end(); ++ i)
-        {
-            if (i == openList.begin() || (*i)->heuristic + addWeight(*i) <= current->heuristic + addWeight(current))
-            {
-                current = (*i);
-            }
-        }
+		// Look for the smallest F value in the openList and make it the current point
+		for (i = openList.begin(); i != openList.end(); ++ i)
+		{
+			if (i == openList.begin() || (*i)->heuristic + addSafeWeight(*i) + addTurnWeight(*i) <= 
+				current->heuristic + addSafeWeight(current))
+			{
+				previous = current;
+				current = (*i);
+			}
+		}
 
-        // Stop if we reached the end
-        if (current == end)
-            break;
+		// Stop if we reached the end
+		if (current == end)
+			break;
 
-        // Remove the current point from the openList
-        openList.remove(current);
-        current->opened = false;
+		// Remove the current point from the openList
+		openList.remove(current);
+		current->opened = false;
 
-        // Add the current point to the closedList
-        closedList.push_back(current);
-        current->closed = true;
+		// Add the current point to the closedList
+		closedList.push_back(current);
+		current->closed = true;
 
-        // Get all current's adjacent walkable points
+		// Get all current's adjacent walkable points
 		// here x and y are used to iterrate through adjacent cells
-        for (int x = -1; x < 2; x ++)
-        {
-            for (int y = -1; y < 2; y ++)
-            {
-                // If it's current point then pass
-                if (x == 0 && y == 0)
-                    continue;
+		for (int x = -1; x < 2; x ++)
+		{
+			for (int y = -1; y < 2; y ++)
+			{
+				// If it's current point then pass
+				if (x == 0 && y == 0)
+					continue;
 
 				// if index out of border then pass
 				if (current->getX() + x < 0 ||
@@ -162,74 +197,74 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 
 				// if the robot can't move in 45 degree direction
 #ifdef STRAIGHT_MODE
-			    if (abs(x) == abs(y))
+				if (abs(x) == abs(y))
 					continue;
 #endif
 
-                // Get this point
+				// Get this point
 				child = _arena->getGrid(current->getX() + x, current->getY() + y);
 
-                // If it's closed or not walkable then pass
+				// If it's closed or not walkable then pass
 				if (child->closed || !pointIsWalkable(child->x, child->y))
-                    continue;
+					continue;
 #ifndef STRAIGHT_MODE
-                // If we are at a corner
-                if (x != 0 && y != 0)
-                {
-                    // if the next horizontal point is not walkable or in the closed list then pass
+				// If we are at a corner
+				if (x != 0 && y != 0)
+				{
+					// if the next horizontal point is not walkable or in the closed list then pass
 					if (!pointIsWalkable(current->getX(), current->getY() + y) || _arena->getGrid(current->getX(), current->getY() + y)->closed)
-                    {
-                        continue;
-                    }
-                    // if the next vertical point is not walkable or in the closed list then pass
-                    if (!pointIsWalkable(current->getX() + x, current->getY()) || _arena->getGrid(current->getX() + x, current->getY())->closed)
-                    {
-                        continue;
-                    }
-                }
+					{
+						continue;
+					}
+					// if the next vertical point is not walkable or in the closed list then pass
+					if (!pointIsWalkable(current->getX() + x, current->getY()) || _arena->getGrid(current->getX() + x, current->getY())->closed)
+					{
+						continue;
+					}
+				}
 #endif
-                // If it's already in the openList
-                if (child->opened)
-                {
-                    // If it has a wroste g score than the one that pass through the current point
-                    // then its path is improved when it's parent is the current point
-                    if (child->distanceTravelled > child->getDistanceTravelled(current))
-                    {
-                        // Change its parent and g score
-                        child->parent = current;
-                        child->computeScores(end);
-                    }
-                }
-                else
-                {
-                    // Add it to the openList with current point as parent
-                    openList.push_back(child);
-                    child->opened = true;
+				// If it's already in the openList
+				if (child->opened)
+				{
+					// If it has a wroste g score than the one that pass through the current point
+					// then its path is improved when it's parent is the current point
+					if (child->distanceTravelled > child->getDistanceTravelled(current))
+					{
+						// Change its parent and g score
+						child->parent = current;
+						child->computeScores(end);
+					}
+				}
+				else
+				{
+					// Add it to the openList with current point as parent
+					openList.push_back(child);
+					child->opened = true;
 
-                    // Compute it's g, h and f score
-                    child->parent = current;
-                    child->computeScores(end);
-                }
-            }
-        }
-        ++n;
-    }
+					// Compute it's g, h and f score
+					child->parent = current;
+					child->computeScores(end);
+				}
+			}
+		}
+		++n;
+	}
 
-    // Reset
-    for (i = openList.begin(); i != openList.end(); ++ i)
-        (*i)->opened = false;
+	// Reset
+	for (i = openList.begin(); i != openList.end(); ++ i)
+		(*i)->opened = false;
 
-    for (i = closedList.begin(); i != closedList.end(); ++ i)
-        (*i)->closed = false;
+	for (i = closedList.begin(); i != closedList.end(); ++ i)
+		(*i)->closed = false;
 
-    // Resolve the path starting from the end point
-    while (current->hasParent() && current != start)
-    {
-        path.push_back(current);
-        current = current->parent;
-        n ++;
-    }
-    return path;
+	// Resolve the path starting from the end point
+	while (current->hasParent() && current != start)
+	{
+		path.push_back(current);
+		current = current->parent;
+		n ++;
+	}
+	return path;
 }
 
 // a point is walkable if there is no obstacle or wall within the four squares
@@ -291,21 +326,32 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 
 bool PathFinder::runOnePath(vector<Grid*> path)
 {
-
+	vector<pair<std::string, int>*>* movementList = getMovementList(path);
+	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); ++i)
+	{
+		if((*i)->first == "rotateClockWise")
+			_robot->rotateClockwise((*i)->second);
+		else if ((*i)->first == "rotateCounterClockWise")
+			_robot->rotateCounterClockwise((*i)->second);
+		else
+			_robot->moveForward((*i)->second);
+	}
 }
 // TODO CHANGE
 vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path)
 {
 	vector<pair<std::string, int>*>* movementList = new vector<pair<std::string, int>*>();
 	pair<std::string, int>* singleMovement = new pair<std::string, int>("", 0);
-	// variables for simulation of robot movement
 	Grid* destination = *path.rbegin();
+	Grid* currentLocation;
+	DIRECTION previousDir;
+
+	// align robot direction first.
 	int currentX = _robot->getPosX(), currentY = _robot->getPosY();
 	DIRECTION currentDir = _robot->getDirection();
 	int xDiff = destination->getX() - currentX;
 	int yDiff = destination->getY() - currentY;
 	DIRECTION dir = RIGHT;
-	// set robot direction first
 	if (xDiff == 0 && yDiff == 1)
 		dir = DOWN;
 	else if (xDiff == -1 && yDiff == 0)
@@ -338,6 +384,44 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 	}
 	if (singleMovement->second != 0)
 		movementList->push_back(singleMovement);
+	singleMovement = new pair<string, int>("moveForward", 0);
+	previousDir = dir;
+	currentLocation = _arena->getGrid(_robot->getPosX(), _robot->getPosY());
+	for (vector<Grid*>::reverse_iterator i = path.rbegin(); i != path.rend(); ++i)
+	{
+		destination = *i;
+		xDiff = destination->getX() - currentLocation->getX();
+		yDiff = destination->getY() - currentLocation->getY();
+
+		if (xDiff == 0 && yDiff == 1)
+			dir = DOWN;
+		else if (xDiff == -1 && yDiff == 0)
+			dir = LEFT;
+		else if (xDiff == 0 && yDiff == -1)
+			dir = UP;
+		else
+			dir = RIGHT;
+
+		if(previousDir == dir)
+			singleMovement->second += 10;
+		else
+		{
+			if (previousDir == DOWN && dir == RIGHT ||
+				dir < previousDir) // turn counterclockwise
+			{
+				movementList->push_back(singleMovement);
+				movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+				singleMovement = new pair<string, int>("moveForward", 0);
+			}
+			else if (previousDir == RIGHT && dir == DOWN ||
+				dir > previousDir) // turn clockwise
+			{
+				movementList->push_back(singleMovement);
+				movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+				singleMovement = new pair<string, int>("moveForward", 0);
+			}
+		}
+	}
 }
 
 void PathFinder::selectNextDestination()

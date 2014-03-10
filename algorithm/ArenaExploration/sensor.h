@@ -8,8 +8,8 @@
 #define IRRIGHT_ID 11
 #define USSIDE_ID 12
 
-#define SMALL_IR_RANGE 40
-#define US_RANGE 120
+#define SMALL_IR_RANGE 30
+#define US_RANGE 80
 
 class Sensor
 {
