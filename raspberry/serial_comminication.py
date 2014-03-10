@@ -204,6 +204,8 @@ class SerialAPI(object):
             self.outstanding_command_pair = None
             return True, type_data, data
 
+        return None, None, None
+
 
     def response_put(self, ack, type_data, data):
         """
@@ -254,7 +256,8 @@ class SerialExecutionThread(AbstractThread):
                 # stop and wait for ack
                 while True:
                     ack, type_data, data = self.serial_api.response()
-                    self.serial_api.response_put(ack, type_data, data)
+                    if ack!=None:
+                        self.serial_api.response_put(ack, type_data, data)
 
                     print data
                     if ack:

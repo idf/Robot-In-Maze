@@ -104,6 +104,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   long firstLeftCount = leftCnt;//leftCnt();
   long firstRightCount = rightCnt;//rightCnt();
   
+
   while (target_tick - avgTicksForAngleOrDist > Config::MIN_SPEED*2) { //target_tick - change to 'angle' for other formula // 200 is tested
   // the tolerance value affect the turning errors
 

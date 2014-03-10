@@ -12,7 +12,7 @@ if __name__=="__main__":
     android_api = None
 
     # threads
-    pc_thread = PcThread("pc_thread", serial_api, android_api, production=True)
+    pc_thread = PcThread("pc_thread", serial_api, android_api)
     serial_thread = SerialExecutionThread("serial", serial_api, production=True)
 
 

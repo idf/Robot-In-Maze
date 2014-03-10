@@ -113,16 +113,19 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     moveForward(parameter);
     getSensorReadings();
     this->send_command_complete(function_code, 200);
+    return true;
   }
   else if(function_code==21) {
     turnLeft(parameter);
     getSensorReadings();
     this->send_command_complete(function_code, 200);
+    return true;
   }
   else if(function_code==22) {
     turnRight(parameter);
     getSensorReadings();
     this->send_command_complete(function_code, 200);
+    return true;
   }
 
   else {

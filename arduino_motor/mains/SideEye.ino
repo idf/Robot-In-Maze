@@ -11,11 +11,11 @@ void SideEye::init() {
 }
 
 int SideEye::output_reading_left() {
-  return this->output_reading(this->sharp_left, SHORT);
+  return this->_output_reading_left(this->sharp_left, SHORT);
 }
 
 int SideEye::output_reading_right() {
-  return this->output_reading(this->sharp_right, SHORT);
+  return this->_output_reading_right(this->sharp_right, SHORT);
 }
 
 int SideEye::output_reading_ultra() {
@@ -39,11 +39,11 @@ void SideEye::test_readings() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private
-bool SideEye::is_within_range(SharpIR* sensor, int model) {
+bool SideEye::is_within_range_left(SharpIR* sensor, int model) {
   int upper, lower;
   if(model==SHORT){
-    upper = 43;
-    lower = 8;
+    upper = 39;
+    lower = 7;
   }
   else {
     upper = 65;
@@ -58,7 +58,26 @@ bool SideEye::is_within_range(SharpIR* sensor, int model) {
   return true;
 }
 
-int SideEye::output_reading(SharpIR* sensor, int model) {
+bool SideEye::is_within_range_right(SharpIR* sensor, int model) {
+  int upper, lower;
+  if(model==SHORT){
+    upper = 43;
+    lower = 7;
+  }
+  else {
+    upper = 65;
+    lower = 22;
+  }
+  for(int i=0; i<5; i++) {
+    int distance = sensor->distance();
+    if(distance>upper || distance<lower) 
+      return false;
+    delay(RANGE_TEST_DELAY); // TODO
+  }
+  return true;
+}
+
+int SideEye::_output_reading_left(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
     OFFSET = 8;
@@ -68,7 +87,7 @@ int SideEye::output_reading(SharpIR* sensor, int model) {
   }
 
   int dis = sensor->distance() - OFFSET;
-  if (this->is_within_range(sensor, model)) {
+  if (this->is_within_range_left(sensor, model)) {
     dis = (dis+5)/10*10; 
   }
   else {
@@ -76,6 +95,26 @@ int SideEye::output_reading(SharpIR* sensor, int model) {
   }
   return dis;
 }
+
+int SideEye::_output_reading_right(SharpIR* sensor, int model) {
+  int OFFSET;
+  if (model==SHORT) {
+    OFFSET = 8;
+  }
+  else {
+    OFFSET = 4  ; // for LONG
+  }
+
+  int dis = sensor->distance() - OFFSET;
+  if (this->is_within_range_right(sensor, model)) {
+    dis = (dis+5)/10*10; 
+  }
+  else {
+    dis = -1;
+  }
+  return dis;
+}
+
 
 int SideEye::get_ultra_reading() {
   const int ULTRA_OFFSET = 2;// need to be verified 
@@ -89,6 +128,7 @@ bool SideEye::is_within_range(Ultrasound* sensor) {
       return false;
     delay(RANGE_TEST_DELAY);
   }
+  Serial.println(F("Ultrasound is_within_range")); //additional delay (wk8 Mon)
   return true;
 }
 

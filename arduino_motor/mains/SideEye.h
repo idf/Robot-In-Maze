@@ -4,7 +4,7 @@
 #include <Ultrasound.h>
 #define SHORT 1080
 //#define LONG 20150
-#define RANGE_TEST_DELAY 10
+#define RANGE_TEST_DELAY 15
 
 class SideEye{
 public:
@@ -19,8 +19,10 @@ private:
   SharpIR* sharp_right;
   Ultrasound* ultrasound;
 
-  bool is_within_range(SharpIR* sensor, int model);
-  int output_reading(SharpIR* sensor, int model);
+  bool is_within_range_left(SharpIR* sensor, int model);
+  bool is_within_range_right(SharpIR* sensor, int model);
+  int _output_reading_left(SharpIR* sensor, int model);
+  int _output_reading_right(SharpIR* sensor, int model);
   int get_ultra_reading();
   bool is_within_range(Ultrasound* sensor);
 };
