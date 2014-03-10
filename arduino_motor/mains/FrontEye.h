@@ -16,11 +16,12 @@ public:
 
   void test_readings();
   
-private: 
- 
+  // for calibrator to use
   int get_ir_reading_left();
   int get_ir_reading_right();
   int get_ultra_reading(); // to clear the check list
+  
+private: 
   bool is_within_range(SharpIR* sensor);
   bool is_within_range(Ultrasound* sensor);
 

@@ -53,6 +53,8 @@ List of function codes currently available:
 20: moveForward with Sensor Reading (returns two packages of data)
 21: turnLeft with Sensor Reading
 22: turnRight with Sensor Reading
+
+98: void calibrate(int situation); // see calibration section below
 ```
 NOTICE: In python each json serial command at very end must end with 
 ```python
@@ -114,3 +116,7 @@ List of sensor codes currently available:
 12: sided ultra sensor; // 10 - 120 cm
 ```
 Notice: if the distance is beyond the sensor's range, it will return -1;  
+###Calibration
+98: void calibrate(int situation);  
+####To determine the situation
+![](./images/calibration_illustration.jpg =350x)

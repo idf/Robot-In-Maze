@@ -54,22 +54,23 @@ void setup(void)
 void loop(void)
 {
   // integration mode
-  
+  /*
   warmingUp();
   serialCommnder->receive_exec_command();
-  
+  */
+  //calibrator->calibrate(4);
   //sideEye->test_readings();
   //getSensorReadings();
   
   //getSensorReadings();
-  //delay(1000);
+  delay(10000);
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
   //moveForward(10);     
 
 
-  //frontEye->test_readings();
+  
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());

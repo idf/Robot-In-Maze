@@ -5,6 +5,7 @@
 #include "ErrorCumulator.h"
 #include "FrontEye.h"
 #include "SideEye.h"
+#include "Calibrator.h"
 //#include "ServoIR.h"
 /* 
 M1 on LEFT
@@ -53,5 +54,6 @@ SerialCommnder* serialCommnder = new SerialCommnder();
 ErrorCumulator* errorCumulator = new ErrorCumulator();
 FrontEye* frontEye = new FrontEye(Pin::ULTRA_1_PWM , Pin::ULTRA_1_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT);
 SideEye* sideEye = new SideEye(Pin::LEFT_IR, Pin::RIGHT_IR, Pin::ULTRA_2_PWM , Pin::ULTRA_2_TRIG);
+Calibrator* calibrator = new Calibrator(frontEye);
 //ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);
 #endif

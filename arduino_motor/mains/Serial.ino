@@ -1,4 +1,5 @@
 #include "Serial.h"
+#include "globals.h"
 // public
 SerialCommnder::SerialCommnder() {
   this->command = 99;
@@ -127,7 +128,11 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     this->send_command_complete(function_code, 200);
     return true;
   }
-
+  else if(function_code==98) {
+    calibrator->calibrate(parameter);
+    this->send_command_complete(function_code, 200);
+    return true;
+  }
   else {
     this->send_command_complete(function_code, 405); // Method not Allowed
     return false;
