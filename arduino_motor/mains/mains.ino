@@ -57,9 +57,8 @@ void loop(void)
   //warmingUp();
   //resetPololuTicks();
 
-  warmingUp();
-  //motorShield.setSpeeds(100, 100);
-  serialCommnder->receive_exec_command();
+  //warmingUp();
+  //serialCommnder->receive_exec_command();
   //sideEye->test_readings();
   //getSensorReadings();
   
@@ -78,8 +77,12 @@ void loop(void)
   //sideEye->test_readings();
   //goStraightlineCheckpoint();
   //printCounts();
-  //turnLeft(90);
-  //printCounts();
+  turnRight(90);
+  printCounts();
+  //delay(1000);
+  moveForward(10);
+  printCounts();
+  //delay(1000);
   //errorCumulator->compass->printAxis();
   
   //turnLeft(90);
@@ -124,7 +127,7 @@ void warmingUp() {
     moveForward(10);
     delay(100);
     moveForward(10);
-    delay(10000);
+    delay(1000);
     first_time = false;
   }
 }
