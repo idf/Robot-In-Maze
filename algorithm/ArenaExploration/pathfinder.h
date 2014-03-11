@@ -18,7 +18,7 @@ public:
 	PathFinder(Robot* robot, Arena* arena, Arena* fullArena);
 	~PathFinder();
 	bool PathFinder::explore(int percentage, int timeLimitInSeconds);
-	int PathFinder::addTurnWeight(Grid* grid);
+	bool PathFinder::isSameDirection(Grid* current, Grid* next);
 	int PathFinder::addSafeWeight(Grid* grid);
 	std::vector<Grid*> findPathBetween(int startX, int startY, int endX, int endY);
 	bool PathFinder::pointIsWalkable(int x, int y);
@@ -32,7 +32,6 @@ private:
 	int _endX, _endY;
 	Robot* _robot;
 	Arena* _arena, *_fullArena;
-	Grid* previous;
 };
 
 #endif

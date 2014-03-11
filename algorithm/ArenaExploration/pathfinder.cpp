@@ -9,9 +9,6 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_arena = arena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
-	previous = new Grid();
-	previous->x = ARENA_START_X;
-	previous->y = ARENA_START_Y;
 }
 PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 {
@@ -20,9 +17,6 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
-	previous = new Grid();
-	previous->x = ARENA_START_X;
-	previous->y = ARENA_START_Y;
 }
 PathFinder::~PathFinder()
 {}
@@ -82,36 +76,41 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		return false;
 }
 
-int PathFinder::addTurnWeight(Grid* grid)
+bool PathFinder::isSameDirection(Grid* current, Grid* next)
 {
-	// check future move direction
-	bool isPreviousTurn = false;
 	int xDiff, yDiff;
-	xDiff = grid->getX() - _robot->getPosX();
-	yDiff = grid->getY() - _robot->getPosY();
-	DIRECTION futureDir = RIGHT, previousDir = RIGHT;
+
+	// check future move direction
+	xDiff = next->getX() - current->getX();
+	yDiff = next->getY() - current->getY();
+	DIRECTION futureDir = RIGHT, previousDir = _robot->getDirection();
 	if (xDiff == 0 && yDiff == 1)
 		futureDir = DOWN;
 	else if (xDiff == -1 && yDiff == 0)
 		futureDir = LEFT;
 	else if (xDiff == 0 && yDiff == -1)
 		futureDir = UP;
-	// check previous move direction
-	xDiff = _robot->getPosX() - previous->getX();
-	yDiff = _robot->getPosY() - previous->getY();
-	if (xDiff == 0 && yDiff == 1)
-		previousDir = DOWN;
-	else if (xDiff == -1 && yDiff == 0)
-		previousDir = LEFT;
-	else if (xDiff == 0 && yDiff == -1)
-		previousDir = UP;
-	else if (xDiff == 0 && yDiff == 0)
-		isPreviousTurn = true;
+	
+	// start location case
+	if (current->hasParent())
+	{
+		// check previous move direction
+		xDiff = current->getX() - current->parent->getX();
+		yDiff = current->getY() - current->parent->getY();
+		if (xDiff == 0 && yDiff == 1)
+			previousDir = DOWN;
+		else if (xDiff == -1 && yDiff == 0)
+			previousDir = LEFT;
+		else if (xDiff == 0 && yDiff == -1)
+			previousDir = UP;
+		else
+			previousDir = RIGHT;
+	}
 
-	if (!isPreviousTurn && futureDir != previousDir)
-		return 1;
+	if (futureDir != previousDir)
+		return false;
 	else 
-		return 0;
+		return true;
 }
 // used to avoid obstacle and provide safety distance
 int PathFinder::addSafeWeight(Grid* grid)
@@ -144,6 +143,8 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 	list<Grid*> closedList;
 	list<Grid*>::iterator i;
 	unsigned int n = 0;
+	bool isSet = false;
+	bool isCurrentPoint = true;
 
 	// Add the start point to the openList
 	openList.push_back(start);
@@ -151,25 +152,73 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 
 	while (n == 0 || current != end)
 	{
+		isSet = false;
 		// stop if the point is unreachable
 		// this part may have problem
 		if (_arena->getGridType(endX, endY) == OBSTACLE)
 			break;
-
-		// Look for the smallest F value in the openList and make it the current point
-		for (i = openList.begin(); i != openList.end(); ++ i)
+		if (isCurrentPoint)
 		{
-			// choose next point
-			int iWeight = (*i)->heuristic + addSafeWeight(*i);
-			iWeight +=  + addTurnWeight(*i);
-			int currentWeight = current->heuristic + addSafeWeight(current);
-			//cout << "nextpt: " << iWeight << ", currnet pt wt: " << currentWeight <<endl;
-			if (i == openList.begin() || iWeight <= currentWeight)
+			current = *openList.begin();
+			isCurrentPoint = false;
+		}
+		else
+		{
+			// same dir, safe
+			for (i = openList.begin(); i != openList.end(); ++ i)
 			{
-				previous = current;
-				current = (*i);
+				if (addSafeWeight(*i) != 0 || !isSameDirection(current, *i))
+					continue;
+			    if ((*i)->heuristic <= current->heuristic)
+			    {
+			        current = (*i);
+					isSet = true;
+			    }
 			}
-			
+
+			// different dir, safe
+			if (!isSet)
+			{
+				for (i = openList.begin(); i != openList.end(); ++ i)
+				{
+					if (addSafeWeight(*i) != 0)
+						continue;
+				    if ((*i)->heuristic <= current->heuristic)
+				    {
+				        current = (*i);
+						isSet = true;
+				    }
+				}
+			}
+			if (!isSet)
+			{
+				for (i = openList.begin(); i != openList.end(); ++ i)
+				{
+					if (!isSameDirection(current, *i))
+						continue;
+				    if ((*i)->heuristic <= current->heuristic)
+				    {
+				        current = (*i);
+						isSet = true;
+				    }
+				}
+			}
+			if (!isSet)
+			{
+				for (i = openList.begin(); i != openList.end(); ++ i)
+				{
+				    if ((*i)->heuristic <= current->heuristic)
+				    {
+				        current = (*i);
+						isSet = true;
+				    }
+				}
+			}
+			// MAY HAVE PROBLEM. BECAUSE DIRECTION NOT CHANGED
+			if (!isSet)
+			{
+				current = *openList.begin();
+			}
 		}
 
 		// Stop if we reached the end
@@ -258,10 +307,16 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 
 	// Reset
 	for (i = openList.begin(); i != openList.end(); ++ i)
+	{
 		(*i)->opened = false;
+		(*i)->parent = NULL;
+	}
 
 	for (i = closedList.begin(); i != closedList.end(); ++ i)
+	{
 		(*i)->closed = false;
+		(*i)->parent = NULL;
+	}
 
 	// Resolve the path starting from the end point
 	while (current->hasParent() && current != start)
