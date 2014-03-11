@@ -51,7 +51,7 @@ MainWindow::MainWindow()
 void MainWindow::startExplorationButtonClicked()
 {
 	//conn->waitForAndroidExplore();
-	robot->senseEnvironment(arena, fullArena);
+	//robot->senseEnvironment(arena, fullArena);
 #ifdef HARDWARE
 	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));
 #else
@@ -68,6 +68,11 @@ bool MainWindow::startGoToDestination()
 
 bool MainWindow::exploreProcessHandler()
 {
+	//pathFinder->runOnePath(pathFinder->findPathBetween(ARENA_START_X, ARENA_START_Y, ARENA_END_X, ARENA_END_Y));
+	//robot->calibrateAtGoal();
+	//pathFinder->runOnePath(pathFinder->findPathBetween(ARENA_END_X, ARENA_END_Y, ARENA_START_X, ARENA_START_Y));
+	//return false;
+
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 	this->refreshDisplay();
 	io->printArena(arena);

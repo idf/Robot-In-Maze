@@ -91,16 +91,19 @@ void Robot::moveForward(int dist)
 	if (!_conn->sendMovement(dist))
 		return;
 #endif
-	switch(_direction)
+	for (int i = 0; i < dist/10; ++i)
 	{
-		case DOWN:  // down
-			++_posY; break;
-		case LEFT: // left
-			--_posX; break;
-		case UP: // up
-			--_posY; break;
-		case RIGHT: // right
-			++_posX; break;
+		switch(_direction)
+		{
+			case DOWN:  // down
+				++_posY; break;
+			case LEFT: // left
+				--_posX; break;
+			case UP: // up
+				--_posY; break;
+			case RIGHT: // right
+				++_posX; break;
+		}
 	}
 }
 map<Sensor*, int>* Robot::getDataFromSensor()
@@ -349,7 +352,7 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
-	cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
+	//cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
 	arena->setGridType(x, y, OBSTACLE);
 }
 
@@ -369,8 +372,7 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
-		cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" << endl;
-		// prevent overriding obstacle as free due to conflict sensor information
+		//cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" << endl;
 		if (arena->getGridType(x, y) == OBSTACLE)
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);

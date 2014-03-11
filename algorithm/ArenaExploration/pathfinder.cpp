@@ -33,7 +33,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
 	// explore one: !_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds
 	// unelegent redundant code LOL. but NVM.
-	if (_robot->getPosX() != _endX && _robot->getPosY() != _endY)
+	if (_robot->getPosX() != _endX && _robot->getPosY() != _endY && time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
@@ -159,12 +159,17 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		// Look for the smallest F value in the openList and make it the current point
 		for (i = openList.begin(); i != openList.end(); ++ i)
 		{
-			if (i == openList.begin() || (*i)->heuristic + addSafeWeight(*i) + addTurnWeight(*i) <= 
-				current->heuristic + addSafeWeight(current))
+			// choose next point
+			int iWeight = (*i)->heuristic + addSafeWeight(*i);
+			iWeight +=  + addTurnWeight(*i);
+			int currentWeight = current->heuristic + addSafeWeight(current);
+			//cout << "nextpt: " << iWeight << ", currnet pt wt: " << currentWeight <<endl;
+			if (i == openList.begin() || iWeight <= currentWeight)
 			{
 				previous = current;
 				current = (*i);
 			}
+			
 		}
 
 		// Stop if we reached the end
@@ -328,11 +333,15 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 bool PathFinder::runOnePath(vector<Grid*> path)
 {
 	vector<pair<std::string, int>*>* movementList = getMovementList(path);
+	for (vector<Grid*>::reverse_iterator i = path.rbegin(); i != path.rend(); i++)
+		cout << (*i)->x << "," <<(*i)->y << endl;
+	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); i++)
+		cout << (*i)->first << "," <<(*i)->second << endl;
 	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); ++i)
 	{
-		if((*i)->first == "rotateClockWise")
+		if((*i)->first == "rotateClockwise")
 			_robot->rotateClockwise((*i)->second);
-		else if ((*i)->first == "rotateCounterClockWise")
+		else if ((*i)->first == "rotateCounterClockwise")
 			_robot->rotateCounterClockwise((*i)->second);
 		else
 			_robot->moveForward((*i)->second);
