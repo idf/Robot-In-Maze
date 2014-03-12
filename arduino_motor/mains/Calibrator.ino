@@ -5,7 +5,7 @@ Calibrator::Calibrator(FrontEye* frontEye) {
 }
 void Calibrator::calibrate(int situation) {
   this->turned_angle = 0; // clear
-  const int CALIBRATE_TIMES = 1;
+  const int CALIBRATE_TIMES = 2;
   if (situation%4==1 || situation%4==0) {
     for(int i=0; i<CALIBRATE_TIMES; i++) {
       turnLeft(90);
@@ -39,7 +39,7 @@ void Calibrator::one_side_calibrate() {
 
 void Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 8.2; //cm
-  const int ADJUST_ANGLE = 10; // degree
+  const int ADJUST_ANGLE = 15; // degree
   int left_reading = frontEye->get_ir_reading_left();
   int right_reading = frontEye->get_ir_reading_right();
   if (left_reading>30 || right_reading>30) {
@@ -49,7 +49,7 @@ void Calibrator::calibrate_angle() {
   double theta = asin((left_reading - right_reading)/DETECTORS_INTERVAL); // radian
   theta *= RAD_TO_DEG; // degree
 
-  while(abs(theta)>3) {
+  while(abs(theta)>1) {
     if(theta>0) {
       turnLeft(ADJUST_ANGLE);
       turnRight(abs(theta)+ADJUST_ANGLE);
@@ -66,7 +66,7 @@ void Calibrator::calibrate_angle() {
 
 }
 void Calibrator::calibrate_distance() {
-  const int ADJUST_DISTANCE = 2; // cm
+  const int ADJUST_DISTANCE = 3; // cm
   int left_reading = frontEye->get_ir_reading_left();
   int right_reading = frontEye->get_ir_reading_right();
   double avg_reading = (left_reading+right_reading)/2.0;

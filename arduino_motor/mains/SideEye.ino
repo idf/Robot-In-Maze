@@ -99,7 +99,7 @@ int SideEye::_output_reading_left(SharpIR* sensor, int model) {
 int SideEye::_output_reading_right(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
-    OFFSET = 5;
+    OFFSET = 6;
   }
   else {
     OFFSET = 4  ; // for LONG

@@ -65,9 +65,10 @@ void loop(void)
   */
   //turnRight(90); delay(200); 
   //moveForward(10); delay(200); 
-  //calibrator->calibrate(6);
-  //delay(10000);
-  frontEye->test_readings();
+  calibrator->calibrate(6);
+  delay(10000);
+  //frontEye->test_readings();
+  //sideEye->test_readings();
   //getSensorReadings();
   
   //getSensorReadings();
