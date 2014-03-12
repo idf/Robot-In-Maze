@@ -69,7 +69,9 @@ void loop(void)
   //getSensorReadings();
   
   //getSensorReadings();
+  //delay(1000);
   //delay(10000);
+
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
@@ -82,13 +84,13 @@ void loop(void)
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
   //goStraightlineCheckpoint();
-  /*
-  moveForward(10);
-  printCounts();
-  turnRight(90);
-  printCounts();
-  //delay(1000);
-  */
+ 
+  //moveForward(10);
+  //printCounts();
+  //turnRight(90);
+  //printCounts();
+  delay(1000);
+ 
   
   //moveForward(10);
   //printCounts();
