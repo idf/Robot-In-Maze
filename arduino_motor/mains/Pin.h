@@ -50,8 +50,8 @@ public:
   static const unsigned char ULTRA_2_PWM = 6;   //side ultrasound
   static const unsigned char ULTRA_2_TRIG = 12; //side ultrasound
 
-  static const unsigned char FRONT_IR_LEFT = A0;
-  static const unsigned char FRONT_IR_RIGHT = A1;
+  static const unsigned char FRONT_IR_LEFT = A4;
+  static const unsigned char FRONT_IR_RIGHT = A5;
 
   static const unsigned char LEFT_IR = A2;
   static const unsigned char RIGHT_IR = A3; 

@@ -1,3 +1,4 @@
+
 /*
 
 routine to be followed in the mains.ino:
@@ -19,21 +20,21 @@ void loop(){
 }
 
 */
-#include <Wire.h>
-#include <HMC5883L.h>
-#include "HMC5883LCompass.h"
+//#include <Wire.h>
+//#include <HMC5883L.h>
+//#include "HMC5883LCompass.h"
 
-void HMC5883LCompass::compassSetup() {
+//void HMC5883LCompass::compassSetup() {
   // Initilization 
-  Wire.begin();
-  this->compass = HMC5883L(); //new instance of HMC5883L library
+  //Wire.begin();
+  //this->compass = HMC5883L(); //new instance of HMC5883L library
   //setupHMC5883L(); //setup the HMC5883L
 
   //Setup
-  compass.SetScale(1.3);
-  compass.SetMeasurementMode(Measurement_Continuous);
-}
-
+  //compass.SetScale(1.3);
+  //compass.SetMeasurementMode(Measurement_Continuous);
+//}
+/*
 float HMC5883LCompass::getHeading(){
   //Get the reading from the HMC5883L and calculate the heading
   MagnetometerScaled scaled = compass.ReadScaledAxis(); //scaled values from compass.
@@ -68,7 +69,7 @@ if (raw.YAxis < miny)
 }
 if (raw.XAxis > maxx)
 {
-     maxx=raw.XAxis;/* code */
+     maxx=raw.XAxis;/* code 
 }
 if (raw.YAxis > maxy)
 {
@@ -81,4 +82,4 @@ if (raw.YAxis > maxy)
 
   
 
-}
+}*/
