@@ -54,16 +54,20 @@ void setup(void)
 void loop(void)
 {
   // integration mode
-  /*
-  warmingUp();
+  
+  //warmingUp();
   serialCommnder->receive_exec_command();
-  */
-  //calibrator->calibrate(4);
+  //turnRight(90); delay(200); 
+  //moveForward(10); delay(200); 
+  //calibrator->calibrate(6);
+  //delay(10000);
   //sideEye->test_readings();
   //getSensorReadings();
   
   //getSensorReadings();
   //delay(1000);
+  //delay(10000);
+
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   sideEye->test_readings();
@@ -90,7 +94,7 @@ void loop(void)
   //errorCumulator->compass->printAxis();
   
   //turnLeft(90);
-  //moveForward(80);
+  // testing
   //turnLeft(90);
   //serialCommnder->send_command_complete(1, 200);
   //Serial.println(errorCumulator->get_compass_read());
@@ -134,4 +138,18 @@ void warmingUp() {
     delay(1000);
     first_time = false;
   }
+}
+
+void test_calibeate() {
+  calibrator->calibrate(6);
+  turnLeft(90);
+  for(int i=0; i<16; i++) {moveForward(10); delay(200);}
+  turnRight(90);
+  delay(200);
+  calibrator->calibrate(4);
+  turnRight(90);
+  delay(200);
+  for(int i=0; i<16; i++)  {moveForward(10); delay(200);}
+  turnLeft(90);
+  delay(200);
 }

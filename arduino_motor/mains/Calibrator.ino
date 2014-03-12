@@ -5,7 +5,7 @@ Calibrator::Calibrator(FrontEye* frontEye) {
 }
 void Calibrator::calibrate(int situation) {
   this->turned_angle = 0; // clear
-  const int CALIBRATE_TIMES = 2;
+  const int CALIBRATE_TIMES = 1;
   if (situation%4==1 || situation%4==0) {
     for(int i=0; i<CALIBRATE_TIMES; i++) {
       turnLeft(90);
@@ -39,17 +39,17 @@ void Calibrator::one_side_calibrate() {
 
 void Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 8.2; //cm
-  const int ADJUST_ANGLE = 15; // degree
+  const int ADJUST_ANGLE = 10; // degree
   int left_reading = frontEye->get_ir_reading_left();
   int right_reading = frontEye->get_ir_reading_right();
-  if (left_reading>20 || right_reading>20) {
+  if (left_reading>30 || right_reading>30) {
     return;
   }
   // http://www.nongnu.org/avr-libc/user-manual/group__avr__math.html#ga98384ad60834911ec93ac5ae1af4cf0a
   double theta = asin((left_reading - right_reading)/DETECTORS_INTERVAL); // radian
   theta *= RAD_TO_DEG; // degree
 
-  while(abs(theta)>1) {
+  while(abs(theta)>3) {
     if(theta>0) {
       turnLeft(ADJUST_ANGLE);
       turnRight(abs(theta)+ADJUST_ANGLE);
@@ -78,8 +78,13 @@ void Calibrator::calibrate_distance() {
       moveForward(abs(delta)+ADJUST_DISTANCE);
     }
     else {
-      moveForward(ADJUST_DISTANCE);
-      moveForward(abs(delta)+ADJUST_DISTANCE);
+      if(left_reading>ADJUST_DISTANCE+1) {
+        moveForward(ADJUST_DISTANCE);
+        moveBackward(abs(delta)+ADJUST_DISTANCE);
+      }
+      else {
+        moveBackward(abs(delta));
+      }
     }
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
