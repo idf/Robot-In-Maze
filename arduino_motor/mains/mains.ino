@@ -56,7 +56,7 @@ void loop(void)
   // integration mode
   
   //warmingUp(//);
-  //serialCommnder->receive_exec_command();//
+  serialCommnder->receive_exec_command();//
   /*
   setScale(1.2);
   moveForward(40);
@@ -66,16 +66,13 @@ void loop(void)
   //turnRight(90); delay(200); 
   //moveForward(10); delay(200); 
   //calibrator->calibrate(2);
-  calibrator->test_calibrate();
-  delay(10000);
+  //calibrator->test_calibrate();
+  //delay(10000);
   //delay(10000);
   //frontEye->test_readings();
-  //sideEye->test_readings(); delay(1000);
-  //getSensorReadings();
-  
-  //getSensorReadings();
- 
-  //delay(10000);
+  //sideEye->test_readings(); 
+  //getSensorReadings(); delay(1000);
+
 
   //sideEye->test_readings();
   //delay(1000);
