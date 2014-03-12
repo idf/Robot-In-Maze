@@ -4,7 +4,7 @@
 #include <Ultrasound.h>
 #define SHORT 1080
 //#define LONG 20150
-#define RANGE_TEST_DELAY 5
+#define RANGE_TEST_DELAY 10
 class FrontEye{
 public:
   FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin_left, unsigned char ir_pin_right);

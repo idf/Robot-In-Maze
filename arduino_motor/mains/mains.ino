@@ -57,15 +57,17 @@ void loop(void)
   
   //warmingUp();
   //serialCommnder->receive_exec_command();
-  setScale(1.25);
-  moveForward(10);
-  setScale(1/1.25);
+  /*
+  setScale(1.2);
+  moveForward(40);
+  setScale(1/1.2);
   delay(1000);
+  */
   //turnRight(90); delay(200); 
   //moveForward(10); delay(200); 
   //calibrator->calibrate(6);
   //delay(10000);
-  //sideEye->test_readings();
+  frontEye->test_readings();
   //getSensorReadings();
   
   //getSensorReadings();

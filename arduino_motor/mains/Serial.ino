@@ -1,5 +1,6 @@
 #include "Serial.h"
 #include "globals.h"
+#define SCALE 1.2 
 // public
 SerialCommnder::SerialCommnder() {
   this->command = 99;
@@ -87,18 +88,24 @@ void SerialCommnder::send_sensor_readings(
 // private
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
+    setScale(SCALE);
     moveForward(parameter);
     this->send_command_complete(function_code, 200);
+    setScale(1/SCALE);
     return true;
   }
   else if(function_code==1) {
+    setScale(SCALE);
     turnLeft(parameter);
     this->send_command_complete(function_code, 200);
+    setScale(1/SCALE);
     return true;
   }
   else if(function_code==2) {
+    setScale(SCALE);
     turnRight(parameter);
     this->send_command_complete(function_code, 200);
+    setScale(1/SCALE);
     return true;
   }
 
