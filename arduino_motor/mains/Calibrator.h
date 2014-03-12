@@ -14,7 +14,7 @@ private:
 
 
   void one_side_calibrate();
-  void calibrate_angle();
+  bool calibrate_angle();
   void calibrate_distance();
 };
 #endif

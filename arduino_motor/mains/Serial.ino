@@ -1,6 +1,6 @@
 #include "Serial.h"
 #include "globals.h"
-#define SCALE 1.2 
+#define SCALE 1
 // public
 SerialCommnder::SerialCommnder() {
   this->command = 99;

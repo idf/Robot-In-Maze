@@ -43,7 +43,7 @@ bool SideEye::is_within_range_left(SharpIR* sensor, int model) {
   int upper, lower;
   if(model==SHORT){
     upper = 39;
-    lower = 7;
+    lower = 6;
   }
   else {
     upper = 65;
@@ -61,8 +61,8 @@ bool SideEye::is_within_range_left(SharpIR* sensor, int model) {
 bool SideEye::is_within_range_right(SharpIR* sensor, int model) {
   int upper, lower;
   if(model==SHORT){
-    upper = 43;
-    lower = 7;
+    upper = 45;
+    lower = 8;
   }
   else {
     upper = 65;
@@ -80,7 +80,7 @@ bool SideEye::is_within_range_right(SharpIR* sensor, int model) {
 int SideEye::_output_reading_left(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
-    OFFSET = 8;
+    OFFSET = 6;
   }
   else {
     OFFSET = 4  ; // for LONG
@@ -99,7 +99,7 @@ int SideEye::_output_reading_left(SharpIR* sensor, int model) {
 int SideEye::_output_reading_right(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
-    OFFSET = 6;
+    OFFSET = 2;
   }
   else {
     OFFSET = 4  ; // for LONG
