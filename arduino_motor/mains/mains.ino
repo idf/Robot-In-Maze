@@ -56,7 +56,11 @@ void loop(void)
   // integration mode
   
   //warmingUp();
-  serialCommnder->receive_exec_command();
+  //serialCommnder->receive_exec_command();
+  setScale(1.25);
+  moveForward(10);
+  setScale(1/1.25);
+  delay(1000);
   //turnRight(90); delay(200); 
   //moveForward(10); delay(200); 
   //calibrator->calibrate(6);
