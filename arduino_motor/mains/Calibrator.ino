@@ -123,7 +123,7 @@ void Calibrator::calibrate_distance() {
       moveForward(abs(delta)+ADJUST_DISTANCE); delay(100);
     }
     else {
-      if(left_reading>ADJUST_DISTANCE+1) { // avoid close obstable ahead
+      if(0.5*(left_reading+right_reading)>ADJUST_DISTANCE+1) { // avoid close obstable ahead
         moveForward(ADJUST_DISTANCE); delay(100);
         moveBackward(abs(delta)+ADJUST_DISTANCE); delay(100);
       }
