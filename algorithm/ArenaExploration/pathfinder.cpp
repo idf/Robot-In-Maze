@@ -27,13 +27,13 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
 	// explore one: !_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds
 	// unelegent redundant code LOL. but NVM.
-	if (_robot->getPosX() != _endX && _robot->getPosY() != _endY && time(0) - start < timeLimitInSeconds)
+	if (_robot->getPosX() != _endX || _robot->getPosY() != _endY && time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 #endif
-		if (_robot->getPosX() != _endX && _robot->getPosY() != _endY)
+		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
 		{
 			// TODO CHANGE TO CHECK EXPLORABLE
 			// if not reachable, check whether it is detectable, if not, break;
@@ -70,6 +70,8 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		_robot->calibrateAtGoal();
 		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
 		runOnePath(result);
+		result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_END_X, ARENA_END_Y);
+		runOnePath(result);
 		return false;
 	}
 	else
@@ -90,6 +92,10 @@ bool PathFinder::isSameDirection(Grid* current, Grid* next)
 		futureDir = LEFT;
 	else if (xDiff == 0 && yDiff == -1)
 		futureDir = UP;
+	else if (xDiff == 1 && yDiff == 0)
+		futureDir = RIGHT;
+	else
+		return false;
 	
 	// start location case
 	if (current->hasParent())
@@ -167,9 +173,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 			// same dir, safe
 			for (i = openList.begin(); i != openList.end(); ++ i)
 			{
+				cout << (*i)->getX() <<  (*i)->getY();
 				if (addSafeWeight(*i) != 0 || !isSameDirection(current, *i))
 					continue;
-			    if ((*i)->heuristic <= current->heuristic)
+				if (!isSet || (*i)->heuristic <= current->heuristic)
 			    {
 			        current = (*i);
 					isSet = true;
@@ -183,7 +190,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 				{
 					if (addSafeWeight(*i) != 0)
 						continue;
-				    if ((*i)->heuristic <= current->heuristic)
+				    if (!isSet || (*i)->heuristic <= current->heuristic)
 				    {
 				        current = (*i);
 						isSet = true;
@@ -196,7 +203,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 				{
 					if (!isSameDirection(current, *i))
 						continue;
-				    if ((*i)->heuristic <= current->heuristic)
+				    if (!isSet || (*i)->heuristic <= current->heuristic)
 				    {
 				        current = (*i);
 						isSet = true;
@@ -207,7 +214,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 			{
 				for (i = openList.begin(); i != openList.end(); ++ i)
 				{
-				    if ((*i)->heuristic <= current->heuristic)
+				    if (!isSet || (*i)->heuristic <= current->heuristic)
 				    {
 				        current = (*i);
 						isSet = true;
@@ -309,13 +316,11 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 	for (i = openList.begin(); i != openList.end(); ++ i)
 	{
 		(*i)->opened = false;
-		(*i)->parent = NULL;
 	}
 
 	for (i = closedList.begin(); i != closedList.end(); ++ i)
 	{
 		(*i)->closed = false;
-		(*i)->parent = NULL;
 	}
 
 	// Resolve the path starting from the end point
@@ -325,6 +330,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		current = current->parent;
 		n ++;
 	}
+	// reset parent for next time
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+			_arena->getGrid(i, j)->parent = NULL;
 	return path;
 }
 

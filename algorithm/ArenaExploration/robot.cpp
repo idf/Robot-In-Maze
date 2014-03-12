@@ -164,9 +164,11 @@ void Robot::calibrateAtGoal()
 	switch(this->_direction)
 	{
 	case DOWN:
+		cout << endl << "calibrate: 5";
 		_conn->calibrate(5);
 		break;
 	case RIGHT:
+		cout << endl << "calibrate: 6";
 		_conn->calibrate(6);
 		break;
 	default:
@@ -373,8 +375,8 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case RIGHT: ++x; break;
 		}
 		//cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" << endl;
-		if (arena->getGridType(x, y) == OBSTACLE)
-			return;
+		//if (arena->getGridType(x, y) == OBSTACLE)
+		//	return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
 }
