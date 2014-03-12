@@ -70,7 +70,7 @@ void loop(void)
 
   //sideEye->test_readings();
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-  sideEye->test_readings();
+  //sideEye->test_readings();
   //moveForward(10);     
 
 
