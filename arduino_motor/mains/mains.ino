@@ -92,7 +92,7 @@ void loop(void)
   //printCounts();
   //turnRight(90);
   //printCounts();
-  delay(1000);
+  //delay(1000);
  
   
   //moveForward(10);
