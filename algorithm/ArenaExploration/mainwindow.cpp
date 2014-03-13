@@ -13,7 +13,7 @@ MainWindow::MainWindow()
 	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT, conn);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
-	pathFinder = new PathFinder(robot, arena, fullArena);
+	pathFinder = new PathFinder(robot, arena, fullArena, conn);
 	
 	// initialize display structure5
 	percentageEntry.set_text("Percentage");
@@ -50,8 +50,8 @@ MainWindow::MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
-	//conn->waitForAndroidExplore();
-	//robot->senseEnvironment(arena, fullArena);
+	conn->waitForAndroidExplore();
+	robot->senseEnvironment(arena, fullArena);
 #ifdef HARDWARE
 	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));
 #else
@@ -80,10 +80,17 @@ bool MainWindow::exploreProcessHandler()
 		;
 	if (!continueTimer)
 	{
+		// trick
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			for (int j = 0; j < ARENA_Y_SIZE; ++j)
+			{
+				if (arena->getGridType(i, j) == UNEXPLORED)
+					arena->setGridType(i, j, UNOCCUPIED);
+			}
+		}
 		io->generateMapDescriptorLevel1();
 		io->generateMapDescriptorLevel2();
-		conn->waitForAndroidRun();
-		Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::startGoToDestination));
 	}
 	return continueTimer;
 }
@@ -100,36 +107,64 @@ void MainWindow::refreshDisplay()
 {
 	Gdk::Color unoccupied("white"), obstacle("#2E231F"), robotColor("#263C8B"), pathColor("#4E74A6"), startAndEnd("#BFA524");
 	// change Arena
-	for (int i = -1; i < 3; ++i)
+	
+	for (std::map<int, int>::iterator i = arena->gridToRefresh->begin(); i != arena->gridToRefresh->end(); ++i)
 	{
-		for (int j = -1; j < 3; ++j)
+		int locateX = (*i).first, locateY = (*i).second;
+		if (locateX < 0 || locateX >= ARENA_X_SIZE || locateY < 0 || locateY >= ARENA_Y_SIZE)
+			continue;
+		switch(arena->getGridType(locateX, locateY))
 		{
-			int locateX = robot->getPosX()+i, locateY = robot->getPosY()+j;
-			if (locateX < 0 || locateX >= ARENA_X_SIZE || locateY < 0 || locateY >= ARENA_Y_SIZE)
-				continue;
-			switch(arena->getGridType(locateX, locateY))
-			{
-			case UNOCCUPIED:
-				gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
-				break;
-			case OBSTACLE:
-				gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, obstacle);
-				break;
-			case UNEXPLORED:
-				//gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unexplored);
-				break;
-			case START:
-			case GOAL:
-				gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, startAndEnd);
-				break;
-			}
+		case UNOCCUPIED:
+		case UNSAFE:
+			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
+			break;
+		case OBSTACLE:
+			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, obstacle);
+			break;
+		case UNEXPLORED:
+			//gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unexplored);
+			break;
+		case START:
+		case GOAL:
+			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, startAndEnd);
+			break;
 		}
 	}
+	//for (int i = -1; i < 3; ++i)
+	//{
+	//	for (int j = -1; j < 3; ++j)
+	//	{
+	//		int locateX = robot->getPosX()+i, locateY = robot->getPosY()+j;
+	//		if (locateX < 0 || locateX >= ARENA_X_SIZE || locateY < 0 || locateY >= ARENA_Y_SIZE)
+	//			continue;
+	//		switch(arena->getGridType(locateX, locateY))
+	//		{
+	//		case UNOCCUPIED:
+	//		case UNSAFE:
+	//			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
+	//			break;
+	//		case OBSTACLE:
+	//			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, obstacle);
+	//			break;
+	//		case UNEXPLORED:
+	//			//gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unexplored);
+	//			break;
+	//		case START:
+	//		case GOAL:
+	//			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, startAndEnd);
+	//			break;
+	//		}
+	//	}
+	//}
+
+
 	//change robot
 	gridDisplay[robot->getPosX()][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()+1][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()+1][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+	arena->gridToRefresh->clear();
 }
 
 MainWindow::~MainWindow()

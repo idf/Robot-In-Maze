@@ -10,6 +10,7 @@
 #define ARENA_END_Y 12
 
 #include <cstdlib>
+#include <map>
 
 enum GRIDTYPE{UNOCCUPIED = 0, OBSTACLE = 1, START = 2, GOAL = 3, UNEXPLORED = 4, UNSAFE = 5};
 
@@ -47,7 +48,7 @@ public:
 	void init();
 	bool isExploredFully(int percentage);
 	GRIDTYPE getRealGridType(int posX, int posY);
-
+	std::map<int, int>* gridToRefresh;
 private:
 	Grid _grid[ARENA_X_SIZE][ARENA_Y_SIZE];
 };

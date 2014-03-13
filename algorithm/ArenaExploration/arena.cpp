@@ -41,6 +41,7 @@ void Arena::setGridType(int posX, int posY, GRIDTYPE gridType)
 
 void Arena::init()
 {
+	gridToRefresh = new std::map<int, int>();
 	for(int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)

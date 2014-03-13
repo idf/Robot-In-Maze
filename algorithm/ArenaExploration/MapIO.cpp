@@ -113,6 +113,7 @@ void MapIO::generateMapDescriptorLevel2()
 			case UNOCCUPIED:
 			case START:
 			case GOAL:
+			case UNSAFE:
 				data.append("0");
 				break;
 			case OBSTACLE:

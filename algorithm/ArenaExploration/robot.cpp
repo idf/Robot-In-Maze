@@ -75,7 +75,8 @@ void Robot::rotateClockwise(int deg)
 	if (!_conn->sendRotationClockwise(deg))
 		return;
 #endif
-	++_direction;
+	for (int i = 0; i < deg/90; ++i)
+		++_direction;
 }
 void Robot::rotateCounterClockwise(int deg)
 {
@@ -83,7 +84,8 @@ void Robot::rotateCounterClockwise(int deg)
 	if (!_conn->sendRotationCounterClockwise(deg))
 		return;
 #endif
-	--_direction;
+	for (int i = 0; i < deg/90; ++i)
+		--_direction;
 }
 void Robot::moveForward(int dist)
 {
@@ -168,6 +170,23 @@ void Robot::calibrateAtGoal()
 		_conn->calibrate(5);
 		break;
 	case RIGHT:
+		cout << endl << "calibrate: 6";
+		_conn->calibrate(6);
+		break;
+	default:
+		return; // cannot calibrate
+	}
+}
+
+void Robot::calibrateAtStart()
+{
+	switch(this->_direction)
+	{
+	case UP:
+		cout << endl << "calibrate: 5";
+		_conn->calibrate(5);
+		break;
+	case LEFT:
 		cout << endl << "calibrate: 6";
 		_conn->calibrate(6);
 		break;
@@ -353,6 +372,7 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		if (arena->getGridType(x, y) == OBSTACLE)
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);
+		arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
 	//cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
 	arena->setGridType(x, y, OBSTACLE);
@@ -363,7 +383,10 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 {
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	if (range == -1) // to far to detect
-		range = US_RANGE;
+	{
+		return;
+		//range = US_RANGE;
+	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (int i = 0; i < range/10; ++i)  // NOTE: DIFFERENT
 	{
@@ -374,9 +397,10 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
-		//cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" << endl;
 		//if (arena->getGridType(x, y) == OBSTACLE)
-		//	return;
+		//	arena->setGridType(x, y, UNSAFE);
+		//else
 		arena->setGridType(x, y, UNOCCUPIED);
+		arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
 }

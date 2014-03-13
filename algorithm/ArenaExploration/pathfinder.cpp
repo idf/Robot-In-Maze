@@ -10,13 +10,14 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
 }
-PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
+PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector* conn)
 {
 	_robot = robot;
 	_arena = arena;
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
+	_conn = conn;
 }
 PathFinder::~PathFinder()
 {}
@@ -43,8 +44,12 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 					return true;
 			}
 			// move to new place, sense the surrounding
-			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY);
+			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
 			vector<Grid*>::reverse_iterator i = result.rbegin();
+			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX(), _robot->getPosY())));
+			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX()+1, _robot->getPosY())));
+			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX(), _robot->getPosY()+1)));
+			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX()+1, _robot->getPosY()+1)));
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMoveAndSense(*i);
 			else
@@ -68,9 +73,12 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
 	{
 		_robot->calibrateAtGoal();
-		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y);
+		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
 		runOnePath(result);
-		result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_END_X, ARENA_END_Y);
+		_robot->calibrateAtStart();
+		cout << "Wait for android run?";
+		_conn->waitForAndroidRun();
+		result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
 		runOnePath(result);
 		return false;
 	}
@@ -137,7 +145,7 @@ int PathFinder::addSafeWeight(Grid* grid)
 
 // Find the path based on current map
 // astar, not the shortest path
-vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY)
+vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY, bool oneShortestPathRun)
 {
 	vector<Grid*> path;
 	Grid *current, *child, *start, *end;
@@ -173,7 +181,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 			// same dir, safe
 			for (i = openList.begin(); i != openList.end(); ++ i)
 			{
-				cout << (*i)->getX() <<  (*i)->getY();
+				//cout << (*i)->getX() <<  (*i)->getY();
 				if (addSafeWeight(*i) != 0 || !isSameDirection(current, *i))
 					continue;
 				if (!isSet || (*i)->heuristic <= current->heuristic)
@@ -233,12 +241,12 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 			break;
 
 		// Remove the current point from the openList
-		openList.remove(current);
 		current->opened = false;
+		openList.remove(current);
 
 		// Add the current point to the closedList
-		closedList.push_back(current);
 		current->closed = true;
+		closedList.push_back(current);
 
 		// Get all current's adjacent walkable points
 		// here x and y are used to iterrate through adjacent cells
@@ -269,6 +277,12 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 				// If it's closed or not walkable then pass
 				if (child->closed || !pointIsWalkable(child->x, child->y))
 					continue;
+
+				if (oneShortestPathRun)
+				{
+					if (!pointIsAlwaysSafe(child->x, child->y))
+						continue;
+				}
 #ifndef STRAIGHT_MODE
 				// If we are at a corner
 				if (x != 0 && y != 0)
@@ -352,6 +366,17 @@ bool PathFinder::pointIsWalkable(int x, int y)
 	return true;
 }
 
+bool PathFinder::pointIsAlwaysSafe(int x, int y)
+{
+	if (_arena->getGridType(x, y) == UNOCCUPIED &&
+		_arena->getGridType(x + 1, y) == UNOCCUPIED &&
+		_arena->getGridType(x, y + 1) == UNOCCUPIED &&
+		_arena->getGridType(x + 1, y + 1) == UNOCCUPIED)
+		return true;
+	else
+		return false;
+}
+
 bool PathFinder::substituteNewPoint(int x, int y)
 {
 	if (pointIsWalkable(_endX-2, _endY-1)) {_endX=_endX-2; _endY--; return true;}
@@ -415,7 +440,7 @@ bool PathFinder::runOnePath(vector<Grid*> path)
 vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path)
 {
 	vector<pair<std::string, int>*>* movementList = new vector<pair<std::string, int>*>();
-	pair<std::string, int>* singleMovement = new pair<std::string, int>("", 0);
+	pair<std::string, int>* singleMovement;
 	Grid* destination = *path.rbegin();
 	Grid* currentLocation;
 	DIRECTION previousDir;
@@ -435,33 +460,33 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 
 	while (dir != currentDir)
 	{
+		singleMovement = new pair<std::string, int>("", 0);
 		if (currentDir == DOWN && dir == RIGHT)
 		{
 			singleMovement->first = "rotateCounterClockwise";
-			singleMovement->second += 90;
+			singleMovement->second = 90;
 			currentDir--;
 		}
 		else if (currentDir == RIGHT && dir == DOWN)
 		{
 			singleMovement->first = "rotateClockwise";
-			singleMovement->second += 90;
+			singleMovement->second = 90;
 			currentDir++;
 		}
 		else if (dir > currentDir)
 		{
 			singleMovement->first = "rotateClockwise";
-			singleMovement->second += 90;
+			singleMovement->second = 90;
 			currentDir++;
 		}
 		else
 		{
 			singleMovement->first = "rotateCounterClockwise";
-			singleMovement->second += 90;
+			singleMovement->second = 90;
 			currentDir--;
 		}
-	}
-	if (singleMovement->second != 0)
 		movementList->push_back(singleMovement);
+	}
 	singleMovement = new pair<string, int>("moveForward", 0);
 	previousDir = dir;
 	currentLocation = _arena->getGrid(_robot->getPosX(), _robot->getPosY());
@@ -485,6 +510,11 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 		{
 			singleMovement->second += 10;
 			currentLocation = destination;
+			//if ((*movementList->rbegin())->first != "moveForward")
+			//{
+			//	movementList->push_back(singleMovement);
+			//	singleMovement = new pair<string, int>("moveForward", 0);
+			//}
 			++i;
 		}
 		else
