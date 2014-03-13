@@ -72,7 +72,7 @@ bool MainWindow::exploreProcessHandler()
 	//robot->calibrateAtGoal();
 	//pathFinder->runOnePath(pathFinder->findPathBetween(ARENA_END_X, ARENA_END_Y, ARENA_START_X, ARENA_START_Y));
 	//return false;
-
+	int count;
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 	this->refreshDisplay();
 	io->printArena(arena);
@@ -81,6 +81,56 @@ bool MainWindow::exploreProcessHandler()
 	if (!continueTimer)
 	{
 		// trick
+		// manually complement the maze with given obstacle size
+		// upper
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			count = 0;
+			for (int j = 5; j >= 0; --j)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// left
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			count = 0;
+			for (int i = 5; i >= 0; --i)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// RIGHT
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			count = 0;
+			for (int i = 14; i < ARENA_X_SIZE; ++i)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// LOWER
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			count = 0;
+			for (int j = 9; j < ARENA_Y_SIZE; ++j)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// set all other as unoccupied
 		for (int i = 0; i < ARENA_X_SIZE; ++i)
 		{
 			for (int j = 0; j < ARENA_Y_SIZE; ++j)
@@ -89,6 +139,7 @@ bool MainWindow::exploreProcessHandler()
 					arena->setGridType(i, j, UNOCCUPIED);
 			}
 		}
+		io->printArena(arena);
 		io->generateMapDescriptorLevel1();
 		io->generateMapDescriptorLevel2();
 	}

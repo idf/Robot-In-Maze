@@ -75,7 +75,7 @@ void MapIO::generateMapDescriptorLevel1()
 	string data("");
 	data.append("11");
 
-	for (int i = ARENA_X_SIZE - 1; i >= 0; --i)
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
@@ -102,9 +102,8 @@ void MapIO::generateMapDescriptorLevel2()
 {
 	ofstream mapDescriptor2("descriptor2.txt");
 	string data("");
-	data.append("11");
 
-	for (int i = ARENA_X_SIZE - 1; i >= 0; --i)
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
@@ -124,7 +123,9 @@ void MapIO::generateMapDescriptorLevel2()
 			}
 		}
 	}
-	data.append("11");
+
+	while (data.length %8 != 0)
+		data.append("0");
 
 	string hexData = convertToHex(data);
 	mapDescriptor2 << hexData;
