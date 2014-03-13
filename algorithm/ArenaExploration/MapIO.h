@@ -15,6 +15,8 @@ public:
 	void MapIO::printArena(Arena* arena);
 	void MapIO::printPath(std::vector<Grid*> path);
 	void readMapFromFile(std::string filename);
+	void generateMapDescriptorLevel1a();
+	void generateMapDescriptorLevel2a();
 	void generateMapDescriptorLevel1();
 	void generateMapDescriptorLevel2();
 private:

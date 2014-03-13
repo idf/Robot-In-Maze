@@ -80,6 +80,9 @@ bool MainWindow::exploreProcessHandler()
 		;
 	if (!continueTimer)
 	{
+		io->printArena(arena);
+		io->generateMapDescriptorLevel1a();
+		io->generateMapDescriptorLevel2a();
 		// trick
 		// manually complement the maze with given obstacle size
 		// upper
