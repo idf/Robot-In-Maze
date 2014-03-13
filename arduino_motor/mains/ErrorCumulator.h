@@ -42,6 +42,10 @@ private:
   double right_deltaY;
   double right_theta;
 
+  double left_deltaX;
+  double left_deltaY;
+  double left_theta;
+
   double forward_deltaX;
   double forward_deltaY;
   double forward_theta;

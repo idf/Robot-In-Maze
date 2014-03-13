@@ -54,18 +54,12 @@ void setup(void)
 void loop(void)
 {
   // integration mode
-  
   warmingUp();
-  //serialCommnder->receive_exec_command();//
-  
-  /*
-  setScale(1.2);
-  moveForward(40);
-  setScale(1/1.2);
-  delay(1000);
-  */
-  turnRight(90); delay(400); printCounts(); 
-  moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
+  serialCommnder->receive_exec_command();
+  ///*
+  //moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
+  //turnRight(90); delay(400); printCounts(); 
+  //*/
   //calibrator->calibrate(6); delay(1000);
   //turnRight(90); delay(400);
   
@@ -141,10 +135,13 @@ void softwareProjectLabSqure() {
 void warmingUp() {
   static bool first_time = true;
   if(first_time) {
-    moveForward(10);
-    delay(100);
-    moveForward(10);
-    delay(1000);
+    for(int i=0; i<1; i++) {
+      moveForward(10); delay(100);
+      turnRight(90); delay(100);
+      moveForward(10); delay(100);
+      turnLeft(90); delay(100);
+    }
+
     first_time = false;
   }
 }

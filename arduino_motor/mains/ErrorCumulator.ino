@@ -13,7 +13,6 @@ ErrorCumulator::ErrorCumulator() {
   this->compass_reading_0 = 0;
   this->current_mode = FORWORD;
 
-  //TODO
   this->forward_deltaX = 0;
   this->forward_deltaY = 0;
   this->forward_theta = 0;
@@ -21,6 +20,10 @@ ErrorCumulator::ErrorCumulator() {
   this->right_deltaX = 0;
   this->right_deltaY = 0;
   this->right_theta = 0;
+
+  this->left_deltaX = 0;
+  this->left_deltaY = 0;
+  this->left_theta = 0;
 
 }
 void ErrorCumulator::init() {
@@ -85,7 +88,9 @@ void ErrorCumulator::change_to_forward_mode() {
     this->right_theta = this->theta;
   }
   else if(this->current_mode==LEFT) {
-
+    this->left_deltaX = this->deltaX ;
+    this->left_deltaY = this->deltaY;
+    this->left_theta = this->theta;
   }
   // end of change 
   this->reset_dead_reckoning(); // suppposed to do
@@ -109,6 +114,9 @@ void ErrorCumulator::change_to_right_mode() {
 
 void ErrorCumulator::change_to_left_mode() {
   this->change_to_turning_mode(LEFT);
+  this->deltaX = this->left_deltaX;
+  this->deltaY = this->left_deltaY;
+  this->theta = this->left_theta;
 }
 
 
@@ -128,6 +136,11 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
     this->right_deltaX = this->deltaX ;
     this->right_deltaY = this->deltaY;
     this->right_theta = this->theta;  
+  }
+  else if(this->current_mode==LEFT) {
+    this->left_deltaX = this->deltaX ;
+    this->left_deltaY = this->deltaY;
+    this->left_theta = this->theta;
   }
   
   this->reset_dead_reckoning();
