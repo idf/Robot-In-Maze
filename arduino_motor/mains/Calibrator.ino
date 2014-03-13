@@ -50,7 +50,7 @@ void Calibrator::one_side_calibrate() {
 
 bool Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 12.2; //cm
-  const int ADJUST_ANGLE = 15; // degree
+  const int ADJUST_ANGLE = 25; // degree
   const int MULTIPLIER = 3;
 
   double theta;
@@ -119,13 +119,15 @@ void Calibrator::calibrate_distance() {
     }
 
     if(delta>0) {
-      moveBackward(ADJUST_DISTANCE); delay(100);
-      moveForward(abs(delta)+ADJUST_DISTANCE); delay(100);
+      //moveBackward(ADJUST_DISTANCE); delay(100);
+      //moveForward(abs(delta)+ADJUST_DISTANCE); delay(100);
+      moveForward(abs(delta));
     }
     else {
-      if(0.5*(left_reading+right_reading)>ADJUST_DISTANCE+1) { // avoid close obstable ahead
-        moveForward(ADJUST_DISTANCE); delay(100);
-        moveBackward(abs(delta)+ADJUST_DISTANCE); delay(100);
+      if(0.5*(left_reading+right_reading)>ADJUST_DISTANCE+3) { // avoid close obstable ahead
+        //moveForward(ADJUST_DISTANCE); delay(100);
+        //moveBackward(abs(delta)+ADJUST_DISTANCE); delay(100);
+        moveBackward(abs(delta)); delay(100);
       }
       else {
         moveBackward(abs(delta)); delay(100);

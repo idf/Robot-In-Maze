@@ -7,8 +7,8 @@ int const Config::COUNTS_PER_REVOLUTION = 2249/2; // only one output connected t
 double const Config::DISTANCE_PER_TICK_CM = (PI*WHEEL_DIAMETER)/COUNTS_PER_REVOLUTION; //0.016762077012005334
 
 int const Config::SAMPLE_TIME = 1; // tuned
-double const Config::WHEELS_INTERVAL = 17.05; // turning right 17.24 SWE Lab (low V); ( SPL high V 17.15)
-double const Config::WHEELS_INTERVAL_LEFT = 16.95; // (SPL high V 17.15)                      
+double const Config::WHEELS_INTERVAL = 17.18; // turning right 17.24 SWE Lab (low V); ( SPL high V 17.15)
+double const Config::WHEELS_INTERVAL_LEFT = 17.20; // (SPL high V 17.15)                      
 
 double Config::MAX_SPEED = 300;
 double Config::TARGET_SPEED = 200;

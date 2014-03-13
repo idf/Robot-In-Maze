@@ -55,8 +55,9 @@ void loop(void)
 {
   // integration mode
   
-  //warmingUp(//);
+  warmingUp();
   serialCommnder->receive_exec_command();//
+  
   /*
   setScale(1.2);
   moveForward(40);
@@ -65,7 +66,10 @@ void loop(void)
   */
   //turnRight(90); delay(200); 
   //moveForward(10); delay(200); 
-  //calibrator->calibrate(2);
+  //calibrator->calibrate(6); delay(1000);
+  //turnRight(90); delay(400);
+  
+  //delay(10000);
   //calibrator->test_calibrate();
   //delay(10000);
   //delay(10000);
@@ -74,7 +78,6 @@ void loop(void)
   //getSensorReadings(); delay(1000);
 
 
-  //sideEye->test_readings();
   //delay(1000);
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();

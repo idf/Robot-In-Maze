@@ -2,8 +2,8 @@
 //public
 FrontEye::FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin_left, unsigned char ir_pin_right) {
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
-  this->sharp_left = new SharpIR(ir_pin_left, 250, 95, SHORT);
-  this->sharp_right = new SharpIR(ir_pin_right, 250, 95, SHORT);
+  this->sharp_left = new SharpIR(ir_pin_left, 100, 95, SHORT);
+  this->sharp_right = new SharpIR(ir_pin_right, 100, 95, SHORT);
 }
 void FrontEye::init() {
   this->ultrasound->init();
@@ -78,7 +78,7 @@ bool FrontEye::is_within_range(SharpIR* sensor) {
 bool FrontEye::is_within_range(Ultrasound* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
-    if(distance>107 || distance<6) // TODO
+    if(distance>107 || distance<2) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }

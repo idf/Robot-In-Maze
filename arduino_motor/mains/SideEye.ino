@@ -1,8 +1,8 @@
 #include "SideEye.h"
 //public
 SideEye::SideEye(unsigned char left_pin, unsigned char right_pin, unsigned char ultra_pin_1, unsigned ultra_pin_2) {
-  this->sharp_left = new SharpIR(left_pin, 250, 95, SHORT);//left side
-  this->sharp_right = new SharpIR(right_pin, 250, 95, SHORT);//right front
+  this->sharp_left = new SharpIR(left_pin, 100, 95, SHORT);//left side
+  this->sharp_right = new SharpIR(right_pin, 100, 95, SHORT);//right front
 
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
 }
@@ -124,7 +124,7 @@ int SideEye::get_ultra_reading() {
 bool SideEye::is_within_range(Ultrasound* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
-    if(distance>107 || distance<7) // TODO
+    if(distance>107 || distance<2) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }
