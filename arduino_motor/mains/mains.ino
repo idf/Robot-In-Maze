@@ -54,10 +54,10 @@ void setup(void)
 void loop(void)
 {
   // integration mode
-  /*
+  
   warmingUp();
   serialCommnder->receive_exec_command();//
-  */
+  
   /*
   setScale(1.2);
   moveForward(40);
@@ -74,7 +74,6 @@ void loop(void)
   //delay(10000);
   //delay(10000);
   //sideEye->test_readings();
-  //sideEye->test_readings(); 
   //getSensorReadings(); delay(1000);
 
 
@@ -91,11 +90,14 @@ void loop(void)
   //sideEye->test_readings();
   //goStraightlineCheckpoint();
  
-  moveForward(10);
-  printCounts();
-  turnRight(90);
+  //moveForward(10);
+  //printCounts(); delay(500);
+  /*
+  turnRight(90); 
+  turnLeft(90);
   printCounts();
   delay(1000);
+  */
  
   
   //moveForward(10);
