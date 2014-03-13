@@ -18,6 +18,10 @@ ErrorCumulator::ErrorCumulator() {
   this->forward_deltaY = 0;
   this->forward_theta = 0;
 
+  this->right_deltaX = 0;
+  this->right_deltaY = 0;
+  this->right_theta = 0;
+
 }
 void ErrorCumulator::init() {
   //this->compass->compassSetup();
@@ -76,7 +80,9 @@ void ErrorCumulator::change_to_forward_mode() {
   if(this->current_mode==FORWORD)
     return ;
   else if(this->current_mode==RIGHT) {
-
+    this->right_deltaX = this->deltaX ;
+    this->right_deltaY = this->deltaY;
+    this->right_theta = this->theta;
   }
   else if(this->current_mode==LEFT) {
 
@@ -96,6 +102,9 @@ void ErrorCumulator::change_to_forward_mode() {
 
 void ErrorCumulator::change_to_right_mode() {
   this->change_to_turning_mode(RIGHT);
+  this->deltaX = this->right_deltaX;
+  this->deltaY = this->right_deltaY;
+  this->theta = this->right_theta;
 }
 
 void ErrorCumulator::change_to_left_mode() {
@@ -115,11 +124,18 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
     
     // this->turning_error += this->theta; // theta +/- consistent
   }
-  // end of change 
+  else if(this->current_mode==RIGHT) {
+    this->right_deltaX = this->deltaX ;
+    this->right_deltaY = this->deltaY;
+    this->right_theta = this->theta;  
+  }
+  
   this->reset_dead_reckoning();
   this->current_mode = mode;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 /**
 return the angle difference within 180 degrees give two angle in the range [-180, +180]
 orthodox coordiates

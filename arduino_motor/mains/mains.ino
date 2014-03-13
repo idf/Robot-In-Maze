@@ -56,7 +56,7 @@ void loop(void)
   // integration mode
   
   warmingUp();
-  serialCommnder->receive_exec_command();//
+  //serialCommnder->receive_exec_command();//
   
   /*
   setScale(1.2);
@@ -64,8 +64,8 @@ void loop(void)
   setScale(1/1.2);
   delay(1000);
   */
-  //turnRight(90); delay(200); 
-  //moveForward(10); delay(200); 
+  turnRight(90); delay(400); printCounts(); 
+  moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
   //calibrator->calibrate(6); delay(1000);
   //turnRight(90); delay(400);
   
@@ -112,9 +112,6 @@ void loop(void)
   //Serial.println(errorCumulator->get_compass_read());
   
 
-  //servo_ir->servoScan(60, 120);
-  //servo_ir->print_dist_array();
-  //delay(500); //to slow down the serial print
 
 
   //getSensorReadings();
