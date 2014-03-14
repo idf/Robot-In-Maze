@@ -1,5 +1,6 @@
 #include "globals.h"
 #include "PinChangeInt.h"
+#define MAGIC_NUMBER 20 // high V 36 Okay 20 perfect 10 not that good 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 int isM1Forward either 1 or -1 or 0
@@ -105,7 +106,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   long firstRightCount = rightCnt;//rightCnt();
   
 
-  while (target_tick - avgTicksForAngleOrDist > Config::MIN_SPEED*2) { //target_tick - change to 'angle' for other formula // 200 is tested
+  while (target_tick - avgTicksForAngleOrDist > 300) { //target_tick - change to 'angle' for other formula // 200 is tested
   // the tolerance value affect the turning errors
 
     double leftTicksForAngleOrDist = leftCnt;
@@ -119,8 +120,9 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
 
     /* IMPORTANT */
     //if(isLeftForward*isRightForward>0)
-      delay(Config::MIN_SPEED*0.5); // long distance problem
+      delay(MAGIC_NUMBER); // long distance problem
   }
+
   // fading
   setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
   //Serial.println(F("fading"));

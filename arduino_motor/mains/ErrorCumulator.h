@@ -37,7 +37,15 @@ private:
   double compass_reading_0;
   
   int current_mode; // 00, 01, 02
-  
+
+  double right_deltaX;
+  double right_deltaY;
+  double right_theta;
+
+  double left_deltaX;
+  double left_deltaY;
+  double left_theta;
+
   double forward_deltaX;
   double forward_deltaY;
   double forward_theta;
