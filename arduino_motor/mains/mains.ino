@@ -58,7 +58,7 @@ void loop(void)
   serialCommnder->receive_exec_command();
   ///*
   //moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
-  //turnRight(90); delay(400); printCounts(); 
+  //turnLeft(90); delay(400); printCounts(); 
   //*/
   //calibrator->calibrate(6); delay(1000);
   //turnRight(90); delay(400);
