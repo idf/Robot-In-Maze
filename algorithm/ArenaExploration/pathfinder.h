@@ -34,7 +34,6 @@ private:
 	int _endX, _endY;
 	Robot* _robot;
 	Arena* _arena, *_fullArena;
-	Connector* _conn;
 };
 
 #endif

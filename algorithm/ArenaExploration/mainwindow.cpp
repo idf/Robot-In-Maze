@@ -52,6 +52,7 @@ void MainWindow::startExplorationButtonClicked()
 {
 	conn->waitForAndroidExplore();
 	robot->senseEnvironment(arena, fullArena);
+	this->refreshDisplay();
 #ifdef HARDWARE
 	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));
 #else
@@ -68,11 +69,6 @@ bool MainWindow::startGoToDestination()
 
 bool MainWindow::exploreProcessHandler()
 {
-	//pathFinder->runOnePath(pathFinder->findPathBetween(ARENA_START_X, ARENA_START_Y, ARENA_END_X, ARENA_END_Y));
-	//robot->calibrateAtGoal();
-	//pathFinder->runOnePath(pathFinder->findPathBetween(ARENA_END_X, ARENA_END_Y, ARENA_START_X, ARENA_START_Y));
-	//return false;
-	int count;
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 	this->refreshDisplay();
 	io->printArena(arena);
@@ -80,68 +76,23 @@ bool MainWindow::exploreProcessHandler()
 		;
 	if (!continueTimer)
 	{
+		if (robot->getPosX() != ARENA_START_X || robot->getPosY() != ARENA_START_Y)
+		{
+			robot->calibrateAtGoal();
+			vector<Grid*> result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
+			pathFinder->runOnePath(result);
+			robot->calibrateAtStart();
+			cout << "Wait for android run?";
+			conn->waitForAndroidRun();
+			result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
+			pathFinder->runOnePath(result);
+			return false;
+		}
+
 		io->printArena(arena);
 		io->generateMapDescriptorLevel1a();
 		io->generateMapDescriptorLevel2a();
-		// trick
-		// manually complement the maze with given obstacle size
-		// upper
-		for (int i = 0; i < ARENA_X_SIZE; ++i)
-		{
-			count = 0;
-			for (int j = 5; j >= 0; --j)
-			{
-				if (arena->getGridType(i, j) == OBSTACLE)
-					count ++;
-				if (count >=5)
-					arena->setGridType(i, j, OBSTACLE);
-			}
-		}
-		// left
-		for (int j = 0; j < ARENA_Y_SIZE; ++j)
-		{
-			count = 0;
-			for (int i = 5; i >= 0; --i)
-			{
-				if (arena->getGridType(i, j) == OBSTACLE)
-					count ++;
-				if (count >=5)
-					arena->setGridType(i, j, OBSTACLE);
-			}
-		}
-		// RIGHT
-		for (int j = 0; j < ARENA_Y_SIZE; ++j)
-		{
-			count = 0;
-			for (int i = 14; i < ARENA_X_SIZE; ++i)
-			{
-				if (arena->getGridType(i, j) == OBSTACLE)
-					count ++;
-				if (count >=5)
-					arena->setGridType(i, j, OBSTACLE);
-			}
-		}
-		// LOWER
-		for (int i = 0; i < ARENA_X_SIZE; ++i)
-		{
-			count = 0;
-			for (int j = 9; j < ARENA_Y_SIZE; ++j)
-			{
-				if (arena->getGridType(i, j) == OBSTACLE)
-					count ++;
-				if (count >=5)
-					arena->setGridType(i, j, OBSTACLE);
-			}
-		}
-		// set all other as unoccupied
-		for (int i = 0; i < ARENA_X_SIZE; ++i)
-		{
-			for (int j = 0; j < ARENA_Y_SIZE; ++j)
-			{
-				if (arena->getGridType(i, j) == UNEXPLORED)
-					arena->setGridType(i, j, UNOCCUPIED);
-			}
-		}
+		io->complementMap(arena);
 		io->printArena(arena);
 		io->generateMapDescriptorLevel1();
 		io->generateMapDescriptorLevel2();
@@ -159,12 +110,12 @@ bool MainWindow::shortestPathHandler()
 // Display the arena based on current information
 void MainWindow::refreshDisplay()
 {
-	Gdk::Color unoccupied("white"), obstacle("#2E231F"), robotColor("#263C8B"), pathColor("#4E74A6"), startAndEnd("#BFA524");
+	Gdk::Color unoccupied("white"), obstacle("#2E231F"), robotColor("#263C8B"), unexplored("#BDBF78"), startAndEnd("#BFA524");
 	// change Arena
 	
 	for (std::map<int, int>::iterator i = arena->gridToRefresh->begin(); i != arena->gridToRefresh->end(); ++i)
 	{
-		int locateX = (*i).first, locateY = (*i).second;
+		int locateX = i->first, locateY = i->second;
 		if (locateX < 0 || locateX >= ARENA_X_SIZE || locateY < 0 || locateY >= ARENA_Y_SIZE)
 			continue;
 		switch(arena->getGridType(locateX, locateY))
@@ -177,7 +128,7 @@ void MainWindow::refreshDisplay()
 			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, obstacle);
 			break;
 		case UNEXPLORED:
-			//gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unexplored);
+			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unexplored);
 			break;
 		case START:
 		case GOAL:
@@ -185,34 +136,6 @@ void MainWindow::refreshDisplay()
 			break;
 		}
 	}
-	//for (int i = -1; i < 3; ++i)
-	//{
-	//	for (int j = -1; j < 3; ++j)
-	//	{
-	//		int locateX = robot->getPosX()+i, locateY = robot->getPosY()+j;
-	//		if (locateX < 0 || locateX >= ARENA_X_SIZE || locateY < 0 || locateY >= ARENA_Y_SIZE)
-	//			continue;
-	//		switch(arena->getGridType(locateX, locateY))
-	//		{
-	//		case UNOCCUPIED:
-	//		case UNSAFE:
-	//			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
-	//			break;
-	//		case OBSTACLE:
-	//			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, obstacle);
-	//			break;
-	//		case UNEXPLORED:
-	//			//gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, unexplored);
-	//			break;
-	//		case START:
-	//		case GOAL:
-	//			gridDisplay[locateX][locateY]->modify_bg(Gtk::StateType::STATE_NORMAL, startAndEnd);
-	//			break;
-	//		}
-	//	}
-	//}
-
-
 	//change robot
 	gridDisplay[robot->getPosX()][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
 	gridDisplay[robot->getPosX()+1][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);

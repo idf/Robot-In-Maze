@@ -68,6 +68,66 @@ void MapIO::readMapFromFile(std::string filename)
 	mapFile.close();
 }
 
+void MapIO::complementMap(Arena* arena)
+{
+	int count;
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			count = 0;
+			for (int j = 5; j >= 0; --j)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// left
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			count = 0;
+			for (int i = 5; i >= 0; --i)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// RIGHT
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			count = 0;
+			for (int i = 14; i < ARENA_X_SIZE; ++i)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// LOWER
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			count = 0;
+			for (int j = 9; j < ARENA_Y_SIZE; ++j)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// set all other as unoccupied
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			for (int j = 0; j < ARENA_Y_SIZE; ++j)
+			{
+				if (arena->getGridType(i, j) == UNEXPLORED)
+					arena->setGridType(i, j, UNOCCUPIED);
+			}
+		}
+}
 void MapIO::generateMapDescriptorLevel1a()
 {
 	ofstream mapDescriptor1("descriptor1a.txt");

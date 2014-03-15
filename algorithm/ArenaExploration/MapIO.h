@@ -19,6 +19,7 @@ public:
 	void generateMapDescriptorLevel2a();
 	void generateMapDescriptorLevel1();
 	void generateMapDescriptorLevel2();
+	void complementMap(Arena* arena);
 private:
 	Arena* _arena;
 	Arena* _fullArena;

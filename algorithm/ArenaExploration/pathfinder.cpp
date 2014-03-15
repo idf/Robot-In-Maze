@@ -17,7 +17,6 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector* 
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
 	_endY = ARENA_END_Y;
-	_conn = conn;
 }
 PathFinder::~PathFinder()
 {}
@@ -26,8 +25,6 @@ PathFinder::~PathFinder()
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
-	// explore one: !_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds
-	// unelegent redundant code LOL. but NVM.
 	if (_robot->getPosX() != _endX || _robot->getPosY() != _endY && time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
@@ -69,21 +66,8 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			return true;
 		}
 	}
-	// go back to start point
-	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
-	{
-		_robot->calibrateAtGoal();
-		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-		runOnePath(result);
-		_robot->calibrateAtStart();
-		cout << "Wait for android run?";
-		_conn->waitForAndroidRun();
-		result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
-		runOnePath(result);
-		return false;
-	}
-	else
-		return false;
+	else 
+		return false; // exploration complete
 }
 
 bool PathFinder::isSameDirection(Grid* current, Grid* next)
