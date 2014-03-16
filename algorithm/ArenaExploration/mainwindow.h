@@ -36,6 +36,8 @@ protected:
 	bool MainWindow::startGoToDestination();
 
 private:
+	void hideRobot();
+	void displayRobot();
 	void refreshDisplay();
 	bool exploreProcessHandler();
 	bool shortestPathHandler();

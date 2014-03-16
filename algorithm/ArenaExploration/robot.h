@@ -43,6 +43,8 @@ public:
 	void openArenaWithSensorData(std::map<Sensor*, int>* sensorData, Arena* arena);
 	void senseEnvironment(Arena* arena, Arena* fullArena);
 
+	void moveForwardWithDisplay(int dist);
+
 #ifndef HARDWARE
 	inline void setLocation(int x, int y) {_posX = x; _posY = y;}
 #endif
