@@ -33,14 +33,13 @@ protected:
 
 	// signal handler
 	void MainWindow::startExplorationButtonClicked();
-	bool MainWindow::startGoToDestination();
+	bool MainWindow::refreshRobot();
 
 private:
-	void hideRobot();
-	void displayRobot();
+	void hideRobot(int x, int y);
+	void displayRobot(int x, int y);
+	void MainWindow::updateRobotDisplayLocation();
 	void refreshDisplay();
-	bool exploreProcessHandler();
-	bool shortestPathHandler();
 };
 
 #endif

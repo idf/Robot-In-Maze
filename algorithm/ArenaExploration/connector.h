@@ -27,7 +27,9 @@ public:
 	bool Connector::waitForAndroidExplore();
 	bool Connector::waitForAndroidRun();
 	bool Connector::sendMapInformationToAndroid(std::string map, std::string location);
-private:
+
+	bool Connector::sendMovementWithDisplay(int dist);
+
 	ClientNetwork* network;
 };
 

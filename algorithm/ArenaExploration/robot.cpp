@@ -4,6 +4,7 @@
 #include "connector.h"
 #include <sstream>
 #include <map>
+#include <Windows.h>
 
 using namespace std;
 
@@ -53,6 +54,7 @@ DIRECTION& operator--(DIRECTION& orig, int)
 Robot::Robot(int x, int y, DIRECTION direction, Connector* conn): 
 	_posX(x), _posY(y), _direction(direction), _conn(conn)
 {
+	movementCount = 0;
 	// initialize sensor configuration
 	Sensor* IRFrontL = new Sensor(IRFRONTL_ID, 0, Sensor::IR);
 	Sensor* IRFrontR = new Sensor(IRFRONTR_ID, 0, Sensor::IR);
@@ -177,7 +179,6 @@ void Robot::calibrateAtGoal()
 		return; // cannot calibrate
 	}
 }
-
 void Robot::calibrateAtStart()
 {
 	switch(this->_direction)
@@ -403,4 +404,39 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		arena->setGridType(x, y, UNOCCUPIED);
 		arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
+}
+
+bool Robot::moveForwardWithDisplay(int dist)
+{
+	if (movementCount == 0)
+	{
+		if (!_conn->sendMovementWithDisplay(dist))
+			return false;
+	}
+
+	if (movementCount < dist/10)
+	{
+		switch(_direction)
+		{
+			case DOWN:  // down
+				++_posY; break;
+			case LEFT: // left
+				--_posX; break;
+			case UP: // up
+				--_posY; break;
+			case RIGHT: // right
+				++_posX; break;
+		}
+		++movementCount;
+		return true;
+	}
+	if (movementCount == dist/10)
+	{
+		char buf[1000];
+		while(NetworkServices::receiveMessage(_conn->network->ConnectSocket, buf, 1000) <= 0)
+			;
+		movementCount = 0;
+		return false;
+	}
+	return false;
 }

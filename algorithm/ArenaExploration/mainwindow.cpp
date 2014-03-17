@@ -3,6 +3,7 @@
 #include "connector.h"
 #include <iostream>
 
+
 using namespace std;
 
 MainWindow::MainWindow()
@@ -50,79 +51,91 @@ MainWindow::MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
+	bool isExploreDone = false;
 	conn->waitForAndroidExplore();
+	pathFinder->start = time(0);
 	robot->senseEnvironment(arena, fullArena);
 	this->refreshDisplay();
-#ifdef HARDWARE
-	Glib::signal_idle().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler));
-#else
-	Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::exploreProcessHandler), 500);
-#endif
-	pathFinder->start = time(0);
-}
 
-bool MainWindow::startGoToDestination()
-{
-	cout << "running";
-	return true;
-}
 
-bool MainWindow::exploreProcessHandler()
-{
-	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
-	this->refreshDisplay();
-	io->printArena(arena);
-	while(!robot->sendItselfAndArena(arena))
-		;
-	if (!continueTimer)
+	while(!isExploreDone)
 	{
-		if (robot->getPosX() != ARENA_START_X || robot->getPosY() != ARENA_START_Y)
-		{
-			robot->calibrateAtGoal();
-			vector<Grid*> result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-			pathFinder->runOnePath(result);
-			robot->calibrateAtStart();
-			cout << "Wait for android run?";
-			conn->waitForAndroidRun();
-			result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
-			pathFinder->runOnePath(result);
-			return false;
-		}
-
+		isExploreDone = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
+		this->refreshDisplay();
 		io->printArena(arena);
-		io->generateMapDescriptorLevel1a();
-		io->generateMapDescriptorLevel2a();
-		io->complementMap(arena);
-		io->printArena(arena);
-		io->generateMapDescriptorLevel1();
-		io->generateMapDescriptorLevel2();
+		while(!robot->sendItselfAndArena(arena))
+			;
 	}
-	return continueTimer;
+	
+	robot->calibrateAtGoal();
+	vector<Grid*> result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
+	
+
+	// display version
+	bool isDone = false;
+	vector<pair<std::string, int>*>* movementList = pathFinder->getMovementList(result);
+	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); ++i)
+	{
+		if((*i)->first == "rotateClockwise")
+			robot->rotateClockwise((*i)->second);
+		else if ((*i)->first == "rotateCounterClockwise")
+			robot->rotateCounterClockwise((*i)->second);
+		else
+		{
+			
+			while(!isDone)
+			{
+				hideRobot(robot->getPosX(), robot->getPosY());
+				isDone = robot->moveForwardWithDisplay((*i)->second);
+				displayRobot(robot->getPosX(), robot->getPosY());
+				Sleep(500);
+			}
+			isDone = false;
+		}
+	}
+
+	//pathFinder->runOnePath(result);
+	robot->calibrateAtStart();
+	cout << "Wait for android run?";
+	conn->waitForAndroidRun();
+	result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
+	pathFinder->runOnePath(result);
+
+	io->printArena(arena);
+	io->generateMapDescriptorLevel1a();
+	io->generateMapDescriptorLevel2a();
+	io->complementMap(arena);
+	io->printArena(arena);
+	io->generateMapDescriptorLevel1();
+	io->generateMapDescriptorLevel2();
 }
 
-// to be done
-// in hardware level
-bool MainWindow::shortestPathHandler()
+bool MainWindow::refreshRobot()
 {
-	return true;
+	
 }
 
-void MainWindow::hideRobot()
+void MainWindow::hideRobot(int x, int y)
 {
 	Gdk::Color unoccupied("white");
-	gridDisplay[robot->getPosX()][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
-	gridDisplay[robot->getPosX()+1][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
-	gridDisplay[robot->getPosX()][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
-	gridDisplay[robot->getPosX()+1][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
+	gridDisplay[x][y]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
+	gridDisplay[x+1][y]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
+	gridDisplay[x][y+1]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
+	gridDisplay[x+1][y+1]->modify_bg(Gtk::StateType::STATE_NORMAL, unoccupied);
 }
 
-void MainWindow::displayRobot()
+void MainWindow::displayRobot(int x, int y)
 {
 	Gdk::Color robotColor("#263C8B");
-	gridDisplay[robot->getPosX()][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
-	gridDisplay[robot->getPosX()+1][robot->getPosY()]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
-	gridDisplay[robot->getPosX()][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
-	gridDisplay[robot->getPosX()+1][robot->getPosY()+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+	gridDisplay[x][y]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+	gridDisplay[x+1][y]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+	gridDisplay[x][y+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+	gridDisplay[x+1][y+1]->modify_bg(Gtk::StateType::STATE_NORMAL, robotColor);
+}
+
+void MainWindow::updateRobotDisplayLocation()
+{
+
 }
 
 // Display the arena based on current information
@@ -155,7 +168,7 @@ void MainWindow::refreshDisplay()
 		}
 	}
 	//change robot
-	displayRobot();
+	displayRobot(robot->getPosX(), robot->getPosY());
 	arena->gridToRefresh->clear();
 }
 
