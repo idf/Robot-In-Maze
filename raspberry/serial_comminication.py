@@ -245,7 +245,7 @@ class SerialExecutionThread(AbstractThread):
                 # self.print_msg("Waiting for enqueuing command")
                 if self.production:
                     # waiting for request_command to be called
-                    time.sleep(1)
+                    time.sleep(0.05)
                     continue
                 else:
                     function_code = int(raw_input("function code: "))

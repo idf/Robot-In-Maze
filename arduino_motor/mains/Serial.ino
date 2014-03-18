@@ -117,9 +117,11 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 
 
   else if(function_code==20) {
+    setScale(EXPLORE_SCALE);
     moveForward(parameter);
     getSensorReadings();
     this->send_command_complete(function_code, 200);
+    setScale(1/EXPLORE_SCALE);
     return true;
   }
   else if(function_code==21) {

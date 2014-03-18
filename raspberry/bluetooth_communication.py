@@ -194,7 +194,7 @@ class AndroidAPI(object):
             print_msg(self.name, "Waiting for response")
             print lst
             if lst==None:
-                time.sleep(2)
+                time.sleep(0.05)
                 continue
             else:
                 ack, type_data, data = lst[0], lst[1], lst[2]
@@ -275,20 +275,20 @@ class AndroidThread(AbstractThread):
                 if self.android_api.is_connect():
                     break
                 self.android_api.init_bluetooth()
-                time.sleep(1)
+                time.sleep(0.05)
 
 
             if self.android_api.is_map_empty():
                 if self.production:
                     # self.print_msg("Waiting for map update")
-                    time.sleep(1)
+                    time.sleep(0.05)
                     continue
                 else:
                     self.__test_run_pipeline_style()
             else:
                 self.print_msg("Updating map")
                 self.android_api.map_pop_n_exe()
-                time.sleep(1)
+                time.sleep(0.05)
 
 
 
@@ -301,10 +301,10 @@ class AndroidThread(AbstractThread):
                 if self.android_api.is_connect():
                     break
                 self.android_api.init_bluetooth()
-                time.sleep(1)
+                time.sleep(0.05)
 
             self.android_api.read_for_remote_control()
-            time.sleep(1)
+            time.sleep(0.05)
 
 
     def __test_run_pipeline_style(self):
@@ -364,7 +364,7 @@ class AndroidExploreRunThread(AbstractThread):
         while True:
             if self.android_api.is_connect():
                 break
-            time.sleep(1)
+            time.sleep(0.05)
 
         while not self.android_api.explore_start or not self.android_api.run_start:
             self.android_api.read_for_explore_run()
