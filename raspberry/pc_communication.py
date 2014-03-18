@@ -97,21 +97,24 @@ class PcAPI (object):
                 print_msg(self.name, "Executing robot command")
                 self.serial_api.command_put(function_code, parameter)  # passing information to Robot
 
-                # waiting for ack
-                while True:
-                    lst = self.serial_api.response_pop() # send acknowledgement to PC
-                    if lst==None:
-                        time.sleep(0.05) # 50 ms
-                        continue
-                    else:
-                        print_msg(self.name, "Received acknowledgement")
-                        ack, type_data, data = lst[0], lst[1], lst[2]
-                        print_msg(self.name, "Acknowledgement: "+str(ack)+str(type_data)+str(data))
+                if (function_code/10!=0): # ack for commands except for 0 1 2 command
+                    # waiting for ack
+                    while True:
+                        lst = self.serial_api.response_pop() # send acknowledgement to PC
+                        if lst==None:
+                            time.sleep(0.05) # 50 ms
+                            continue
+                        else:
+                            print_msg(self.name, "Received acknowledgement")
+                            ack, type_data, data = lst[0], lst[1], lst[2]
+                            print_msg(self.name, "Acknowledgement: "+str(ack)+str(type_data)+str(data))
 
-                        sending_msg = data
-                        self.__response_to_pc(sending_msg)
-                        if ack:
-                            break
+                            sending_msg = data
+                            self.__response_to_pc(sending_msg)
+                            if ack:
+                                break
+                else:
+                    pass # no ack
 
 
         else:
