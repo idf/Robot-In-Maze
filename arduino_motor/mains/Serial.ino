@@ -9,6 +9,8 @@ SerialCommnder::SerialCommnder() {
 }
 
 bool SerialCommnder::receive_exec_command() {
+  Config::verbose = false;
+  
   if(Serial.available()>0) {
     int function_code;
     double parameter;

@@ -125,7 +125,6 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
 
   // fading
   setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
-  //Serial.println(F("fading"));
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
 
@@ -141,7 +140,9 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   }
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); 
   setScale(1/0.35);
-  Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
+  if(Config::verbose){
+    Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
+  }
   delay(40); // vital for ticks target
   return avgTicksForAngleOrDist;
 }
@@ -212,16 +213,11 @@ void turnLeft(double angle) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //ISR for interrupts
-void leftCounter()
-{
+void leftCounter() {
   leftCnt = leftCnt+1;
-
 }
 
-void rightCounter()
-{
+void rightCounter() {
   rightCnt=rightCnt+1;
-  //if(rightCnt == 19) rightCnt+=1;
-  
 }
 
