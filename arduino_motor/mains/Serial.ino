@@ -1,6 +1,6 @@
 #include "Serial.h"
 #include "globals.h"
-#define SCALE 1
+#define SCALE 2.0
 // public
 SerialCommnder::SerialCommnder() {
   this->command = 99;
@@ -95,17 +95,13 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     return true;
   }
   else if(function_code==1) {
-    setScale(SCALE);
     turnLeft(parameter);
     this->send_command_complete(function_code, 200);
-    setScale(1/SCALE);
     return true;
   }
   else if(function_code==2) {
-    setScale(SCALE);
     turnRight(parameter);
     this->send_command_complete(function_code, 200);
-    setScale(1/SCALE);
     return true;
   }
 

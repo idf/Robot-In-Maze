@@ -109,12 +109,16 @@ class PcAPI (object):
                             ack, type_data, data = lst[0], lst[1], lst[2]
                             print_msg(self.name, "Acknowledgement: "+str(ack)+str(type_data)+str(data))
 
+                            if json.loads(data)["function"]/10==0: # avoid 0 1 2
+                                continue
+
                             sending_msg = data
                             self.__response_to_pc(sending_msg)
                             if ack:
                                 break
                 else:
-                    pass # no ack
+                    sending_msg = json.dumps({"function": function_code, "status": 200}) # manual 0 1 2
+                    self.__response_to_pc(sending_msg)
 
 
         else:
