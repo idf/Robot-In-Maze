@@ -2,8 +2,8 @@
 //public
 FrontEye::FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin_left, unsigned char ir_pin_right) {
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
-  this->sharp_left = new SharpIR(ir_pin_left, 100, 95, SHORT);
-  this->sharp_right = new SharpIR(ir_pin_right, 100, 95, SHORT);
+  this->sharp_left = new SharpIR(ir_pin_left, 50, 95, SHORT);
+  this->sharp_right = new SharpIR(ir_pin_right, 50, 95, SHORT);
 }
 void FrontEye::init() {
   this->ultrasound->init();
@@ -82,6 +82,5 @@ bool FrontEye::is_within_range(Ultrasound* sensor) {
       return false;
     delay(RANGE_TEST_DELAY);
   }
-  Serial.println(F("Ultrasound is_within_range")); //additional delay (wk8 Mon)
   return true;
 }

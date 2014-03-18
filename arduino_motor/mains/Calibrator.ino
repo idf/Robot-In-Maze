@@ -51,7 +51,6 @@ void Calibrator::one_side_calibrate() {
 bool Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 12.2; //cm
   const int ADJUST_ANGLE = 25; // degree
-  const int MULTIPLIER = 3;
 
   double theta;
   int left_reading;
@@ -93,8 +92,8 @@ bool Calibrator::calibrate_angle() {
     }
 
     // testing print 
-    Serial.print(F("theta: ")); Serial.println(theta);
-    frontEye->test_readings();
+    //Serial.print(F("theta: ")); Serial.println(theta);
+    //frontEye->test_readings();
   }
   return true;
 }
@@ -134,9 +133,9 @@ void Calibrator::calibrate_distance() {
       }
     }
 
-     // testing print 
-    Serial.print(F("delta: ")); Serial.println(delta);
-    frontEye->test_readings();
+    // testing print 
+    //Serial.print(F("delta: ")); Serial.println(delta);
+    //frontEye->test_readings();
   }
 
 }
