@@ -427,8 +427,9 @@ bool Robot::moveForwardWithDisplay(int dist)
 			case RIGHT: // right
 				++_posX; break;
 		}
+		cout <<movementCount;
 		++movementCount;
-		return true;
+		return false;
 	}
 	if (movementCount == dist/10)
 	{
@@ -436,7 +437,7 @@ bool Robot::moveForwardWithDisplay(int dist)
 		while(NetworkServices::receiveMessage(_conn->network->ConnectSocket, buf, 1000) <= 0)
 			;
 		movementCount = 0;
-		return false;
+		return true;
 	}
-	return false;
+	return true;
 }
