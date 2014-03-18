@@ -11,10 +11,10 @@
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-int minx = 0;
-int maxx = 0;
-int miny = 0;
-int maxy = 0;
+//int minx = 0;
+//int maxx = 0;
+//int miny = 0;
+//int maxy = 0;
 
 
 void setup(void)
@@ -55,7 +55,7 @@ void loop(void)
 {
   // integration mode
   //warmingUp();
-  serialCommnder->receive_exec_command();
+  //serialCommnder->receive_exec_command();
   ///*
   //moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
   //turnLeft(90); delay(400); printCounts(); 
@@ -73,7 +73,7 @@ void loop(void)
 
   //delay(1000);
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-  //sideEye->test_readings();
+  sideEye->test_readings();
   //moveForward(10);     
 
 

@@ -1,5 +1,7 @@
 #include "FrontEye.h"
-//public
+
+
+//public 
 FrontEye::FrontEye(unsigned char ultra_pin_1, unsigned char ultra_pin_2, unsigned char ir_pin_left, unsigned char ir_pin_right) {
   this->ultrasound = new Ultrasound(ultra_pin_1, ultra_pin_2);
   this->sharp_left = new SharpIR(ir_pin_left, 50, 95, SHORT);
