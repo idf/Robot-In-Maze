@@ -55,16 +55,21 @@ void configureMotor(int isM1Forward, int isM2Forward)
   leftTicks /= (timez/1000.0);
   rightTicks /= (timez/1000.0); // ms
   if(leftPololuCount*previousLeftTick>0 && rightPololuCount*previousRightTick>0) { // avoid overflow
-    InputLeft = leftTicks;
-    InputRight = rightTicks;
-    InputMid = errorCumulator->deltaY / Config::DISTANCE_PER_TICK_CM;
+    pidMgr->InputLeft = leftTicks;
+    pidMgr->InputRight = rightTicks;
+    pidMgr->InputMid = errorCumulator->deltaY / Config::DISTANCE_PER_TICK_CM;
   }
 
   
-  midPID.Compute();
-  SetpointRight = Config::PID_SETPOINT  + map(OutputMid,-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2, -Config::PID_SETPOINT, +Config::PID_SETPOINT);
-  rightPID.Compute();
-  leftPID.Compute();
+  pidMgr->midPID->Compute();
+  pidMgr->SetpointRight = Config::PID_SETPOINT  + map(
+    pidMgr->OutputMid,-Config::PID_SETPOINT/2, 
+    Config::PID_SETPOINT/2, 
+    -Config::PID_SETPOINT,
+    +Config::PID_SETPOINT
+    );
+  pidMgr->rightPID->Compute();
+  pidMgr->leftPID->Compute();
 
   
 
@@ -73,8 +78,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
   previousRightTick = rightPololuCount;
   timing = millis();
 
-  int m1Speed = isM1Forward * map(OutputLeft, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
-  int m2Speed = isM2Forward * map(OutputRight, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
+  int m1Speed = isM1Forward * map(pidMgr->OutputLeft, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
+  int m2Speed = isM2Forward * map(pidMgr->OutputRight, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
 
   // if(isM1Forward*isM2Forward>0) delay(200); // replace print // move to reachTarget
   /*
@@ -106,7 +111,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   long firstRightCount = rightCnt;//rightCnt();
   
 
-  while (target_tick - avgTicksForAngleOrDist > 600) { //300 for scale 1, 600 for 1.75
+  while (target_tick - avgTicksForAngleOrDist > 300*pidMgr->getCurrentScale()) { //300 for scale 1, 600 for 1.75
   // the tolerance value affect the turning errors
 
     double leftTicksForAngleOrDist = leftCnt;
@@ -124,7 +129,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   }
 
   // fading
-  setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
+  pidMgr->setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
   while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
   // the tolerance value affect the turning errors
 
@@ -139,7 +144,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
   }
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); 
-  setScale(1/0.35);
+  pidMgr->setScale(1/0.35);
   delay(40); // vital for ticks target
   if(Config::verbose){
     Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);

@@ -91,10 +91,10 @@ void SerialCommnder::send_sensor_readings(
 // private
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
-    setScale(SCALE);
+    pidMgr->setScale(SCALE);
     moveForward(parameter);
     this->send_command_complete(function_code, 200);
-    setScale(1/SCALE);
+    pidMgr->restore();
     return true;
   }
   else if(function_code==1) {
@@ -117,11 +117,11 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 
 
   else if(function_code==20) {
-    setScale(EXPLORE_SCALE);
+    pidMgr->setScale(EXPLORE_SCALE);
     moveForward(parameter);
     getSensorReadings();
     this->send_command_complete(function_code, 200);
-    setScale(1/EXPLORE_SCALE);
+    pidMgr->restore();
     return true;
   }
   else if(function_code==21) {
