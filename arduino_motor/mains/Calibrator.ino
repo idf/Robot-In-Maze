@@ -50,7 +50,7 @@ void Calibrator::one_side_calibrate() {
 
 bool Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 12.2; //cm
-  const int ADJUST_ANGLE = 25; // degree
+  const int ADJUST_ANGLE = 0; // degree
 
   double theta;
   int left_reading;

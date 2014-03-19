@@ -54,8 +54,8 @@ void setup(void)
 void loop(void)
 {
   // integration mode
-  //warmingUp();
-  //serialCommnder->receive_exec_command();
+  warmingUp();
+  serialCommnder->receive_exec_command();
   ///*
   //moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
   //turnLeft(90); delay(400); printCounts(); 
@@ -73,9 +73,7 @@ void loop(void)
 
   //delay(1000);
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-  sideEye->test_readings();
-  //moveForward(10);     
-
+  //sideEye->test_readings();
 
   
   //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
@@ -84,10 +82,10 @@ void loop(void)
   //sideEye->test_readings();
   //goStraightlineCheckpoint();
   /*
-  setScale(2);
-  moveForward(10);
+  setScale(1.75);
+  moveForward(80);
   printCounts(); delay(500);
-  setScale(1/2.0);
+  setScale(1/1.75);
   */
   /*
   turnRight(90); 
