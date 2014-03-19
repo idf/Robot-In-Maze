@@ -67,13 +67,13 @@ void loop(void)
   //calibrator->test_calibrate();
   //delay(10000);
   //delay(10000);
-  //sideEye->test_readings();
+  sideEye->test_readings();
   //getSensorReadings(); delay(1000);
 
 
   //delay(1000);
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-  sideEye->test_readings();
+  //frontEye->test_readings();
   //moveForward(10);     
 
 

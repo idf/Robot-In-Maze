@@ -117,7 +117,7 @@ int SideEye::_output_reading_right(SharpIR* sensor, int model) {
 
 
 int SideEye::get_ultra_reading() {
-  const int ULTRA_OFFSET = 2;// need to be verified 
+  const int ULTRA_OFFSET = 4;// measured
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
 
