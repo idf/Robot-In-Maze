@@ -54,13 +54,13 @@ void setup(void)
 void loop(void)
 {
   // integration mode
-  warmingUp();
-  serialCommnder->receive_exec_command();
+  // warmingUp();
+  // serialCommnder->receive_exec_command();
   ///*
   //moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
   //turnLeft(90); delay(400); printCounts(); 
   //*/
-  //calibrator->calibrate(6); delay(1000);
+  //calibrator->calibrate(6); delay(10000);
   //turnRight(90); delay(400);
   
   //delay(10000);

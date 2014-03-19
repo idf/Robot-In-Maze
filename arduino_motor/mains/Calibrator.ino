@@ -50,7 +50,7 @@ void Calibrator::one_side_calibrate() {
 
 bool Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 12.2; //cm
-  const int ADJUST_ANGLE = 0; // degree
+  const int ADJUST_ANGLE = 7 ; // degree
 
   double theta;
   int left_reading;
@@ -73,7 +73,7 @@ bool Calibrator::calibrate_angle() {
     }
 
     if(theta>0) {
-      if(abs(theta)>21) {
+      if(abs(theta)>8) {
         turnRight(abs(theta));
       }
       else { //avoid small angle problem
@@ -82,7 +82,7 @@ bool Calibrator::calibrate_angle() {
       }
     }
     else {
-      if(abs(theta)>21) {
+      if(abs(theta)>8) {
         turnLeft(abs(theta));
       }
       else { 
