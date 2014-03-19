@@ -77,8 +77,8 @@ void loop(void)
  
   //moveForward(10);     
 
-  //frontEye->test_readings();
-  sideEye->test_readings();
+  frontEye->test_readings();
+  //sideEye->test_readings();
 
 
   

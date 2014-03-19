@@ -80,7 +80,7 @@ bool SideEye::is_within_range_right(SharpIR* sensor, int model) {
 int SideEye::_output_reading_left(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
-    OFFSET = 7;//measured
+    OFFSET = 8;//measured
   }
   else {
     OFFSET = 4  ; // for LONG
@@ -99,7 +99,7 @@ int SideEye::_output_reading_left(SharpIR* sensor, int model) {
 int SideEye::_output_reading_right(SharpIR* sensor, int model) {
   int OFFSET;
   if (model==SHORT) {
-    OFFSET = 5;//measured
+    OFFSET = 6;//measured
   }
   else {
     OFFSET = 4  ; // for LONG
