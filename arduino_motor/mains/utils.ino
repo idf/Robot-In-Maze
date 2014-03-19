@@ -47,30 +47,6 @@ void printCounts()
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void setScale(double scale) {
-  SetpointLeft *= scale;
-  SetpointRight *= scale;
-  SetpointMid *= scale; // always 0
-
-  Config::PID_SETPOINT *= scale;
-  Config::PID_UPPER_LIMIT *= scale;
-  Config::PID_LOWER_LIMIT *= scale;
-
-  Config::MAX_SPEED *= scale;
-  Config::TARGET_SPEED *= scale;
-  Config::MIN_SPEED *= scale;
-
-  leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
-  rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
-  midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
-}
-void setScaleLeft(double scale) {
-
-}
-void setScaleRight(double scale) {
-  
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Replaced by const TICKS_PER_DEGREE
 double angle_to_ticks(double angle) {

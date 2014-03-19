@@ -106,7 +106,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   long firstRightCount = rightCnt;//rightCnt();
   
 
-  while (target_tick - avgTicksForAngleOrDist > 300) { //target_tick - change to 'angle' for other formula // 200 is tested
+  while (target_tick - avgTicksForAngleOrDist > 600) { //300 for scale 1, 600 for 1.75
   // the tolerance value affect the turning errors
 
     double leftTicksForAngleOrDist = leftCnt;
