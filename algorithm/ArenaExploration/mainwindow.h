@@ -37,11 +37,12 @@ protected:
 private:
 	void hideRobot(int x, int y);
 	void displayRobot(int x, int y);
-	void MainWindow::updateRobotDisplayLocation();
 	void refreshDisplay();
+	void refreshAllDisplay();
+
+	// real time update functions
 	bool MainWindow::exploreProcessHandler();
 	bool MainWindow::shortestPathHandler();
-
 	std::vector<std::pair<std::string, int>*>* movementList;
 	std::vector<Grid*> result;
 	std::vector<std::pair<std::string, int>*>::iterator i;
