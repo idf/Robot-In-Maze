@@ -1,6 +1,6 @@
 #include "globals.h"
 #include "PinChangeInt.h"
-#define MAGIC_NUMBER 20 // high V 36 Okay 20 perfect 10 not that good 
+#define MAGIC_NUMBER 20 // high V 36 Okay 20 perfect 10 not that good 20 for scale 1
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 int isM1Forward either 1 or -1 or 0
@@ -140,10 +140,10 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   }
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); 
   setScale(1/0.35);
+  delay(40); // vital for ticks target
   if(Config::verbose){
     Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   }
-  delay(40); // vital for ticks target
   return avgTicksForAngleOrDist;
 }
 
