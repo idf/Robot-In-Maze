@@ -57,7 +57,6 @@ void loop(void)
   // warmingUp();
   // serialCommnder->receive_exec_command();
   ///*
-  //moveForward(10); delay(400); printCounts(); errorCumulator->print_dead_reckoning();
   //turnLeft(90); delay(400); printCounts(); 
   //*/
   //calibrator->calibrate(6); delay(10000);
@@ -67,8 +66,8 @@ void loop(void)
   //calibrator->test_calibrate();
   //delay(10000);
   //delay(10000);
-  //sideEye->test_readings();
-  //getSensorReadings(); delay(1000);
+  sideEye->test_readings();
+  getSensorReadings(); delay(1000);
 
 
   //delay(1000);
@@ -81,12 +80,12 @@ void loop(void)
   //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
   //sideEye->test_readings();
   //goStraightlineCheckpoint();
-  /*
-  setScale(1.75);
-  moveForward(80);
-  printCounts(); delay(500);
-  setScale(1/1.75);
-  */
+  
+ // setScale(1.75);
+  //moveForward(10);
+  //printCounts(); delay(500);
+ // setScale(1/1.75);
+  
   /*
   turnRight(90); 
   turnLeft(90);
