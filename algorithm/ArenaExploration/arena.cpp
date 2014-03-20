@@ -35,6 +35,9 @@ void Arena::setGridType(int posX, int posY, GRIDTYPE gridType)
 {
 	if (posX < 0 || posX >= ARENA_X_SIZE || posY < 0 || posY >= ARENA_Y_SIZE)
 		return;
+	if (_grid[posX][posY].type == START || 
+		_grid[posX][posY].type == GOAL)
+		return;
 	else
 	    _grid[posX][posY].type = gridType;
 }

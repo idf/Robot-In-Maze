@@ -37,7 +37,6 @@ protected:
 private:
 	void hideRobot(int x, int y);
 	void displayRobot(int x, int y);
-	void refreshDisplay();
 	void refreshAllDisplay();
 
 	// real time update functions

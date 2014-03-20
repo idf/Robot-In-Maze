@@ -25,7 +25,7 @@ PathFinder::~PathFinder()
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
-	if (_robot->getPosX() != _endX || _robot->getPosY() != _endY && time(0) - start < timeLimitInSeconds)
+	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY )&& time(0) - start < timeLimitInSeconds)
 	{
 #ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
@@ -151,10 +151,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 	while (n == 0 || current != end)
 	{
 		isSet = false;
-		// stop if the point is unreachable
-		// this part may have problem
-		if (_arena->getGridType(endX, endY) == OBSTACLE)
-			break;
 		if (isCurrentPoint)
 		{
 			current = *openList.begin();
@@ -352,10 +348,14 @@ bool PathFinder::pointIsWalkable(int x, int y)
 
 bool PathFinder::pointIsAlwaysSafe(int x, int y)
 {
-	if (_arena->getGridType(x, y) == UNOCCUPIED &&
-		_arena->getGridType(x + 1, y) == UNOCCUPIED &&
-		_arena->getGridType(x, y + 1) == UNOCCUPIED &&
-		_arena->getGridType(x + 1, y + 1) == UNOCCUPIED)
+	if (_arena->getGridType(x, y) != OBSTACLE &&
+		_arena->getGridType(x + 1, y) != OBSTACLE &&
+		_arena->getGridType(x, y + 1) != OBSTACLE &&
+		_arena->getGridType(x + 1, y + 1) != OBSTACLE &&
+		_arena->getGridType(x, y) != UNEXPLORED &&
+		_arena->getGridType(x + 1, y) != UNEXPLORED &&
+		_arena->getGridType(x, y + 1) != UNEXPLORED &&
+		_arena->getGridType(x + 1, y + 1) != UNEXPLORED)
 		return true;
 	else
 		return false;
