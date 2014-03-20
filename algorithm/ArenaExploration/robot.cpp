@@ -195,6 +195,38 @@ void Robot::calibrateAtStart()
 		return; // cannot calibrate
 	}
 }
+void Robot::calibrateAtUpperRight()
+{
+	switch(this->_direction)
+	{
+	case RIGHT:
+		cout << endl << "calibrate: 5";
+		_conn->calibrate(5);
+		break;
+	case UP:
+		cout << endl << "calibrate: 6";
+		_conn->calibrate(6);
+		break;
+	default:
+		return; // cannot calibrate
+	}
+}
+void Robot::calibrateAtBottomLeft()
+{
+	switch(this->_direction)
+	{
+	case LEFT:
+		cout << endl << "calibrate: 5";
+		_conn->calibrate(5);
+		break;
+	case DOWN:
+		cout << endl << "calibrate: 6";
+		_conn->calibrate(6);
+		break;
+	default:
+		return; // cannot calibrate
+	}
+}
 
 map<Sensor*, int>* Robot::mapDataWithSensor(map<int, int>* data)
 {
@@ -379,7 +411,7 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		if (arena->getGridType(x, y) == OBSTACLE)
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);
-		arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
+		//arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
 	//cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
 	arena->setGridType(x, y, OBSTACLE);
@@ -408,7 +440,7 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		//	arena->setGridType(x, y, UNSAFE);
 		//else
 		arena->setGridType(x, y, UNOCCUPIED);
-		arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
+		//arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
 }
 

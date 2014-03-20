@@ -4,7 +4,6 @@
 #include <iostream>
 #include <windows.h>
 
-
 using namespace std;
 
 MainWindow::MainWindow()
@@ -15,11 +14,11 @@ MainWindow::MainWindow()
 	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT, conn);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
-	pathFinder = new PathFinder(robot, arena, fullArena, conn);
+	pathFinder = new PathFinder(robot, arena, fullArena);
 	
 	// initialize display structure5
-	percentageEntry.set_text("Percentage");
-	timeLimitEntry.set_text("Time");
+	percentageEntry.set_text("100");
+	timeLimitEntry.set_text("360");
 	this->add(vbox);
 	vbox.pack_start(arenaDisplay);
 	vbox.pack_start(hbox);
@@ -68,8 +67,7 @@ void MainWindow::startExplorationButtonClicked()
 
 bool MainWindow::exploreProcessHandler()
 {
-	bool continueTimer = false;
-	continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
+	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 #ifdef GUI
 	this->refreshAllDisplay();
 #endif
@@ -99,17 +97,17 @@ bool MainWindow::exploreProcessHandler()
 		Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::shortestPathHandler), 250 );
 		return false;
 #else
-		robot->calibrateAtGoal();
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
 		pathFinder->runOnePath(result);
+		robot->calibrateAtStart();
 #ifdef ANDROID
-		cout << "Wait for android run?";
+		cout << "Wait for android run.";
 		conn->waitForAndroidRun();
 #else
 		cout << "Wait for button press";
 		getchar();
 #endif
-		robot->calibrateAtStart();
+		
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
 		pathFinder->runOnePath(result);
 #endif

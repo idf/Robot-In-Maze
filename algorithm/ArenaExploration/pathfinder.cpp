@@ -8,15 +8,25 @@ PathFinder::PathFinder(Robot* robot, Arena* arena)
 	_robot = robot;
 	_arena = arena;
 	_endX = ARENA_END_X;
+#ifdef GUI
 	_endY = ARENA_END_Y;
+#else
+	_endY = ARENA_START_Y;
+#endif
+	_destinationCount = 0;
 }
-PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector* conn)
+PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena)
 {
 	_robot = robot;
 	_arena = arena;
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
+#ifdef GUI
 	_endY = ARENA_END_Y;
+#else
+	_endY = ARENA_START_Y;
+#endif
+	_destinationCount = 0;
 }
 PathFinder::~PathFinder()
 {}
@@ -25,44 +35,52 @@ PathFinder::~PathFinder()
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
-	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY )&& time(0) - start < timeLimitInSeconds)
+	// _destinationCount < 4 for 4 corner exploration
+	// (_robot->getPosX() != _endX || _robot->getPosY() != _endY) for week 8 algo
+#ifdef GUI
+	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY)&& time(0) - start < timeLimitInSeconds)
+#else
+	if (_destinationCount < 4 && time(0) - start < timeLimitInSeconds) // exploration not done
+#endif
 	{
-#ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
-#endif
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
 		{
-			// TODO CHANGE TO CHECK EXPLORABLE
-			// if not reachable, check whether it is detectable, if not, break;
+			// if not reachable, means it is detected. Find next location
 			if(!pointIsWalkable(_endX, _endY))
 			{
-				if(!substituteNewPoint(_endX, _endY))
-					return true;
+				cout << "old destination: " << _endX << _endY;
+				this->selectNextDestination();
+				cout << "new destination: " << _endX << _endY << endl;
+				return true;
 			}
 			// move to new place, sense the surrounding
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
 			vector<Grid*>::reverse_iterator i = result.rbegin();
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX(), _robot->getPosY())));
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX()+1, _robot->getPosY())));
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX(), _robot->getPosY()+1)));
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX()+1, _robot->getPosY()+1)));
+			
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMoveAndSense(*i);
 			else
 				_robot->rotateClockwiseAndSense(90, _arena); // sense other areas
-
 			return true;
 		}
 		else
 		{
-#ifdef DEBUG
 			cout << "old destination: " << _endX << _endY;
-#endif
+			switch (_destinationCount)
+			{
+			case 0: 
+				_robot->calibrateAtUpperRight(); break;
+			case 1:
+				_robot->calibrateAtGoal(); break;
+			case 2:
+				_robot->calibrateAtBottomLeft(); break;
+			default:
+				break;
+			}
 			this->selectNextDestination();
-#ifdef DEBUG
 			cout << "new destination: " << _endX << _endY << endl;
-#endif
 			return true;
 		}
 	}
@@ -403,7 +421,7 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 #endif
 }
 
-bool PathFinder::runOnePath(vector<Grid*> path)
+void PathFinder::runOnePath(vector<Grid*> path)
 {
 	vector<pair<std::string, int>*>* movementList = getMovementList(path);
 	for (vector<Grid*>::reverse_iterator i = path.rbegin(); i != path.rend(); i++)
@@ -537,12 +555,16 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 
 void PathFinder::selectNextDestination()
 {
-	for (int i = 0; i < ARENA_X_SIZE; ++i)
-		for (int j = 0; j < ARENA_Y_SIZE; ++j)
-			if (_arena->getGridType(i, j) == UNEXPLORED)
-			{
-				this->_endX = i;
-				this->_endY = j;
-				return;
-			}
+	switch (_destinationCount)
+	{
+	case 0: // set next dest as goal
+		_endY = ARENA_END_Y; break;
+	case 1:
+		_endX = ARENA_START_X; break;
+	case 2:
+		_endY = ARENA_START_Y; break;
+	default:
+		break;
+	}
+	++_destinationCount;
 }

@@ -39,6 +39,8 @@ public:
 
 	void calibrateAtGoal();
 	void calibrateAtStart();
+	void calibrateAtUpperRight();
+	void calibrateAtBottomLeft();
 
 	void openArenaWithSensorData(std::map<Sensor*, int>* sensorData, Arena* arena);
 	void senseEnvironment(Arena* arena, Arena* fullArena);
