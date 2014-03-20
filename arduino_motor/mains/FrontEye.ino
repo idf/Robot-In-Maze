@@ -58,7 +58,7 @@ int FrontEye::get_ultra_reading() {
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
 int FrontEye::get_ir_reading_left() {
-  const int IR_OFFSET = 2; // TODO
+  const int IR_OFFSET = 3; // TODO
   return this->sharp_left->distance()-IR_OFFSET;
 }
 // private
@@ -70,7 +70,7 @@ int FrontEye::get_ir_reading_right() {
 bool FrontEye::is_within_range(SharpIR* sensor) {
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
-    if(distance>45 || distance<10) // TODO
+    if(distance>45 || distance<6) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }

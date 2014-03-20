@@ -120,6 +120,8 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     pidMgr->setScale(EXPLORE_SCALE);
     moveForward(parameter);
     getSensorReadings();
+    pidMgr->setScale(0.8); // for calibrate
+    calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
     pidMgr->restore();
     return true;
@@ -127,12 +129,16 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
   else if(function_code==21) {
     turnLeft(parameter);
     getSensorReadings();
+    pidMgr->setScale(0.8); // for calibrate
+    calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==22) {
     turnRight(parameter);
     getSensorReadings();
+    pidMgr->setScale(0.8); // for calibrate
+    calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
     return true;
   }

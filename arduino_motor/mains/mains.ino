@@ -25,6 +25,7 @@ void setup(void)
   errorCumulator->init();
   frontEye->init(); 
   sideEye->init();
+  calibrator->init();
   pidMgr->init();
   resetPololuTicks();
 }
@@ -33,7 +34,7 @@ void loop(void)
 {
   // integration mode
   //warmingUp();
-  //serialCommnder->receive_exec_command();
+  serialCommnder->receive_exec_command();
   ///*
   //turnLeft(90); delay(400); printCounts(); 
   //*/
@@ -54,7 +55,7 @@ void loop(void)
  
   //moveForward(10);     
 
-  frontEye->test_readings();
+  //frontEye->test_readings();
   //sideEye->test_readings();
 
 
@@ -109,7 +110,10 @@ void warmingUp() {
       moveForward(20); delay(100);
     }
     first_time = false;
-    delay(10000);
+    if(Config::verbose){
+      Serial.print(F("warmingUp finished, waiting for 10s"));
+      delay(10000);
+    }
   }
   
 }

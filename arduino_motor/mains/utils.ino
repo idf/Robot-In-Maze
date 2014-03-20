@@ -64,43 +64,4 @@ void getSensorReadings() {
     sideEye->output_reading_ultra()
     );
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////
-void obstacle_checkpoint() {
-  turnLeft(90);
-  moveForward(10);
 
-  turnLeft(90);
-  moveForward(10);
-  turnLeft(90);
-  moveForward(10);
-  turnRight(90);
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void goStraightlineCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ // get_ulra_reading
-  turnRight(90);
-  moveForward(20);
-  turnLeft(90);
-  moveForward(40);
-  turnLeft(90);
-  moveForward(20);
-  turnRight(90);
-  //finish
- }
- moveForward(10);
-}
-
-
-void extensionCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ //get_ulra_reading
-  turnRight(45);
-  moveForward(20);
-  turnLeft(90);
-  moveForward(40);
-  turnLeft(90);
-  moveForward(20);
-  turnRight(90);
-  //finish
- }
- moveForward(10);
-}
