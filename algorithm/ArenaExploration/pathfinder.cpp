@@ -447,6 +447,9 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 	Grid* currentLocation;
 	DIRECTION previousDir;
 
+	if (path.begin() == path.end())
+		return movementList;
+
 	// align robot direction first.
 	int currentX = _robot->getPosX(), currentY = _robot->getPosY();
 	DIRECTION currentDir = _robot->getDirection();
