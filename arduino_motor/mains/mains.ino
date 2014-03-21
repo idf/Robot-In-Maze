@@ -32,7 +32,7 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-  //warmingUp();
+  warmingUp();
   serialCommnder->receive_exec_command();
   ///*
   //turnLeft(90); delay(400); printCounts(); 

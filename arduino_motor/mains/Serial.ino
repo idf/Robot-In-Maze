@@ -143,8 +143,10 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
     return true;
   }
   else if(function_code==98) {
+    pidMgr->setScale(0.8); // for calibrate
     calibrator->calibrate(parameter);
     this->send_command_complete(function_code, 200);
+    pidMgr->restore();
     return true;
   }
   else {
