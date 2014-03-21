@@ -32,7 +32,6 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 {
-  // integration mode
   //warmingUp();
   serialCommnder->receive_exec_command();
   ///*
@@ -57,14 +56,8 @@ void loop(void)
 
   //frontEye->test_readings();
   //sideEye->test_readings();
-
-
+  //getSensorReadings(); delay(1000);
   
-  //Serial.print(F("Get Front Reading: ")); Serial.println(frontEye->get_reading());
-  //sideEye->test_readings();
-  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-  //sideEye->test_readings();
-  //goStraightlineCheckpoint();
   /*
   pidMgr->setScale(1.75);
   moveForward(20);
@@ -81,22 +74,6 @@ void loop(void)
   
   //moveForward(10);
   //printCounts();
-  //delay(1000);
-  //errorCumulator->compass->printAxis();
-  
-  //turnLeft(90);
-  // testing
-  //turnLeft(90);
-  //serialCommnder->send_command_complete(1, 200);
-  //Serial.println(errorCumulator->get_compass_read());
-  
-
-
-
-  //getSensorReadings();
-  //obstacle_checkpoint();
-  //softwareProjectLabSqure();
-  
 }
 
 void warmingUp() {
@@ -111,8 +88,8 @@ void warmingUp() {
     }
     first_time = false;
     if(Config::verbose){
-      Serial.print(F("warmingUp finished, waiting for 10s"));
-      delay(10000);
+      Serial.print(F("warmingUp finished, waiting for 1s"));
+      delay(1000);
     }
   }
   
