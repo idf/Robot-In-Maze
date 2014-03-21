@@ -69,7 +69,7 @@ bool MainWindow::exploreProcessHandler()
 {
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 #ifdef GUI
-	this->refreshAllDisplay();
+	//this->refreshAllDisplay();
 #endif
 	io->printArena(arena);
 	while(!robot->sendItselfAndArena(arena))
@@ -83,9 +83,10 @@ bool MainWindow::exploreProcessHandler()
 		hideRobot(robot->getPosX(), robot->getPosY());
 		pathFinder->runOnePath(result);
 		displayRobot(robot->getPosX(), robot->getPosY());
+		robot->calibrateAtStart();
 		getchar();
 
-		robot->calibrateAtStart();
+		
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
 		movementList = pathFinder->getMovementList(result);
 		for (vector<Grid*>::reverse_iterator i = result.rbegin(); i != result.rend(); i++)
