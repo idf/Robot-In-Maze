@@ -69,7 +69,7 @@ bool MainWindow::exploreProcessHandler()
 {
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 #ifdef GUI
-	//this->refreshAllDisplay();
+	this->refreshAllDisplay();
 #endif
 	io->printArena(arena);
 	while(!robot->sendItselfAndArena(arena))
@@ -122,6 +122,8 @@ bool MainWindow::exploreProcessHandler()
 	}
 	return continueTimer;
 }
+
+// GUI Methods
 bool MainWindow::shortestPathHandler()
 {
 	if (i <= movementList->end())
@@ -160,7 +162,6 @@ bool MainWindow::shortestPathHandler()
 		return false;
 	
 }
-
 void MainWindow::hideRobot(int x, int y)
 {
 	Gdk::Color unoccupied("white");

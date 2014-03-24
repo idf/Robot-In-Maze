@@ -61,11 +61,16 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMoveAndSense(*i);
-			else
-				_robot->rotateClockwiseAndSense(90, _arena); // sense other areas
+			else	// if there is no path to current location, find next location
+			{
+				cout << "old destination: " << _endX << _endY;
+				this->selectNextDestination();
+				cout << "new destination: " << _endX << _endY << endl;
+				return true;
+			}
 			return true;
 		}
-		else
+		else  // goal reached, calibrate at goal and go to next destination
 		{
 			cout << "old destination: " << _endX << _endY;
 			switch (_destinationCount)
@@ -227,7 +232,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 				    }
 				}
 			}
-			// MAY HAVE PROBLEM. BECAUSE DIRECTION NOT CHANGED
+			
 			if (!isSet)
 			{
 				current = *openList.begin();
@@ -237,6 +242,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		// Stop if we reached the end
 		if (current == end)
 			break;
+
+		// check if there is no path to go. if yes, return a null path
+		if (openList.begin() == openList.end())
+			return path;
 
 		// Remove the current point from the openList
 		current->opened = false;
