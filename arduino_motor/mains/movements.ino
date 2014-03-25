@@ -19,16 +19,7 @@ void configureMotor(int isM1Forward, int isM2Forward)
   PCintPort::attachInterrupt(3, leftCounter, CHANGE);
   PCintPort::attachInterrupt(5, rightCounter,CHANGE);
 
-
-  /*
-  if(abs(leftPololuCount - rightPololuCount) > 30000){ // if not too many errors 
-    halt();
-  } 
-
-  else { */
   if(millis() - timing >= Config::SAMPLE_TIME){ // Calculated every 10 ms (Sample time 10 ms)
-  //leftPololuCount = leftCnt();                       
-  //rightPololuCount = rightCnt();
   leftPololuCount = leftCnt;
   rightPololuCount = rightCnt;
   long timez = millis() - timing; // time passed by 
@@ -73,7 +64,6 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
   
 
-  
   previousLeftTick = leftPololuCount;
   previousRightTick = rightPololuCount;
   timing = millis();
@@ -101,19 +91,14 @@ void configureMotor(int isM1Forward, int isM2Forward)
 This function receive the target_tick as target and run the motor to reach the goal
 @return: real tick reached
 */
-
-
-
 double reachTickTarget(int isLeftForward, int isRightForward, double target_tick) {
   resetPololuTicks(); // since we only cares about the difference, the starting point better set to 0 to avoid overflow
   double avgTicksForAngleOrDist = 0;
   long firstLeftCount = leftCnt;//leftCnt();
   long firstRightCount = rightCnt;//rightCnt();
   
-
-  while (target_tick - avgTicksForAngleOrDist > 300*pidMgr->getCurrentScale()) { //300 for scale 1, 600 for 1.75
-  // the tolerance value affect the turning errors
-
+  while (target_tick - avgTicksForAngleOrDist > (400*pidMgr->getCurrentScale()-100)) { //300 for scale 1, 600 for 1.75
+    // the tolerance value affect the turning errors
     double leftTicksForAngleOrDist = leftCnt;
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
@@ -124,15 +109,12 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
 
     /* IMPORTANT */
-    //if(isLeftForward*isRightForward>0)
-      delay(MAGIC_NUMBER*pidMgr->getCurrentScale()); // long distance problem
+    delay(MAGIC_NUMBER*pidMgr->getCurrentScale()); // long distance problem
   }
 
   // fading
   pidMgr->setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
-  while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
-  // the tolerance value affect the turning errors
-
+  while (target_tick - avgTicksForAngleOrDist > 0) { 
     double leftTicksForAngleOrDist = leftCnt;
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
 
@@ -140,7 +122,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
     
 
-    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2; // turn right
+    avgTicksForAngleOrDist = (leftTicksForAngleOrDist + rightTicksForAngleOrDist) / 2;
     configureMotor(isLeftForward, isRightForward);
   }
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); 
@@ -180,9 +162,11 @@ void moveBackward(double dist)
   double realNoOfTicksForDist = reachTickTarget(isLeftForward, isRightForward, noOfTicksForDist);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// angle in this function is abs
-// but in ErrorCumulator, it is +/-
-//double noOfTicksForAngle = turnAngleR(angle);
+/* 
+angle in this function is abs
+but in ErrorCumulator, it is +/-
+double noOfTicksForAngle = turnAngleR(angle);
+*/
 void turnRight(double angle) { 
   errorCumulator->change_to_right_mode();
   const int isLeftForward = 1;
@@ -199,8 +183,9 @@ void turnRight(double angle) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// depends on whether turning right and turning left is symmetric
-// NOT SYMMETRIC w.r.t. deltaY
+/*
+turnLeft and turnRight is slightly different 
+*/
 void turnLeft(double angle) {
   errorCumulator->change_to_left_mode();
   const int isLeftForward = -1;
@@ -213,11 +198,11 @@ void turnLeft(double angle) {
   
   errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE_LEFT); 
   //errorCumulator->record_turning_error_compass(isRightForward*adjusted_angle); 
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-//ISR for interrupts
+/*
+ISR for interrupts
+*/
 void leftCounter() {
   leftCnt = leftCnt+1;
 }

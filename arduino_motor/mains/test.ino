@@ -52,8 +52,7 @@ void goStraightlineCheckpoint(){
  }
  moveForward(10);
 }
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void extensionCheckpoint(){
  if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ //get_ulra_reading
   turnRight(45);

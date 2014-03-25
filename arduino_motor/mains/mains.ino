@@ -9,19 +9,11 @@
 //#include "PinChangeInt.h"
 // TAB SIZE 2, whitespaces as tab
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-//int minx = 0;
-//int maxx = 0;
-//int miny = 0;
-//int maxy = 0;
-
-
 void setup(void)
 {
   Serial.begin(9600); // data rate in bits per second 
   motorShield.init();
   //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
-  //servo_ir->init();
   errorCumulator->init();
   frontEye->init(); 
   sideEye->init();
@@ -33,49 +25,17 @@ void setup(void)
 void loop(void)
 { 
   
-  warmingUp();
-  //serialCommnder->receive_exec_command();
-  
-  //softwareProjectLabSqure();
-  //moveForward(10); delay(400); printCounts(); 
-  
+  warmingUp(); serialCommnder->receive_exec_command();
+  //pidMgr->setScale(1); moveForward(10); pidMgr->restore(); printCounts(); delay(400); 
+  //turnRight(90);  printCounts(); delay(400);
+
   //calibrator->calibrate(6); delay(10000);
-  turnRight(90); delay(400);
-  
-  //delay(10000);
-  //calibrator->test_calibrate();
-  //delay(10000);
-  //delay(10000);
-  
-  //getSensorReadings(); delay(1000);
-
-
-  //delay(1000);
-  //Serial.print(F("Get Right Reading: ")); Serial.println(sideEye->output_reading_right());
-
- 
-  //moveForward(10);     
 
   //frontEye->test_readings();
   //sideEye->test_readings();
   //getSensorReadings(); delay(1000);
-  
-  /*
-  pidMgr->setScale(1.75);
-  moveForward(20);
-  printCounts(); delay(500);
-  pidMgr->restore();
-  */
-  /*
-  turnRight(90); 
-  turnLeft(90);
-  printCounts();
-  delay(1000);
-  */
- 
-  
-  //moveForward(10);
-  //printCounts();
+
+  //softwareProjectLabSqure();  
 }
 
 void warmingUp() {
@@ -94,6 +54,5 @@ void warmingUp() {
       delay(5000);
     }
   }
-  
 }
 
