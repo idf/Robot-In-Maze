@@ -1,5 +1,5 @@
 #include "Calibrator.h"
-#define TRIAL_INTERVAL (60*1000)
+#define TRIAL_INTERVAL (30*1000)
 //public 
 
 Calibrator::Calibrator(FrontEye* frontEye) {

@@ -125,7 +125,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
 
     /* IMPORTANT */
     //if(isLeftForward*isRightForward>0)
-      delay(MAGIC_NUMBER); // long distance problem
+      delay(MAGIC_NUMBER*pidMgr->getCurrentScale()); // long distance problem
   }
 
   // fading

@@ -32,15 +32,15 @@ void setup(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
 { 
-  ///*
+  
   warmingUp();
-  serialCommnder->receive_exec_command();
-  //*/
-  /*
-  turnRight(90); delay(400); printCounts(); 
-  */
+  //serialCommnder->receive_exec_command();
+  
+  //softwareProjectLabSqure();
+  //moveForward(10); delay(400); printCounts(); 
+  
   //calibrator->calibrate(6); delay(10000);
-  //turnRight(90); delay(400);
+  turnRight(90); delay(400);
   
   //delay(10000);
   //calibrator->test_calibrate();
@@ -91,7 +91,7 @@ void warmingUp() {
     first_time = false;
     if(Config::verbose){
       Serial.print(F("warmingUp finished, waiting for 1s"));
-      delay(1000);
+      delay(5000);
     }
   }
   

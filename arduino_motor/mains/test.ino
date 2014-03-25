@@ -1,17 +1,16 @@
 void softwareProjectLabSqure() {
-  for(int i=0; i<11; i++) {
-    moveForward(10);
-    printCounts();
-  } 
+  pidMgr->restore();
+
+  pidMgr->setScale(1.75);
+  moveForward(160);
+  pidMgr->restore();
 
   turnRight(90);
-  printCounts();
-  for(int i=0; i<6; i++) {
-    moveForward(10);
-    printCounts();
-  }
+
+  pidMgr->setScale(1.75);
+  moveForward(110);
+  pidMgr->restore();
   turnRight(90);
-  printCounts();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

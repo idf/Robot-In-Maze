@@ -54,11 +54,11 @@ void FrontEye::test_readings() {
 }
 
 int FrontEye::get_ultra_reading() {
-  const int ULTRA_OFFSET = 4; 
+  const int ULTRA_OFFSET = 5; 
   return this->ultrasound->dist()-ULTRA_OFFSET;
 }
 int FrontEye::get_ir_reading_left() {
-  const int IR_OFFSET = 3; // TODO
+  const int IR_OFFSET = 2; // TODO
   return this->sharp_left->distance()-IR_OFFSET;
 }
 // private
