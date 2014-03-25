@@ -14,7 +14,7 @@ MainWindow::MainWindow()
 	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT, conn);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
-	pathFinder = new PathFinder(robot, arena, fullArena);
+	pathFinder = new PathFinder(robot, arena, fullArena, conn);
 	
 	// initialize display structure5
 	percentageEntry.set_text("100");
@@ -98,19 +98,13 @@ bool MainWindow::exploreProcessHandler()
 		Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::shortestPathHandler), 250 );
 		return false;
 #else
+		robot->calibrateAtGoal();
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-		pathFinder->runOnePath(result);
+		pathFinder->runOnePath(result, false);
 		robot->calibrateAtStart();
-#ifdef ANDROID
-		cout << "Wait for android run.";
-		conn->waitForAndroidRun();
-#else
-		cout << "Wait for button press";
-		getchar();
-#endif
-		
+
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
-		pathFinder->runOnePath(result);
+		pathFinder->runOnePath(result, true);
 #endif
 		io->printArena(arena);
 		io->generateMapDescriptorLevel1a();
