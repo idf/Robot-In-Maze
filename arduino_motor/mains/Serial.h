@@ -15,6 +15,7 @@ private:
   int command;
   bool is_started;
   bool exec_command(int function_code, double parameter);
+  void routine_clean(int function_code);
 };
 #endif
 

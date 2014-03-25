@@ -1,5 +1,5 @@
 #include "Calibrator.h"
-#define TRIAL_INTERVAL (180*1000)
+#define TRIAL_INTERVAL (60*1000)
 //public 
 
 Calibrator::Calibrator(FrontEye* frontEye) {
@@ -43,9 +43,9 @@ void Calibrator::try_calibrate() {
   int left_reading = frontEye->output_reading_ir_left();
   int right_reading = frontEye->output_reading_ir_right();
   if(left_reading==10&&right_reading==10) {
-    long delta_time = millis() - this->last_time_trial;
+    unsigned long delta_time = millis() - this->last_time_trial;
     if(delta_time>TRIAL_INTERVAL) {
-      this->one_side_calibrate();
+      this->one_side_calibrate(1);
       this->last_time_trial = millis();
     }
   }
@@ -89,7 +89,7 @@ bool Calibrator::calibrate_angle() {
       break;
     }
 
-    if(theta>0) {
+    if(theta>0) { // positive negative
       if(abs(theta)>8) {
         turnRight(abs(theta));
       }

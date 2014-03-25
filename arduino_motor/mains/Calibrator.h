@@ -20,6 +20,6 @@ private:
   bool calibrate_angle();
   void calibrate_distance();
 
-  long last_time_trial;
+  unsigned long last_time_trial;
 };
 #endif

@@ -161,3 +161,7 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 }
 
 
+//private
+void SerialCommnder::routine_clean(int function_code) {
+
+}
