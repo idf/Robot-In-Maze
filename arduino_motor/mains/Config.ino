@@ -19,5 +19,9 @@ double Config::PID_SETPOINT = PID_UPPER_LIMIT*(double(TARGET_SPEED)/DESIGNED_MAX
 
 bool Config::verbose = true;
 
-double const Config::TICKS_PER_DEGREE = (WHEELS_INTERVAL/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); //8.95463688680154
-double const Config::TICKS_PER_DEGREE_LEFT = (WHEELS_INTERVAL_LEFT/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); 
+//double const Config::TICKS_PER_DEGREE = (WHEELS_INTERVAL/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); //8.95463688680154
+//double const Config::TICKS_PER_DEGREE_LEFT = (WHEELS_INTERVAL_LEFT/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); 
+
+// range from 796 - 810; 803 baseline, -7 to +7
+double const Config::TICKS_PER_DEGREE_LEFT = (803+(0))/90;
+double const Config::TICKS_PER_DEGREE = (803+(0))/90;
