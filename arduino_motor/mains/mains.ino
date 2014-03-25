@@ -31,9 +31,12 @@ void setup(void)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(void)
-{
-  warmingUp();
-  serialCommnder->receive_exec_command();
+{ 
+
+
+  turnLeft(90); printCounts();
+  //turnRight(90); printCounts();
+  //moveForward(10); printCounts();
   ///*
   //turnLeft(90); delay(400); printCounts(); 
   //*/
@@ -80,11 +83,11 @@ void warmingUp() {
   static bool first_time = true;
   if(first_time) {
     for(int i=0; i<1; i++) {
-      moveForward(20); delay(100);
+      moveForward(15); delay(100);
       turnRight(90); delay(100);
-      moveForward(20); delay(100);
+      moveForward(15); delay(100);
       turnLeft(90); delay(100);
-      moveForward(20); delay(100);
+      moveForward(15); delay(100);
     }
     first_time = false;
     if(Config::verbose){
