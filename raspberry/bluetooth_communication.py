@@ -98,6 +98,7 @@ class AndroidAPI(object):
             self.is_connected = False
             self.client_sock.close()
             self.disconnect()
+            sys.exit(-1)
 
     def write_map(self,msg):
         """
@@ -117,6 +118,7 @@ class AndroidAPI(object):
             self.is_connected = False
             self.client_sock.close()
             self.disconnect()
+            sys.exit(-1)
 
     def __translate_robot_location(self, x, y):
         """
@@ -166,6 +168,7 @@ class AndroidAPI(object):
             self.is_connected = False
             self.client_sock.close()
             self.disconnect()
+            sys.exit(-1)
 
     def read_for_explore_run(self):
         """
