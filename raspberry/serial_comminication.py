@@ -123,7 +123,9 @@ class SerialAPI(object):
         :param parameter: double
         """
         # if self.ready==True:
-        self.ser.write(self._convert_to_machine_code(function_code, parameter))
+        self.ser.write(self._convert_to_machine_code(function_code, parameter)+"\r\n")  # Patched for bulk messaging
+        time.sleep(0.5)
+
 
     def read(self):
         """
@@ -172,12 +174,20 @@ class SerialAPI(object):
 
     ########################################################################################################################
     def command_pop_n_exe(self):
-        if not self.commands_outgoing.empty():
-            self.ack = False
+        if not self.is_command_empty():
             command_pair = self.commands_outgoing.get()
             self.write(command_pair[0], command_pair[1])
-            self.outstanding_command_pair = command_pair
+
+            # Patched for bulk messaging
+            if not command_pair[0]/10==0:
+                self.ack = False
+                self.outstanding_command_pair = command_pair
+            else:
+                self.ack = True
+                self.outstanding_command_pair = None
+
             print_msg(self.name, "Executing command"+str(command_pair))
+            return command_pair
 
     def command_put(self, function, parameter):
         self.commands_outgoing.put([function, parameter])
@@ -199,6 +209,12 @@ class SerialAPI(object):
         if type_data==SENSOR:
             return False, type_data, data
         data_dict = json.loads(data)
+
+        # Patched for bulk messaging
+        if data_dict["function"]/10==0:
+            # skip concurrent function_code
+            return None, None, None
+
         data_parsed = self._parse_function_status(data_dict)
         if data_parsed.get(self.outstanding_command_pair[0], None)==200:  # use the function_code to get the status
             self.outstanding_command_pair = None
@@ -252,15 +268,16 @@ class SerialExecutionThread(AbstractThread):
                     parameter = float(raw_input("parameter: "))
                     self.serial_api.command_put(function_code, parameter)
             else:
-                self.serial_api.command_pop_n_exe()
-                # stop and wait for ack
-                while True:
-                    ack, type_data, data = self.serial_api.response()
-                    if ack!=None:
-                        self.serial_api.response_put(ack, type_data, data)
+                command_pair = self.serial_api.command_pop_n_exe()
+                if not command_pair[0]/10==0:  # Patched for bulk messaging
+                    self.print_msg("Waiting for ack")
+                    while True:
+                        ack, type_data, data = self.serial_api.response()
+                        if ack!=None:
+                            self.serial_api.response_put(ack, type_data, data)
 
-                    print data
-                    if ack:
-                        break
+                        print data
+                        if ack:
+                            break
 
         self.print_msg("Exiting")
