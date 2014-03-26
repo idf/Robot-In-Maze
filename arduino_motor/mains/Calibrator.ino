@@ -75,7 +75,6 @@ bool Calibrator::calibrate_angle() {
 
 
   // http://www.nongnu.org/avr-libc/user-manual/group__avr__math.html#ga98384ad60834911ec93ac5ae1af4cf0a
-
   while(true) {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
