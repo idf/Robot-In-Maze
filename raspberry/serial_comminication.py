@@ -11,7 +11,7 @@ from settings import *
 __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
-MAX_CREDITS = 5
+MAX_CREDITS = 12
 
 class SerialAPI(object):
     def __init__(self, port=None, data_rate=9600,production=True):
@@ -129,7 +129,7 @@ class SerialAPI(object):
         """
         # if self.ready==True:
         self.ser.write(self._convert_to_machine_code(function_code, parameter)+"\r\n")  # Patched for bulk messaging
-        time.sleep(0.5)
+        time.sleep(0.05)
 
 
     def read(self):
