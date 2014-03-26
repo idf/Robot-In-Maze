@@ -22,6 +22,6 @@ bool Config::verbose = true;
 //double const Config::TICKS_PER_DEGREE = (WHEELS_INTERVAL/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); //8.95463688680154
 //double const Config::TICKS_PER_DEGREE_LEFT = (WHEELS_INTERVAL_LEFT/2)*(PI/180)*(1/DISTANCE_PER_TICK_CM); 
 
-// range from 796 - 810; 803 baseline, -7 to +7
+// range from 796 - 810; 803 baseline, -7 to +7; log 14 = 4
 double const Config::TICKS_PER_DEGREE_LEFT = (803+(-5))/90.0;
 double const Config::TICKS_PER_DEGREE = (803+(-5))/90.0;

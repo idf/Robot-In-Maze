@@ -97,7 +97,7 @@ class PcAPI (object):
                 print_msg(self.name, "Executing robot command")
                 self.serial_api.command_put(function_code, parameter)  # passing information to Robot
 
-                if (function_code/10!=0): # ack for commands except for 0 1 2 command
+                if not function_code in self.serial_api.non_waiting_commands: # ack for commands except for 0 1 2 command
                     # waiting for ack
                     while True:
                         lst = self.serial_api.response_pop() # send acknowledgement to PC
@@ -110,7 +110,7 @@ class PcAPI (object):
                             print_msg(self.name, "Acknowledgement: "+str(ack)+str(type_data)+str(data))
 
                             try:
-                                if json.loads(data)["function"]/10==0: # avoid 0 1 2
+                                if json.loads(data)["function"] in self.serial_api.non_waiting_commands: # avoid 0 1 2
                                     continue
                             except KeyError as e:
                                 pass 
