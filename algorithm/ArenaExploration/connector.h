@@ -28,7 +28,9 @@ public:
 	bool Connector::waitForAndroidRun();
 	bool Connector::sendMapInformationToAndroid(std::string map, std::string location);
 
+#ifdef GUI
 	bool Connector::sendMovementWithDisplay(int dist);
+#endif
 
 	ClientNetwork* network;
 };

@@ -35,18 +35,16 @@ protected:
 	void MainWindow::startExplorationButtonClicked();
 
 private:
+	bool MainWindow::exploreProcessHandler();
+#ifdef GUI
+	// real time update functions
 	void hideRobot(int x, int y);
 	void displayRobot(int x, int y);
 	void refreshAllDisplay();
-
-	// real time update functions
-	bool MainWindow::exploreProcessHandler();
 	bool MainWindow::shortestPathHandler();
-	std::vector<std::pair<std::string, int>*>* movementList;
-	std::vector<Grid*> result;
-	std::vector<std::pair<std::string, int>*>::iterator i;
 	bool waitDone;
 	int range;
+#endif
 };
 
 #endif

@@ -236,10 +236,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 				_pathIsSafe = false;
 			}
 			
-			if (!isSet)
-			{
-				current = *openList.begin();
-			}
 		}
 
 		// Stop if we reached the end
@@ -436,11 +432,8 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 #endif
 }
 
-void PathFinder::runOnePath(vector<Grid*> path, bool turnFirst)
+void PathFinder::runOnePath(vector<pair<std::string, int>*>* movementList, bool turnFirst)
 {
-	vector<pair<std::string, int>*>* movementList = getMovementList(path);
-	for (vector<Grid*>::reverse_iterator i = path.rbegin(); i != path.rend(); i++)
-		cout << (*i)->x << "," <<(*i)->y << endl;
 	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); i++)
 		cout << (*i)->first << "," <<(*i)->second << endl;
 	vector<pair<std::string, int>*>::iterator i = movementList->begin();

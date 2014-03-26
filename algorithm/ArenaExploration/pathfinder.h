@@ -25,7 +25,7 @@ public:
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);
 	void PathFinder::getRobotToMoveAndSense(Grid* destination);
-	void PathFinder::runOnePath(std::vector<Grid*> path, bool turnFirst);
+	void PathFinder::runOnePath(std::vector<std::pair<std::string, int>*>* movementList, bool turnFirst);
 	std::vector<std::pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path);
 	void selectNextDestination();
 	time_t start;

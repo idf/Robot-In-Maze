@@ -67,6 +67,8 @@ void MainWindow::startExplorationButtonClicked()
 
 bool MainWindow::exploreProcessHandler()
 {
+	std::vector<std::pair<std::string, int>*>* movementList;
+	std::vector<Grid*> result;
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 #ifdef GUI
 	this->refreshAllDisplay();
@@ -100,11 +102,13 @@ bool MainWindow::exploreProcessHandler()
 #else
 		robot->calibrateAtGoal();
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-		pathFinder->runOnePath(result, false);
+		movementList = pathFinder->getMovementList(result);
+		pathFinder->runOnePath(movementList, false);
 		robot->calibrateAtStart();
 
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
-		pathFinder->runOnePath(result, true);
+		movementList = pathFinder->getMovementList(result);
+		pathFinder->runOnePath(movementList, true);
 #endif
 		io->printArena(arena);
 		io->generateMapDescriptorLevel1a();
@@ -118,6 +122,7 @@ bool MainWindow::exploreProcessHandler()
 }
 
 // GUI Methods
+#ifdef GUI
 bool MainWindow::shortestPathHandler()
 {
 	if (i <= movementList->end())
@@ -208,3 +213,4 @@ void MainWindow::refreshAllDisplay()
 	//change robot
 	displayRobot(robot->getPosX(), robot->getPosY());
 }
+#endif

@@ -275,7 +275,7 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			default:
 				break;
 			}
-			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second, sensorID);
 			break;
 		case IRRIGHT_ID: // IRRight
 			sensorDir++;
@@ -297,7 +297,7 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			default: 
 				break;
 			}
-			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second, sensorID);
 			break;
 		case USFRONT_ID: // USFront
 			switch(this->_direction)
@@ -390,12 +390,21 @@ void Robot::senseEnvironment(Arena* arena, Arena* fullArena)
 
 // open up unoccupied spaces
 // whenever a range is given, there is an obstacle in front, otherwise 0 will be given
-void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int range)
+void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int range, int sensorID)
 {
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	int i;
+	bool noObstacle = false;
 	if (range == -1) // to far or too near to detect. Dont open for safety reason
-		return;
+	{
+		if (sensorID == IRLEFT_ID)
+		{
+			range = SMALL_IR_RANGE;
+			noObstacle = true;
+		}
+		else
+			return;
+	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (i = 0; i <= range/10; ++i)  // NOTE: DIFFERENT
 	{
@@ -406,15 +415,15 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
-		cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" <<endl;
+		//cout << "setting grid: "<< x << ", " << y << " as UNOCCUPOiED" <<endl;
 		// prevent overriding obstacle as free due to conflict sensor information
 		if (arena->getGridType(x, y) == OBSTACLE)
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);
-		//arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
 	//cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
-	arena->setGridType(x, y, OBSTACLE);
+	if (!noObstacle)
+		arena->setGridType(x, y, OBSTACLE);
 }
 
 // US will only set free. It will not set obstacle.
@@ -436,14 +445,11 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
-		//if (arena->getGridType(x, y) == OBSTACLE)
-		//	arena->setGridType(x, y, UNSAFE);
-		//else
 		arena->setGridType(x, y, UNOCCUPIED);
-		//arena->gridToRefresh->insert(*(new pair<int, int>(x, y)));
 	}
 }
 
+#ifdef GUI
 bool Robot::moveForwardWithDisplay(int dist)
 {
 	if (movementCount == 0)
@@ -479,3 +485,4 @@ bool Robot::moveForwardWithDisplay(int dist)
 	}
 	return true;
 }
+#endif

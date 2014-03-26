@@ -44,8 +44,9 @@ public:
 
 	void openArenaWithSensorData(std::map<Sensor*, int>* sensorData, Arena* arena);
 	void senseEnvironment(Arena* arena, Arena* fullArena);
-
+#ifdef GUI
 	bool moveForwardWithDisplay(int dist);
+#endif
 
 #ifndef HARDWARE
 	inline void setLocation(int x, int y) {_posX = x; _posY = y;}
@@ -57,7 +58,7 @@ private:
 	DIRECTION _direction;
 	std::vector<Sensor*> _sensors;
 	Connector* _conn;
-	void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int range);
+	void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int range, int sensorID);
 	void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int range);
 };
 

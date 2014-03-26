@@ -213,6 +213,7 @@ bool Connector::sendMapInformationToAndroid(std::string map, std::string locatio
 	return true;
 }
 
+#ifdef GUI
 // simulator real time display
 bool Connector::sendMovementWithDisplay(int dist)
 { 
@@ -229,3 +230,4 @@ bool Connector::sendMovementWithDisplay(int dist)
 	NetworkServices::sendMessage(network->ConnectSocket, (char*)outputConfig.c_str(), strlen(temp));
 	return true;
 } 
+#endif
