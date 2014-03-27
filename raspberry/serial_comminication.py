@@ -11,7 +11,7 @@ from settings import *
 __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
-MAX_CREDITS = 12
+MAX_CREDITS = 8 # tested
 
 class SerialAPI(object):
     def __init__(self, port=None, data_rate=9600,production=True):
@@ -185,26 +185,26 @@ class SerialAPI(object):
         If the command is non_waiting and have sufficient credits, execute it without set the ack; otherwise waits for credits
         If the command is normal, executes it and waits for ack
         :return:
+        :except: index error when the commands queue is empty
         """
-        if not self.is_command_empty():
-            command_pair = self.commands_outgoing.queue[0] # peek
-            # Patched for bulk messaging
-            if command_pair[0] in self.non_waiting_commands:
-                if self.credits<=0:
-                    return None
+        command_pair = self.commands_outgoing.queue[0] # peek
+        # Patched for bulk messaging
+        if command_pair[0] in self.non_waiting_commands:
+            if self.credits<=0:
+                return None
 
 
-                self.ack = True
-                self.outstanding_command_pair = None
-                self.credits -= 1
-            else:
-                self.ack = False
-                self.outstanding_command_pair = command_pair
+            self.ack = True
+            self.outstanding_command_pair = None
+            self.credits -= 1
+        else:
+            self.ack = False
+            self.outstanding_command_pair = command_pair
 
-            command_pair = self.commands_outgoing.get()
-            self.write(command_pair[0], command_pair[1])
-            print_msg(self.name, "Executing command"+str(command_pair))
-            return command_pair
+        command_pair = self.commands_outgoing.get()
+        self.write(command_pair[0], command_pair[1])
+        print_msg(self.name, "Executing command"+str(command_pair))
+        return command_pair
 
     def command_put(self, function, parameter):
         self.commands_outgoing.put([function, parameter])
