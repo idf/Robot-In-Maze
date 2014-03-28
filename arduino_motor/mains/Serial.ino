@@ -1,6 +1,6 @@
 #include "Serial.h"
 #include "globals.h"
-#define SCALE 1.75
+#define SCALE 2
 #define EXPLORE_SCALE 1.0
 // public
 SerialCommnder::SerialCommnder() {
