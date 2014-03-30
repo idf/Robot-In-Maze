@@ -59,11 +59,11 @@ double angle_to_ticks(double angle) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void getSensorReadings() {
   serialCommnder->send_sensor_readings(
-    eyes->output_reading_ultra(0),
     eyes->output_reading_ir(0),
     eyes->output_reading_ir(1),
     eyes->output_reading_ir(2),
     eyes->output_reading_ir(3),
+    eyes->output_reading_ultra(0),
     eyes->output_reading_ultra(1)
     );
 }

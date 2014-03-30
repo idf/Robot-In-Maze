@@ -74,20 +74,18 @@ int Eyes::output_reading_ir_right() {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void Eyes::test_readings() {
-  for(int i=0; i<ULTRA_SIZE; i++) {
-    int dis= this->ultrasound[i]->dist();
-    Serial.print(i);
-    Serial.print(F(" Ultrasound Distance :"));
-    Serial.println(dis);
-  }
-  
   for(int i=0; i<SHARP_SIZE; i++) {
     int dis = this->sharp[i]->distance();  
     Serial.print(i);
     Serial.print(F(" SharpIR distance: "));  
     Serial.println(dis);   
   }
-
+  for(int i=0; i<ULTRA_SIZE; i++) {
+    int dis= this->ultrasound[i]->dist();
+    Serial.print(i);
+    Serial.print(F(" Ultrasound Distance :"));
+    Serial.println(dis);
+  }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private

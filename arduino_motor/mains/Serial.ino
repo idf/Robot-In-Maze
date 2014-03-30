@@ -58,31 +58,31 @@ void SerialCommnder::send_ready_signal() {
 }
 
 void SerialCommnder::send_sensor_readings(
-                                          int front_value, 
-                                          int front_left_value, 
-                                          int front_right_value, 
-                                          int left_value, 
-                                          int right_value,
-                                          int side_ultra_value) {
+                                          int value0, 
+                                          int value1, 
+                                          int value2, 
+                                          int value3, 
+                                          int value10,
+                                          int value11) {
   Serial.print(F("{\"sensors\":["));
-  // front 
+
   Serial.print(F("{\"sensor\":")); Serial.print(0);
-  Serial.print(F(",\"value\":")); Serial.print(front_value); Serial.print(F("}")); Serial.print(F(","));
+  Serial.print(F(",\"value\":")); Serial.print(value0); Serial.print(F("}")); Serial.print(F(","));
 
   Serial.print(F("{\"sensor\":")); Serial.print(1);
-  Serial.print(F(",\"value\":")); Serial.print(front_left_value); Serial.print(F("}")); Serial.print(F(","));
+  Serial.print(F(",\"value\":")); Serial.print(value1); Serial.print(F("}")); Serial.print(F(","));
 
   Serial.print(F("{\"sensor\":")); Serial.print(2);
-  Serial.print(F(",\"value\":")); Serial.print(front_right_value); Serial.print(F("}")); Serial.print(F(","));
-  // left
-  Serial.print(F("{\"sensor\":")); Serial.print(10); 
-  Serial.print(F(",\"value\":")); Serial.print(left_value); Serial.print(F("}")); Serial.print(F(","));
-  // right
+  Serial.print(F(",\"value\":")); Serial.print(value2); Serial.print(F("}")); Serial.print(F(","));
+
+  Serial.print(F("{\"sensor\":")); Serial.print(3); 
+  Serial.print(F(",\"value\":")); Serial.print(value3); Serial.print(F("}")); Serial.print(F(","));
+
+  Serial.print(F("{\"sensor\":")); Serial.print(10);
+  Serial.print(F(",\"value\":")); Serial.print(value10); Serial.print(F("}")); Serial.print(F(","));
+
   Serial.print(F("{\"sensor\":")); Serial.print(11);
-  Serial.print(F(",\"value\":")); Serial.print(right_value); Serial.print(F("}")); Serial.print(F(","));
-  // right ultra
-  Serial.print(F("{\"sensor\":")); Serial.print(12);
-  Serial.print(F(",\"value\":")); Serial.print(side_ultra_value); Serial.print(F("}"));
+  Serial.print(F(",\"value\":")); Serial.print(value11); Serial.print(F("}"));
   //end
   Serial.println(F("]}"));
    
