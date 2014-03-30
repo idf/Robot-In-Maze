@@ -5,8 +5,10 @@
 class Calibrator {
 public:
   Calibrator(FrontEye* frontEye);
+  void init();
   void calibrate(int situation);
   void test_calibrate();
+  void try_calibrate();
 
 private:
   FrontEye* frontEye; // to get the sensor reading
@@ -14,7 +16,10 @@ private:
 
 
   void one_side_calibrate();
+  void one_side_calibrate(int times);
   bool calibrate_angle();
   void calibrate_distance();
+
+  unsigned long last_time_trial;
 };
 #endif

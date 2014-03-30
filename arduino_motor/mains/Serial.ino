@@ -1,6 +1,7 @@
 #include "Serial.h"
 #include "globals.h"
-#define SCALE 1
+#define SCALE 2
+#define EXPLORE_SCALE 1.0
 // public
 SerialCommnder::SerialCommnder() {
   this->command = 99;
@@ -8,6 +9,8 @@ SerialCommnder::SerialCommnder() {
 }
 
 bool SerialCommnder::receive_exec_command() {
+  Config::verbose = false;
+  
   if(Serial.available()>0) {
     int function_code;
     double parameter;
@@ -17,7 +20,7 @@ bool SerialCommnder::receive_exec_command() {
     parameter = comamnd_int%100000;
     parameter /= 100;
     // Serial.flush();
-    Serial.print(F("debug, command received: ")); Serial.print(function_code); Serial.println(parameter);
+    // Serial.print(F("debug, command received: ")); Serial.print(function_code); Serial.println(parameter);
     return this->exec_command(function_code, parameter);
   }
   return false;
@@ -88,24 +91,20 @@ void SerialCommnder::send_sensor_readings(
 // private
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
-    setScale(SCALE);
-    moveForward(parameter);
+    pidMgr->setScale(SCALE);
+    moveForward(parameter); delay(50);
     this->send_command_complete(function_code, 200);
-    setScale(1/SCALE);
+    pidMgr->restore();
     return true;
   }
   else if(function_code==1) {
-    setScale(SCALE);
-    turnLeft(parameter);
+    turnLeft(parameter); delay(50);
     this->send_command_complete(function_code, 200);
-    setScale(1/SCALE);
     return true;
   }
   else if(function_code==2) {
-    setScale(SCALE);
-    turnRight(parameter);
+    turnRight(parameter); delay(50);
     this->send_command_complete(function_code, 200);
-    setScale(1/SCALE);
     return true;
   }
 
@@ -118,26 +117,38 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 
 
   else if(function_code==20) {
+    pidMgr->setScale(EXPLORE_SCALE);
     moveForward(parameter);
     getSensorReadings();
+    pidMgr->setScale(0.8); // for calibrate
+    calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
+    pidMgr->restore();
     return true;
   }
   else if(function_code==21) {
     turnLeft(parameter);
     getSensorReadings();
+    pidMgr->setScale(0.8); // for calibrate
+    calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
+    pidMgr->restore();
     return true;
   }
   else if(function_code==22) {
     turnRight(parameter);
     getSensorReadings();
+    pidMgr->setScale(0.8); // for calibrate
+    calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
+    pidMgr->restore();
     return true;
   }
   else if(function_code==98) {
+    pidMgr->setScale(0.8); // for calibrate
     calibrator->calibrate(parameter);
     this->send_command_complete(function_code, 200);
+    pidMgr->restore();
     return true;
   }
   else {
@@ -150,3 +161,7 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 }
 
 
+//private
+void SerialCommnder::routine_clean(int function_code) {
+
+}

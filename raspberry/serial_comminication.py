@@ -11,12 +11,17 @@ from settings import *
 __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
+MAX_CREDITS = 8 # tested
 
 class SerialAPI(object):
     def __init__(self, port=None, data_rate=9600,production=True):
         self.name = "SerialAPI"
         self.ready=False
         self.ser = None
+
+        # Patched for bulk messaging
+        self.credits = MAX_CREDITS
+        self.non_waiting_commands = [0, 1, 2, "0", "1", "2"]
 
         if production:
             self._init_serial(port, data_rate)
@@ -73,7 +78,7 @@ class SerialAPI(object):
                     print e.message
                     continue
 
-            print_msg(self.name, "Automatically find port fails. Try to reboot the OS")
+            print_msg(self.name, "Automatically find port fails. Try to reboot the linux OS")
             sys.exit(-1)
 
 
@@ -123,12 +128,15 @@ class SerialAPI(object):
         :param parameter: double
         """
         # if self.ready==True:
-        self.ser.write(self._convert_to_machine_code(function_code, parameter))
+        self.ser.write(self._convert_to_machine_code(function_code, parameter)+"\r\n")  # Patched for bulk messaging
+        time.sleep(0.05)
+
 
     def read(self):
         """
-        Read from the serial
-        Guaranteed to get json response
+        Reads from the serial
+        Line by line
+        Blocking method to get json response
         :return: parsed json
         """
         receive_data = ""
@@ -136,7 +144,7 @@ class SerialAPI(object):
             data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
 
             if "{" in data: # only check for starting "{" # naive type checking
-                receive_data = data[data.find("{"): ]
+                receive_data = data[data.find("{"):]
                 break
             else:
                 # if no json, wait
@@ -172,12 +180,31 @@ class SerialAPI(object):
 
     ########################################################################################################################
     def command_pop_n_exe(self):
-        if not self.commands_outgoing.empty():
+        """
+        Peeks the command queue, if not empty, try to execute the command
+        If the command is non_waiting and have sufficient credits, execute it without set the ack; otherwise waits for credits
+        If the command is normal, executes it and waits for ack
+        :return:
+        :except: index error when the commands queue is empty
+        """
+        command_pair = self.commands_outgoing.queue[0] # peek
+        # Patched for bulk messaging
+        if command_pair[0] in self.non_waiting_commands:
+            if self.credits<=0:
+                return None
+
+
+            self.ack = True
+            self.outstanding_command_pair = None
+            self.credits -= 1
+        else:
             self.ack = False
-            command_pair = self.commands_outgoing.get()
-            self.write(command_pair[0], command_pair[1])
             self.outstanding_command_pair = command_pair
-            print_msg(self.name, "Executing command"+str(command_pair))
+
+        command_pair = self.commands_outgoing.get()
+        self.write(command_pair[0], command_pair[1])
+        print_msg(self.name, "Executing command"+str(command_pair))
+        return command_pair
 
     def command_put(self, function, parameter):
         self.commands_outgoing.put([function, parameter])
@@ -191,14 +218,23 @@ class SerialAPI(object):
         Parse the response from the serial
         :return: ack:bool, type_data: int, data:dict
         """
-        print_msg(self.name, "waiting for ack")
+        print_msg(self.name, "In response(), waiting for ack")
         type_data, data = self.read()
-
-
+        if type_data == None:
+            return None, None, None
         # sensor data
         if type_data==SENSOR:
             return False, type_data, data
+
         data_dict = json.loads(data)
+
+        # Patched for bulk messaging
+        if data_dict["function"] in self.non_waiting_commands:
+            # skip concurrent function_code
+            self.credits += 1
+            print_msg(self.name, "Received one credits: %d/%d"%(self.credits, MAX_CREDITS))
+            return None, None, None # silence the actual ack
+
         data_parsed = self._parse_function_status(data_dict)
         if data_parsed.get(self.outstanding_command_pair[0], None)==200:  # use the function_code to get the status
             self.outstanding_command_pair = None
@@ -245,22 +281,34 @@ class SerialExecutionThread(AbstractThread):
                 # self.print_msg("Waiting for enqueuing command")
                 if self.production:
                     # waiting for request_command to be called
-                    time.sleep(1)
+                    time.sleep(0.05)
                     continue
                 else:
                     function_code = int(raw_input("function code: "))
                     parameter = float(raw_input("parameter: "))
                     self.serial_api.command_put(function_code, parameter)
             else:
-                self.serial_api.command_pop_n_exe()
-                # stop and wait for ack
-                while True:
-                    ack, type_data, data = self.serial_api.response()
-                    if ack!=None:
-                        self.serial_api.response_put(ack, type_data, data)
+                command_pair = self.serial_api.command_pop_n_exe()
 
-                    print data
-                    if ack:
-                        break
+                if command_pair==None:
+                    self.print_msg("Waiting for refilling credits")
+                    while True:
+                        ack, type_data, data = self.serial_api.response()
+                        if self.serial_api.credits==MAX_CREDITS:
+                            break
+                        time.sleep(0.05)
+
+                elif not command_pair[0] in self.serial_api.non_waiting_commands:  # Patched for bulk messaging
+                    # self.serial_api.credits = MAX_CREDITS # restore credits # naturally restored in response()
+                    self.print_msg("Waiting for normal ack")
+                    while True:
+                        # stop-n-wait for other non non-waiting commands
+                        ack, type_data, data = self.serial_api.response()
+                        if ack!=None:
+                            self.serial_api.response_put(ack, type_data, data)
+
+                        if ack:
+                            break
+                        time.sleep(0.05)
 
         self.print_msg("Exiting")

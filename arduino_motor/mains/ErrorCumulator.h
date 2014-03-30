@@ -1,6 +1,6 @@
 #ifndef ERRORCUMULATOR_H
 #define ERRORCUMULATOR_H
-#include "HMC5883LCompass.h"
+//#include "HMC5883LCompass.h"
 // The signs of numbers have meaning in ErrorCumulator
 class ErrorCumulator {
 public:

@@ -3,6 +3,7 @@
 float distCentimeter(float centimeter) 
 {
   float divisibleTicks;
+  /*
   if (centimeter <= 10) {
     divisibleTicks = 18.7; 
   } else if (centimeter <= 20) {
@@ -12,10 +13,12 @@ float distCentimeter(float centimeter)
   } else if (centimeter <= 50) {
     divisibleTicks = 18.5;
   } else if (centimeter <= 75) {
-    divisibleTicks = 18.9;
+    divisibleTicks = 18.97;
   } else {
     divisibleTicks = 18.7;
   }
+  */
+  divisibleTicks = 18.8;
   float ticksForOneCentimeter = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
   float dist = ticksForOneCentimeter * centimeter;
   return dist;
@@ -47,30 +50,6 @@ void printCounts()
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void setScale(double scale) {
-  SetpointLeft *= scale;
-  SetpointRight *= scale;
-  SetpointMid *= scale; // always 0
-
-  Config::PID_SETPOINT *= scale;
-  Config::PID_UPPER_LIMIT *= scale;
-  Config::PID_LOWER_LIMIT *= scale;
-
-  Config::MAX_SPEED *= scale;
-  Config::TARGET_SPEED *= scale;
-  Config::MIN_SPEED *= scale;
-
-  leftPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
-  rightPID.SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
-  midPID.SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
-}
-void setScaleLeft(double scale) {
-
-}
-void setScaleRight(double scale) {
-  
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Replaced by const TICKS_PER_DEGREE
 double angle_to_ticks(double angle) {
@@ -88,43 +67,4 @@ void getSensorReadings() {
     sideEye->output_reading_ultra()
     );
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////
-void obstacle_checkpoint() {
-  turnLeft(90);
-  moveForward(10);
 
-  turnLeft(90);
-  moveForward(10);
-  turnLeft(90);
-  moveForward(10);
-  turnRight(90);
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void goStraightlineCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ // get_ulra_reading
-  turnRight(90);
-  moveForward(20);
-  turnLeft(90);
-  moveForward(40);
-  turnLeft(90);
-  moveForward(20);
-  turnRight(90);
-  //finish
- }
- moveForward(10);
-}
-
-
-void extensionCheckpoint(){
- if (frontEye->output_reading_ultra()!=-1&&frontEye->output_reading_ultra()<=10){ //get_ulra_reading
-  turnRight(45);
-  moveForward(20);
-  turnLeft(90);
-  moveForward(40);
-  turnLeft(90);
-  moveForward(20);
-  turnRight(90);
-  //finish
- }
- moveForward(10);
-}

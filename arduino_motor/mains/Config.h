@@ -22,5 +22,7 @@ public:
 
   static double const TICKS_PER_DEGREE;
   static double const TICKS_PER_DEGREE_LEFT;
+
+  static bool verbose; // changed in receive_exec_command()
 };
 #endif

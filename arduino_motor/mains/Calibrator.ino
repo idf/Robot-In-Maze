@@ -1,11 +1,14 @@
 #include "Calibrator.h"
+#define TRIAL_INTERVAL (60*1000)
 //public 
-
 
 Calibrator::Calibrator(FrontEye* frontEye) {
   this->frontEye = frontEye;
 }
 
+void Calibrator::init() {
+  this->last_time_trial = millis();
+}
 
 void Calibrator::calibrate(int situation) {
   const int CALIBRATE_TIMES = 2;
@@ -33,13 +36,28 @@ void Calibrator::calibrate(int situation) {
 
 
 void Calibrator::test_calibrate() {
-  this->one_side_calibrate();
+  this->one_side_calibrate(1);
 }
 
+void Calibrator::try_calibrate() {
+  int left_reading = frontEye->output_reading_ir_left();
+  int right_reading = frontEye->output_reading_ir_right();
+  if(left_reading==10&&right_reading==10) {
+    unsigned long delta_time = millis() - this->last_time_trial;
+    if(delta_time>TRIAL_INTERVAL) {
+      this->one_side_calibrate(1);
+      this->last_time_trial = millis();
+    }
+  }
+}
 
 //private
 void Calibrator::one_side_calibrate() {
-  for(int i=0; i<3; i++) {
+  this->one_side_calibrate(3);
+}
+
+void Calibrator::one_side_calibrate(int times) {
+  for(int i=0; i<times; i++) {
     while(!this->calibrate_angle()){
       this->calibrate_distance();
     }
@@ -47,11 +65,9 @@ void Calibrator::one_side_calibrate() {
   }
 }
 
-
 bool Calibrator::calibrate_angle() {
   const double DETECTORS_INTERVAL = 12.2; //cm
-  const int ADJUST_ANGLE = 25; // degree
-  const int MULTIPLIER = 3;
+  const int ADJUST_ANGLE = 0 ; // degree
 
   double theta;
   int left_reading;
@@ -59,7 +75,6 @@ bool Calibrator::calibrate_angle() {
 
 
   // http://www.nongnu.org/avr-libc/user-manual/group__avr__math.html#ga98384ad60834911ec93ac5ae1af4cf0a
-
   while(true) {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
@@ -73,8 +88,8 @@ bool Calibrator::calibrate_angle() {
       break;
     }
 
-    if(theta>0) {
-      if(abs(theta)>21) {
+    if(theta>0) { // positive negative
+      if(abs(theta)>8) {
         turnRight(abs(theta));
       }
       else { //avoid small angle problem
@@ -83,7 +98,7 @@ bool Calibrator::calibrate_angle() {
       }
     }
     else {
-      if(abs(theta)>21) {
+      if(abs(theta)>8) {
         turnLeft(abs(theta));
       }
       else { 
@@ -93,8 +108,8 @@ bool Calibrator::calibrate_angle() {
     }
 
     // testing print 
-    Serial.print(F("theta: ")); Serial.println(theta);
-    frontEye->test_readings();
+    //Serial.print(F("theta: ")); Serial.println(theta);
+    //frontEye->test_readings();
   }
   return true;
 }
@@ -134,9 +149,9 @@ void Calibrator::calibrate_distance() {
       }
     }
 
-     // testing print 
-    Serial.print(F("delta: ")); Serial.println(delta);
-    frontEye->test_readings();
+    // testing print 
+    //Serial.print(F("delta: ")); Serial.println(delta);
+    //frontEye->test_readings();
   }
 
 }

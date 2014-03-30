@@ -31,7 +31,9 @@ void ErrorCumulator::init() {
 }
 double ErrorCumulator::adjust_turning_angle(double target_angle) {
   double adjusted_target_angle;
-  Serial.print("turning error: "); Serial.println(this->turning_error);
+  if(Config::verbose) {
+    Serial.print("turning error: "); Serial.println(this->turning_error);
+  }
   adjusted_target_angle = target_angle - this->turning_error; // +/- guaranteed
   this->turning_error = 0;
   //this->compass_reading_0 = this->compass->getHeading();
@@ -107,16 +109,10 @@ void ErrorCumulator::change_to_forward_mode() {
 
 void ErrorCumulator::change_to_right_mode() {
   this->change_to_turning_mode(RIGHT);
-  this->deltaX = this->right_deltaX;
-  this->deltaY = this->right_deltaY;
-  this->theta = this->right_theta;
 }
 
 void ErrorCumulator::change_to_left_mode() {
   this->change_to_turning_mode(LEFT);
-  this->deltaX = this->left_deltaX;
-  this->deltaY = this->left_deltaY;
-  this->theta = this->left_theta;
 }
 
 
@@ -145,6 +141,17 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
   
   this->reset_dead_reckoning();
   this->current_mode = mode;
+
+  if(mode==LEFT) {
+    this->deltaX = this->left_deltaX;
+    this->deltaY = this->left_deltaY;
+    this->theta = this->left_theta;
+  }
+  else if(mode==RIGHT) {
+    this->deltaX = this->right_deltaX;
+    this->deltaY = this->right_deltaY;
+    this->theta = this->right_theta;
+  }
 }
 
 
