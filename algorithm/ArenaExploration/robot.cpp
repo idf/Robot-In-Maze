@@ -241,10 +241,9 @@ map<Sensor*, int>* Robot::mapDataWithSensor(map<int, int>* data)
 void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 {
 	// Mark current robot location as UNOCCUPIED
-	arena->setGridType(this->_posX, this->_posY, UNOCCUPIED);
-	arena->setGridType(this->_posX+1, this->_posY, UNOCCUPIED);
-	arena->setGridType(this->_posX, this->_posY+1, UNOCCUPIED);
-	arena->setGridType(this->_posX+1, this->_posY+1, UNOCCUPIED);
+	for (int i = -1; i < 2; ++i)
+		for (int j = -2; j < 2; ++j)
+			arena->setGridType(this->_posX + i, this->_posY + j, UNOCCUPIED);
 	// determine sensor location (x,y), and sensor direction (enum)
 
 	for (map<Sensor*, int>::iterator iter = sensorData->begin(); iter != sensorData->end(); ++iter)

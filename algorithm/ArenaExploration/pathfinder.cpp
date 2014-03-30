@@ -34,7 +34,6 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY) && time(0) - start < timeLimitInSeconds) // exploration not done
 #endif
 	{
-		this->_safetyDistanceMode = true;
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
@@ -48,19 +47,8 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				return true;
 			}
 			// move to new place, sense the surrounding
-			if (addSafeWeight(_arena->getGrid(_robot->getPosX(), _robot->getPosY())) != 0)
-				this->_safetyDistanceMode = false;
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
-			this->_safetyDistanceMode = true;
-			if (!this->_pathIsSafe)
-			{
-				cout << "recalculate path with safety distance disabled" << endl;
-				this->_safetyDistanceMode = false;
-				result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
-				this->_pathIsSafe = true;
-				this->_safetyDistanceMode = true;
-			}
-
+			
 			// resolve direction path problem
 			if (isSamePath(prevPrev, result))
 			{
@@ -198,10 +186,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		else
 		{
 			// same dir, safe
-			for (i = openList.begin(); _safetyDistanceMode && i != openList.end(); ++ i)
+			for (i = openList.begin();i != openList.end(); ++ i)
 			{
 				//cout << (*i)->getX() <<  (*i)->getY();
-				if (addSafeWeight(*i) != 0 || !isSameDirection(current, *i))
+				if (!isSameDirection(current, *i))
 					continue;
 				if (!isSet || (*i)->heuristic <= current->heuristic)
 			    {
@@ -209,35 +197,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					isSet = true;
 			    }
 			}
-
-			// different dir, safe
-			if (!isSet)
-			{
-				for (i = openList.begin(); _safetyDistanceMode && i != openList.end(); ++ i)
-				{
-					if (addSafeWeight(*i) != 0)
-						continue;
-				    if (!isSet || (*i)->heuristic <= current->heuristic)
-				    {
-				        current = (*i);
-						isSet = true;
-				    }
-				}
-			}
-			if (!isSet)
-			{
-				for (i = openList.begin(); i != openList.end(); ++ i)
-				{
-					if (!isSameDirection(current, *i))
-						continue;
-				    if (!isSet || (*i)->heuristic <= current->heuristic)
-				    {
-				        current = (*i);
-						isSet = true;
-				    }
-				}
-				_pathIsSafe = false;
-			}
 			if (!isSet)
 			{
 				for (i = openList.begin(); i != openList.end(); ++ i)
@@ -248,7 +207,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 						isSet = true;
 				    }
 				}
-				_pathIsSafe = false;
 			}
 			
 		}
@@ -376,11 +334,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 bool PathFinder::pointIsWalkable(int x, int y)
 {
 	// obstacle case
-	if (_arena->getGridType(x, y) == OBSTACLE ||
-		_arena->getGridType(x + 1, y) == OBSTACLE ||
-		_arena->getGridType(x, y + 1) == OBSTACLE ||
-		_arena->getGridType(x + 1, y + 1) == OBSTACLE)
-		return false;
+	for (int i = -1; i < 2; ++i)
+		for (int j = -2; j < 2; ++j)
+			if (_arena->getGridType(x + i, y + j) == OBSTACLE)
+				return false;
 	// border case
 	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_Y_SIZE)
 		return false;
@@ -389,17 +346,12 @@ bool PathFinder::pointIsWalkable(int x, int y)
 
 bool PathFinder::pointIsAlwaysSafe(int x, int y)
 {
-	if (_arena->getGridType(x, y) != OBSTACLE &&
-		_arena->getGridType(x + 1, y) != OBSTACLE &&
-		_arena->getGridType(x, y + 1) != OBSTACLE &&
-		_arena->getGridType(x + 1, y + 1) != OBSTACLE &&
-		_arena->getGridType(x, y) != UNEXPLORED &&
-		_arena->getGridType(x + 1, y) != UNEXPLORED &&
-		_arena->getGridType(x, y + 1) != UNEXPLORED &&
-		_arena->getGridType(x + 1, y + 1) != UNEXPLORED)
-		return true;
-	else
-		return false;
+	for (int i = -1; i < 2; ++i)
+		for (int j = -2; j < 2; ++j)
+			if (_arena->getGridType(x + i, y + j) == OBSTACLE ||
+				_arena->getGridType(x + i, y + j) == UNEXPLORED )
+				return false;
+	return true;
 }
 
 bool PathFinder::substituteNewPoint(int x, int y)
