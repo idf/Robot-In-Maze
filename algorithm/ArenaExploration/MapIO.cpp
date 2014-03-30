@@ -68,6 +68,129 @@ void MapIO::readMapFromFile(std::string filename)
 	mapFile.close();
 }
 
+void MapIO::complementMap(Arena* arena)
+{
+	int count;
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			count = 0;
+			for (int j = 5; j >= 0; --j)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// left
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			count = 0;
+			for (int i = 5; i >= 0; --i)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// RIGHT
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			count = 0;
+			for (int i = 14; i < ARENA_X_SIZE; ++i)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// LOWER
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			count = 0;
+			for (int j = 9; j < ARENA_Y_SIZE; ++j)
+			{
+				if (arena->getGridType(i, j) == OBSTACLE)
+					count ++;
+				if (count >=5)
+					arena->setGridType(i, j, OBSTACLE);
+			}
+		}
+		// set all other as unoccupied
+		for (int i = 0; i < ARENA_X_SIZE; ++i)
+		{
+			for (int j = 0; j < ARENA_Y_SIZE; ++j)
+			{
+				if (arena->getGridType(i, j) == UNEXPLORED)
+					arena->setGridType(i, j, UNOCCUPIED);
+			}
+		}
+}
+void MapIO::generateMapDescriptorLevel1a()
+{
+	ofstream mapDescriptor1("descriptor1a.txt");
+	string data("");
+	data.append("11");
+
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+	{
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			switch(_arena->getGridType(i, j))
+			{
+			case UNEXPLORED:
+				data.append("0");
+				break;
+			default:
+				data.append("1");
+				break;
+			}
+		}
+	}
+	data.append("11");
+
+	string hexData = convertToHex(data);
+	mapDescriptor1 << hexData;
+	mapDescriptor1.close();
+}
+
+// level 2 map descriptor: obstacle and unoccupied
+void MapIO::generateMapDescriptorLevel2a()
+{
+	ofstream mapDescriptor2("descriptor2a.txt");
+	string data("");
+
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+	{
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+		{
+			switch(_arena->getGridType(i, j))
+			{
+			case UNOCCUPIED:
+			case START:
+			case GOAL:
+			case UNSAFE:
+				data.append("0");
+				break;
+			case OBSTACLE:
+				data.append("1");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	while (data.length() %8 != 0)
+		data.append("0");
+
+	string hexData = convertToHex(data);
+	mapDescriptor2 << hexData;
+	mapDescriptor2.close();
+}
+
 // generate level 1 map descriptor: covered and uncovered
 void MapIO::generateMapDescriptorLevel1()
 {
@@ -75,7 +198,7 @@ void MapIO::generateMapDescriptorLevel1()
 	string data("");
 	data.append("11");
 
-	for (int i = ARENA_X_SIZE - 1; i >= 0; --i)
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
@@ -102,9 +225,8 @@ void MapIO::generateMapDescriptorLevel2()
 {
 	ofstream mapDescriptor2("descriptor2.txt");
 	string data("");
-	data.append("11");
 
-	for (int i = ARENA_X_SIZE - 1; i >= 0; --i)
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
@@ -124,7 +246,9 @@ void MapIO::generateMapDescriptorLevel2()
 			}
 		}
 	}
-	data.append("11");
+
+	while (data.length() %8 != 0)
+		data.append("0");
 
 	string hexData = convertToHex(data);
 	mapDescriptor2 << hexData;

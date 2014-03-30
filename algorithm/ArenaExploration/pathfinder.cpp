@@ -3,21 +3,21 @@
 
 using namespace std;
 
-PathFinder::PathFinder(Robot* robot, Arena* arena)
-{
-	_robot = robot;
-	_arena = arena;
-	_endX = ARENA_END_X;
-	_endY = ARENA_END_Y;
-}
-PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector* conn)
+PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector *conn)
 {
 	_robot = robot;
 	_arena = arena;
 	_fullArena = fullArena;
 	_endX = ARENA_END_X;
+#ifdef GUI
 	_endY = ARENA_END_Y;
+#else
+	_endY = ARENA_END_Y;
+#endif
+	_destinationCount = 0;
 	_conn = conn;
+	_safetyDistanceMode = true;
+	_pathIsSafe = true;
 }
 PathFinder::~PathFinder()
 {}
@@ -26,64 +26,72 @@ PathFinder::~PathFinder()
 // return false when the procedure is completed
 bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 {   
-	// explore one: !_arena->isExploredFully(percentage) && time(0) - start < timeLimitInSeconds
-	// unelegent redundant code LOL. but NVM.
-	if (_robot->getPosX() != _endX || _robot->getPosY() != _endY && time(0) - start < timeLimitInSeconds)
+	// _destinationCount < 4 for 4 corner exploration
+	// (_robot->getPosX() != _endX || _robot->getPosY() != _endY) for week 8 algo
+#ifdef GUI
+	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY)&& time(0) - start < timeLimitInSeconds)
+#else
+	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY) && time(0) - start < timeLimitInSeconds) // exploration not done
+#endif
 	{
-#ifdef DEBUG
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
-#endif
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
 		{
-			// TODO CHANGE TO CHECK EXPLORABLE
-			// if not reachable, check whether it is detectable, if not, break;
+			// if not reachable, means it is detected. Find next location
 			if(!pointIsWalkable(_endX, _endY))
 			{
-				if(!substituteNewPoint(_endX, _endY))
-					return true;
+				cout << "old destination: " << _endX << _endY;
+				this->selectNextDestination();
+				cout << "new destination: " << _endX << _endY << endl;
+				return true;
 			}
 			// move to new place, sense the surrounding
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
+
+			if (!this->_pathIsSafe)
+			{
+				cout << "recalculate path with safety distance disabled" << endl;
+				this->_safetyDistanceMode = false;
+				result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
+				this->_pathIsSafe = true;
+				this->_safetyDistanceMode = true;
+			}
+
 			vector<Grid*>::reverse_iterator i = result.rbegin();
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX(), _robot->getPosY())));
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX()+1, _robot->getPosY())));
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX(), _robot->getPosY()+1)));
-			_arena->gridToRefresh->insert(*(new pair<int, int>(_robot->getPosX()+1, _robot->getPosY()+1)));
+			
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMoveAndSense(*i);
-			else
-				_robot->rotateClockwiseAndSense(90, _arena); // sense other areas
-
+			else	// if there is no path to current location, find next location
+			{
+				cout << "old destination: " << _endX << _endY;
+				this->selectNextDestination();
+				cout << "new destination: " << _endX << _endY << endl;
+				return true;
+			}
 			return true;
 		}
-		else
+		else  // goal reached, calibrate at goal and go to next destination
 		{
-#ifdef DEBUG
 			cout << "old destination: " << _endX << _endY;
-#endif
+			switch (_destinationCount)
+			{
+			case 0: 
+				_robot->calibrateAtUpperRight(); break;
+			case 1:
+				_robot->calibrateAtGoal(); break;
+			case 2:
+				_robot->calibrateAtBottomLeft(); break;
+			default:
+				break;
+			}
 			this->selectNextDestination();
-#ifdef DEBUG
 			cout << "new destination: " << _endX << _endY << endl;
-#endif
 			return true;
 		}
 	}
-	// go back to start point
-	else if (_robot->getPosX() != ARENA_START_X || _robot->getPosY() != ARENA_START_Y)
-	{
-		_robot->calibrateAtGoal();
-		vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-		runOnePath(result);
-		_robot->calibrateAtStart();
-		cout << "Wait for android run?";
-		_conn->waitForAndroidRun();
-		result = findPathBetween(_robot->getPosX(), _robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
-		runOnePath(result);
-		return false;
-	}
-	else
-		return false;
+	else 
+		return false; // exploration complete
 }
 
 bool PathFinder::isSameDirection(Grid* current, Grid* next)
@@ -167,10 +175,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 	while (n == 0 || current != end)
 	{
 		isSet = false;
-		// stop if the point is unreachable
-		// this part may have problem
-		if (_arena->getGridType(endX, endY) == OBSTACLE)
-			break;
 		if (isCurrentPoint)
 		{
 			current = *openList.begin();
@@ -179,7 +183,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		else
 		{
 			// same dir, safe
-			for (i = openList.begin(); i != openList.end(); ++ i)
+			for (i = openList.begin(); _safetyDistanceMode && i != openList.end(); ++ i)
 			{
 				//cout << (*i)->getX() <<  (*i)->getY();
 				if (addSafeWeight(*i) != 0 || !isSameDirection(current, *i))
@@ -194,7 +198,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 			// different dir, safe
 			if (!isSet)
 			{
-				for (i = openList.begin(); i != openList.end(); ++ i)
+				for (i = openList.begin(); _safetyDistanceMode && i != openList.end(); ++ i)
 				{
 					if (addSafeWeight(*i) != 0)
 						continue;
@@ -217,6 +221,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 						isSet = true;
 				    }
 				}
+				_pathIsSafe = false;
 			}
 			if (!isSet)
 			{
@@ -228,17 +233,18 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 						isSet = true;
 				    }
 				}
+				_pathIsSafe = false;
 			}
-			// MAY HAVE PROBLEM. BECAUSE DIRECTION NOT CHANGED
-			if (!isSet)
-			{
-				current = *openList.begin();
-			}
+			
 		}
 
 		// Stop if we reached the end
 		if (current == end)
 			break;
+
+		// check if there is no path to go. if yes, return a null path
+		if (openList.begin() == openList.end())
+			return path;
 
 		// Remove the current point from the openList
 		current->opened = false;
@@ -368,10 +374,14 @@ bool PathFinder::pointIsWalkable(int x, int y)
 
 bool PathFinder::pointIsAlwaysSafe(int x, int y)
 {
-	if (_arena->getGridType(x, y) == UNOCCUPIED &&
-		_arena->getGridType(x + 1, y) == UNOCCUPIED &&
-		_arena->getGridType(x, y + 1) == UNOCCUPIED &&
-		_arena->getGridType(x + 1, y + 1) == UNOCCUPIED)
+	if (_arena->getGridType(x, y) != OBSTACLE &&
+		_arena->getGridType(x + 1, y) != OBSTACLE &&
+		_arena->getGridType(x, y + 1) != OBSTACLE &&
+		_arena->getGridType(x + 1, y + 1) != OBSTACLE &&
+		_arena->getGridType(x, y) != UNEXPLORED &&
+		_arena->getGridType(x + 1, y) != UNEXPLORED &&
+		_arena->getGridType(x, y + 1) != UNEXPLORED &&
+		_arena->getGridType(x + 1, y + 1) != UNEXPLORED)
 		return true;
 	else
 		return false;
@@ -406,27 +416,48 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 		dir = UP;
 	if (dir == robotDir)
 		_robot->moveForwardAndSense(10, _arena);
-	else if (robotDir == DOWN && dir == RIGHT)
-		_robot->rotateCounterClockwiseAndSense(90, _arena);
-	else if (robotDir == RIGHT && dir == DOWN)
-		_robot->rotateClockwiseAndSense(90, _arena);
-	else if (dir > robotDir)
-		_robot->rotateClockwiseAndSense(90, _arena);
-	else
-		_robot->rotateCounterClockwiseAndSense(90, _arena);
+	else 
+		{
+		if (robotDir == DOWN && dir == RIGHT)
+			_robot->rotateCounterClockwiseAndSense(90, _arena);
+		else if (robotDir == RIGHT && dir == DOWN)
+			_robot->rotateClockwiseAndSense(90, _arena);
+		else if (dir > robotDir)
+			_robot->rotateClockwiseAndSense(90, _arena);
+		else
+			_robot->rotateCounterClockwiseAndSense(90, _arena);
+		}
 #else
 	this->_robot->setLocation(destination->getX(), destination->getY());
 #endif
 }
 
-bool PathFinder::runOnePath(vector<Grid*> path)
+void PathFinder::runOnePath(vector<pair<std::string, int>*>* movementList, bool turnFirst)
 {
-	vector<pair<std::string, int>*>* movementList = getMovementList(path);
-	for (vector<Grid*>::reverse_iterator i = path.rbegin(); i != path.rend(); i++)
-		cout << (*i)->x << "," <<(*i)->y << endl;
 	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); i++)
 		cout << (*i)->first << "," <<(*i)->second << endl;
-	for (vector<pair<std::string, int>*>::iterator i = movementList->begin(); i != movementList->end(); ++i)
+	vector<pair<std::string, int>*>::iterator i = movementList->begin();
+
+	if (turnFirst)
+	{
+		while((*i)->first != "moveForward")
+		{
+			if((*i)->first == "rotateClockwise")
+				_robot->rotateClockwise((*i)->second);
+			else if ((*i)->first == "rotateCounterClockwise")
+				_robot->rotateCounterClockwise((*i)->second);
+			++i;
+		}
+#ifdef ANDROID
+		cout << "Wait for android run.";
+		conn->waitForAndroidRun();
+#else
+		cout << "Wait for button press";
+		getchar();
+#endif
+	}
+
+	for (; i != movementList->end(); ++i)
 	{
 		if((*i)->first == "rotateClockwise")
 			_robot->rotateClockwise((*i)->second);
@@ -444,6 +475,9 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 	Grid* destination = *path.rbegin();
 	Grid* currentLocation;
 	DIRECTION previousDir;
+
+	if (path.begin() == path.end())
+		return movementList;
 
 	// align robot direction first.
 	int currentX = _robot->getPosX(), currentY = _robot->getPosY();
@@ -553,12 +587,16 @@ vector<pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> 
 
 void PathFinder::selectNextDestination()
 {
-	for (int i = 0; i < ARENA_X_SIZE; ++i)
-		for (int j = 0; j < ARENA_Y_SIZE; ++j)
-			if (_arena->getGridType(i, j) == UNEXPLORED)
-			{
-				this->_endX = i;
-				this->_endY = j;
-				return;
-			}
+	switch (_destinationCount)
+	{
+	case 0: // set next dest as goal
+		_endY = ARENA_END_Y; break;
+	case 1:
+		_endX = ARENA_START_X; break;
+	case 2:
+		_endY = ARENA_START_Y; break;
+	default:
+		break;
+	}
+	++_destinationCount;
 }

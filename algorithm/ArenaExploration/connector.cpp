@@ -212,3 +212,22 @@ bool Connector::sendMapInformationToAndroid(std::string map, std::string locatio
 
 	return true;
 }
+
+#ifdef GUI
+// simulator real time display
+bool Connector::sendMovementWithDisplay(int dist)
+{ 
+	Json::Value root;
+	Json::Value value1( 00 );
+	Json::Value value2( dist );
+
+	root["function"] = value1;
+	root["parameter"] = value2;
+
+	Json::StyledWriter writer;
+	std::string outputConfig = writer.write(root);
+	char* temp = (char*)outputConfig.c_str();
+	NetworkServices::sendMessage(network->ConnectSocket, (char*)outputConfig.c_str(), strlen(temp));
+	return true;
+} 
+#endif

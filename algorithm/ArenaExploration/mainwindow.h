@@ -33,12 +33,18 @@ protected:
 
 	// signal handler
 	void MainWindow::startExplorationButtonClicked();
-	bool MainWindow::startGoToDestination();
 
 private:
-	void refreshDisplay();
-	bool exploreProcessHandler();
-	bool shortestPathHandler();
+	bool MainWindow::exploreProcessHandler();
+#ifdef GUI
+	// real time update functions
+	void hideRobot(int x, int y);
+	void displayRobot(int x, int y);
+	void refreshAllDisplay();
+	bool MainWindow::shortestPathHandler();
+	bool waitDone;
+	int range;
+#endif
 };
 
 #endif

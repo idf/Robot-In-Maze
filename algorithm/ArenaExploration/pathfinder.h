@@ -15,8 +15,7 @@
 class PathFinder
 {
 public:
-	PathFinder(Robot* robot, Arena* arena);
-	PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector* conn);
+	PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector *conn);
 	~PathFinder();
 	bool PathFinder::explore(int percentage, int timeLimitInSeconds);
 	bool PathFinder::isSameDirection(Grid* current, Grid* next);
@@ -26,7 +25,7 @@ public:
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);
 	void PathFinder::getRobotToMoveAndSense(Grid* destination);
-	bool PathFinder::runOnePath(std::vector<Grid*> path);
+	void PathFinder::runOnePath(std::vector<std::pair<std::string, int>*>* movementList, bool turnFirst);
 	std::vector<std::pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path);
 	void selectNextDestination();
 	time_t start;
@@ -34,7 +33,10 @@ private:
 	int _endX, _endY;
 	Robot* _robot;
 	Arena* _arena, *_fullArena;
-	Connector* _conn;
+	int _destinationCount;
+	Connector *_conn;
+	bool _safetyDistanceMode;
+	bool _pathIsSafe;
 };
 
 #endif
