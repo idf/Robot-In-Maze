@@ -29,7 +29,7 @@ DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1
 
 SerialCommnder* serialCommnder = new SerialCommnder(); 
 ErrorCumulator* errorCumulator = new ErrorCumulator();
-Eyes* eyes = new Eyes(Pin::ULTRA_1_PWM, Pin::ULTRA_1_TRIG, Pin::ULTRA_2_PWM, Pin::ULTRA_2_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT, Pin::LEFT_IR, Pin::RIGHT_IR);
+Eyes* eyes = new Eyes(Pin::ULTRA_1_PWM, Pin::ULTRA_1_TRIG, Pin::ULTRA_2_PWM, Pin::ULTRA_2_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT, Pin::RIGHT_IR, Pin::LEFT_IR);
 Calibrator* calibrator = new Calibrator(eyes);
 PidMgr* pidMgr = new PidMgr();
 //ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);

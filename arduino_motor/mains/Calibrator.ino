@@ -81,30 +81,28 @@ bool Calibrator::calibrate_angle() {
     right_reading = frontEye->get_ir_reading_right();
     theta = asin((left_reading - right_reading)/DETECTORS_INTERVAL)*RAD_TO_DEG; 
 
-    if (left_reading>14 || right_reading>14 || left_reading<3 || right_reading<3) {
+    if (left_reading>13 || right_reading>13 || left_reading<1 || right_reading<1) {
       return false;
     }
 
     if(abs(theta)<=1) {
       break;
     }
-
+    
     if(theta>0) { // positive negative
-      if(abs(theta)>8) {
+      if(abs(theta)>6) {
         turnRight(abs(theta));
       }
       else { //avoid small angle problem
-        turnLeft(ADJUST_ANGLE); delay(100);
-        turnRight(abs(theta)+ADJUST_ANGLE); delay(100);       
+        turnRight(1);
       }
     }
     else {
-      if(abs(theta)>8) {
+      if(abs(theta)>6) {
         turnLeft(abs(theta));
       }
       else { 
-        turnRight(ADJUST_ANGLE); delay(100);
-        turnLeft(abs(theta)+ADJUST_ANGLE); delay(100);       
+        turnLeft(1);
       }
     }
 

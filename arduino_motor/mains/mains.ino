@@ -29,9 +29,9 @@ void loop(void)
   //turnRight(90);  printCounts(); delay(400);
 
   //calibrator->calibrate(6); delay(10000);
-
-  eyes->test_readings();
-  getSensorReadings(); delay(1000);
+  calibrator->test_calibrate(); delay(1000);
+  //eyes->test_readings();
+  //getSensorReadings(); delay(1000);
 
   //softwareProjectLabSqure();  
 }
