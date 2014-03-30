@@ -1,8 +1,9 @@
 #include "Calibrator.h"
 #define TRIAL_INTERVAL (60*1000)
+#define TARGET_DISTANCE 5
 //public 
 
-Calibrator::Calibrator(FrontEye* frontEye) {
+Calibrator::Calibrator(Eyes* frontEye) {
   this->frontEye = frontEye;
 }
 
@@ -42,7 +43,7 @@ void Calibrator::test_calibrate() {
 void Calibrator::try_calibrate() {
   int left_reading = frontEye->output_reading_ir_left();
   int right_reading = frontEye->output_reading_ir_right();
-  if(left_reading==10&&right_reading==10) {
+  if(left_reading==0&&right_reading==0) {
     unsigned long delta_time = millis() - this->last_time_trial;
     if(delta_time>TRIAL_INTERVAL) {
       this->one_side_calibrate(1);
@@ -80,7 +81,7 @@ bool Calibrator::calibrate_angle() {
     right_reading = frontEye->get_ir_reading_right();
     theta = asin((left_reading - right_reading)/DETECTORS_INTERVAL)*RAD_TO_DEG; 
 
-    if (left_reading>14 || right_reading>14 || left_reading<6 || right_reading<6) {
+    if (left_reading>14 || right_reading>14 || left_reading<3 || right_reading<3) {
       return false;
     }
 
@@ -116,7 +117,6 @@ bool Calibrator::calibrate_angle() {
 
 
 void Calibrator::calibrate_distance() {
-  const int ADJUST_DISTANCE = 3; // cm
 
   int left_reading;
   int right_reading;
@@ -127,28 +127,18 @@ void Calibrator::calibrate_distance() {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
     avg_reading = (left_reading+right_reading)/2.0;
-    delta = avg_reading - 10; // actual - expected 
+    delta = avg_reading - TARGET_DISTANCE; // actual - expected 
 
     if(abs(delta)<=0.5) {
       break;
     }
 
     if(delta>0) {
-      //moveBackward(ADJUST_DISTANCE); delay(100);
-      //moveForward(abs(delta)+ADJUST_DISTANCE); delay(100);
       moveForward(abs(delta));
     }
     else {
-      if(0.5*(left_reading+right_reading)>ADJUST_DISTANCE+3) { // avoid close obstable ahead
-        //moveForward(ADJUST_DISTANCE); delay(100);
-        //moveBackward(abs(delta)+ADJUST_DISTANCE); delay(100);
         moveBackward(abs(delta)); delay(100);
-      }
-      else {
-        moveBackward(abs(delta)); delay(100);
-      }
     }
-
     // testing print 
     //Serial.print(F("delta: ")); Serial.println(delta);
     //frontEye->test_readings();

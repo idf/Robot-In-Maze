@@ -25,3 +25,4 @@ bool Config::verbose = true;
 // range from 796 - 810; 803 baseline, -7 to +7; log 14 = 4
 double const Config::TICKS_PER_DEGREE_LEFT = (803+(-6))/90.0;
 double const Config::TICKS_PER_DEGREE = (803+(-5))/90.0;
+int const Config::VIRTUAL_OFFSET = 5;

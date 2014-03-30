@@ -1,17 +1,17 @@
 #ifndef CALIBRATOR_H
 #define CALIBRATOR_H
-#include "FrontEye.h"
+#include "Eyes.h"
 #define RAD_TO_DEG 57.2957795
 class Calibrator {
 public:
-  Calibrator(FrontEye* frontEye);
+  Calibrator(Eyes* frontEye);
   void init();
   void calibrate(int situation);
   void test_calibrate();
   void try_calibrate();
 
 private:
-  FrontEye* frontEye; // to get the sensor reading
+  Eyes* frontEye; // to get the sensor reading
   double turned_angle; // to restore original orientation 
 
 
