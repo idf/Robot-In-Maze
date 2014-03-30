@@ -1,4 +1,6 @@
 #include "Eyes.h"
+#include <SharpIR.h>
+#include <Ultrasound.h>
 #include "Config.h"
 //public 
 Eyes::Eyes(
