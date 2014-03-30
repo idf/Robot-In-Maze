@@ -34,6 +34,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY) && time(0) - start < timeLimitInSeconds) // exploration not done
 #endif
 	{
+		this->_safetyDistanceMode = true;
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
@@ -47,8 +48,10 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				return true;
 			}
 			// move to new place, sense the surrounding
+			if (addSafeWeight(_arena->getGrid(_robot->getPosX(), _robot->getPosY())) != 0)
+				this->_safetyDistanceMode = false;
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
-
+			this->_safetyDistanceMode = true;
 			if (!this->_pathIsSafe)
 			{
 				cout << "recalculate path with safety distance disabled" << endl;
@@ -58,8 +61,20 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				this->_safetyDistanceMode = true;
 			}
 
+			// resolve direction path problem
+			if (isSamePath(prevPrev, result))
+			{
+				cout << "stuck, choose one path!" <<endl;
+				vector<Grid*>::reverse_iterator i = result.rbegin();
+				while (!getRobotToMoveAndSense(*i))
+					++i;
+				prevPrev = prev;
+				prev = result;
+				return true;
+			}
+			prevPrev = prev;
+			prev = result;
 			vector<Grid*>::reverse_iterator i = result.rbegin();
-			
 			if (result.begin() != result.end()) // list not empty
 				getRobotToMoveAndSense(*i);
 			else	// if there is no path to current location, find next location
@@ -402,7 +417,7 @@ bool PathFinder::substituteNewPoint(int x, int y)
 }
 
 // rotate or move forward
-void PathFinder::getRobotToMoveAndSense(Grid* destination)
+bool PathFinder::getRobotToMoveAndSense(Grid* destination)
 {
 #ifdef HARDWARE
 	int xDiff = destination->getX() - _robot->getPosX();
@@ -415,7 +430,10 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 	else if (xDiff == 0 && yDiff == -1)
 		dir = UP;
 	if (dir == robotDir)
+	{
 		_robot->moveForwardAndSense(10, _arena);
+		return true;
+	}
 	else 
 		{
 		if (robotDir == DOWN && dir == RIGHT)
@@ -426,6 +444,7 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 			_robot->rotateClockwiseAndSense(90, _arena);
 		else
 			_robot->rotateCounterClockwiseAndSense(90, _arena);
+		return false;
 		}
 #else
 	this->_robot->setLocation(destination->getX(), destination->getY());
@@ -450,7 +469,7 @@ void PathFinder::runOnePath(vector<pair<std::string, int>*>* movementList, bool 
 		}
 #ifdef ANDROID
 		cout << "Wait for android run.";
-		conn->waitForAndroidRun();
+		_conn->waitForAndroidRun();
 #else
 		cout << "Wait for button press";
 		getchar();
@@ -599,4 +618,18 @@ void PathFinder::selectNextDestination()
 		break;
 	}
 	++_destinationCount;
+}
+
+bool PathFinder::isSamePath(vector<Grid*> one, vector<Grid*> two)
+{
+	vector<Grid*>::reverse_iterator i,j;
+	for (i = one.rbegin(), j = two.rbegin(); i != one.rend() && j != two.rend(); ++i, ++j)
+	{
+		if ((*i)->getX() != (*j)->getX() || (*i)->getY() != (*j)->getY())
+			return false;
+	}
+	if (i != one.rend() || j != two.rend())
+		return false;
+	else
+		return true;
 }

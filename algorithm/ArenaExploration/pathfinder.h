@@ -24,11 +24,12 @@ public:
 	bool PathFinder::pointIsAlwaysSafe(int x, int y);
 	bool PathFinder::pointIsWalkable(int x, int y);
 	bool PathFinder::substituteNewPoint(int x, int y);
-	void PathFinder::getRobotToMoveAndSense(Grid* destination);
+	bool PathFinder::getRobotToMoveAndSense(Grid* destination);
 	void PathFinder::runOnePath(std::vector<std::pair<std::string, int>*>* movementList, bool turnFirst);
 	std::vector<std::pair<std::string, int>*>* PathFinder::getMovementList(std::vector<Grid*> path);
 	void selectNextDestination();
 	time_t start;
+	bool PathFinder::isSamePath(std::vector<Grid*> one, std::vector<Grid*> two);
 private:
 	int _endX, _endY;
 	Robot* _robot;
@@ -37,6 +38,7 @@ private:
 	Connector *_conn;
 	bool _safetyDistanceMode;
 	bool _pathIsSafe;
+	std::vector<Grid*> prev, prevPrev;
 };
 
 #endif
