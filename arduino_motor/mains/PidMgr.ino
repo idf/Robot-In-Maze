@@ -2,8 +2,6 @@
 #include <PID_v1.h>  
 
 PidMgr::PidMgr() {
-  // PID
-  // variables upper case by documentation 
   this->leftPID = new PID(&InputLeft, &OutputLeft, &SetpointLeft, kp, ki, kd, DIRECT);
   this->rightPID = new PID(&InputRight, &OutputRight, &SetpointRight, kp, ki, kd, DIRECT);
   this->midPID = new PID(&InputMid, &OutputMid, &SetpointMid, kp_mid, ki_mid, kd_mid, DIRECT);

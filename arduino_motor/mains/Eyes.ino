@@ -28,7 +28,7 @@ Eyes::Eyes(
 
   this->sharp_offsets[0] = 5;
   this->sharp_offsets[1] = 5;
-  this->sharp_offsets[2] = 5;
+  this->sharp_offsets[2] = 3;
   this->sharp_offsets[3] = 5;
 }
 void Eyes::init() {
@@ -99,9 +99,9 @@ int Eyes::get_ir_reading(int index) {
 
 
 bool Eyes::is_within_range(SharpIR* sensor, int index) {
-  for(int i=0; i<5; i++) {
+  for(int i=0; i<7; i++) {
     int distance = sensor->distance();
-    if(distance>45 || distance<3) // TODO
+    if(distance>27 || distance<6) // TODO
       return false;
     delay(RANGE_TEST_DELAY);
   }

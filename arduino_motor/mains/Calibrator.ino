@@ -79,7 +79,7 @@ bool Calibrator::calibrate_angle() {
   while(true) {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
-    theta = asin((left_reading - right_reading)/DETECTORS_INTERVAL)*RAD_TO_DEG; 
+    theta = asin((left_reading - right_reading) / DETECTORS_INTERVAL)*RAD_TO_DEG; 
 
     if (left_reading>13 || right_reading>13 || left_reading<1 || right_reading<1) {
       return false;

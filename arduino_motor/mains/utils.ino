@@ -3,22 +3,22 @@
 float distCentimeter(float centimeter) 
 {
   float divisibleTicks;
-  /*
+  
   if (centimeter <= 10) {
-    divisibleTicks = 18.7; 
+    divisibleTicks = 18.8; 
   } else if (centimeter <= 20) {
-    divisibleTicks = 18.65;
+    divisibleTicks = 18.8;
   } else if (centimeter <= 35) {
-    divisibleTicks = 19.05;
+    divisibleTicks = 18.9;
   } else if (centimeter <= 50) {
-    divisibleTicks = 18.5;
+    divisibleTicks = 19.0;
   } else if (centimeter <= 75) {
-    divisibleTicks = 18.97;
+    divisibleTicks = 19.1;
   } else {
-    divisibleTicks = 18.7;
+    divisibleTicks = 19.2;
   }
-  */
-  divisibleTicks = 18.8;
+  
+  
   float ticksForOneCentimeter = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
   float dist = ticksForOneCentimeter * centimeter;
   return dist;

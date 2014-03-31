@@ -92,18 +92,18 @@ void SerialCommnder::send_sensor_readings(
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
     pidMgr->setScale(SCALE);
-    moveForward(parameter); delay(50);
+    moveForward(parameter); delay(100);
     this->send_command_complete(function_code, 200);
     pidMgr->restore();
     return true;
   }
   else if(function_code==1) {
-    turnLeft(parameter); delay(50);
+    turnLeft(parameter); delay(150);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==2) {
-    turnRight(parameter); delay(50);
+    turnRight(parameter); delay(150);
     this->send_command_complete(function_code, 200);
     return true;
   }

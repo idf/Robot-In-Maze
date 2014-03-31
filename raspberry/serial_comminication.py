@@ -294,7 +294,10 @@ class SerialExecutionThread(AbstractThread):
                     self.print_msg("Waiting for refilling credits")
                     while True:
                         ack, type_data, data = self.serial_api.response()
-                        if self.serial_api.credits==MAX_CREDITS:
+                        if self.serial_api.credits>=MAX_CREDITS:
+                            if self.serial_api.credits>MAX_CREDITS:
+                                print_msg(self.name, "ERROR - Received extra credit")
+                            self.serial_api.credits=MAX_CREDITS
                             break
                         time.sleep(0.05)
 
