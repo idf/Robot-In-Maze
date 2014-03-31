@@ -224,3 +224,4 @@ mobilecrm.ini
 uwsgi_params
 # sublime text
 *.sublime-workspace
+*.docx
