@@ -94,7 +94,15 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 		}
 	}
 	else 
+	{
+		for (vector<Grid*>::iterator i = experiencedPath.begin(); i != experiencedPath.end(); ++i)
+		{
+			for (int j = -1; j < 2; ++j)
+				for (int k = -1; k < 2; ++k)
+					_arena->setGridType((*i)->getX() + j,(*i)->getY() + k, UNOCCUPIED);
+		}
 		return false; // exploration complete
+	}
 }
 
 bool PathFinder::isSameDirection(Grid* current, Grid* next)
@@ -188,7 +196,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 			// same dir, safe
 			for (i = openList.begin();i != openList.end(); ++ i)
 			{
-				//cout << (*i)->getX() <<  (*i)->getY();
 				if (!isSameDirection(current, *i))
 					continue;
 				if (!isSet || (*i)->heuristic <= current->heuristic)
@@ -243,7 +250,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					current->getY() + y < 0 ||
 					current->getY() + y >= ARENA_Y_SIZE)
 					continue;
-
 				// if the robot can't move in 45 degree direction
 #ifdef STRAIGHT_MODE
 				if (abs(x) == abs(y))
@@ -335,7 +341,7 @@ bool PathFinder::pointIsWalkable(int x, int y)
 {
 	// obstacle case
 	for (int i = -1; i < 2; ++i)
-		for (int j = -2; j < 2; ++j)
+		for (int j = -1; j < 2; ++j)
 			if (_arena->getGridType(x + i, y + j) == OBSTACLE)
 				return false;
 	// border case
@@ -347,7 +353,7 @@ bool PathFinder::pointIsWalkable(int x, int y)
 bool PathFinder::pointIsAlwaysSafe(int x, int y)
 {
 	for (int i = -1; i < 2; ++i)
-		for (int j = -2; j < 2; ++j)
+		for (int j = -1; j < 2; ++j)
 			if (_arena->getGridType(x + i, y + j) == OBSTACLE ||
 				_arena->getGridType(x + i, y + j) == UNEXPLORED )
 				return false;
@@ -383,6 +389,7 @@ bool PathFinder::getRobotToMoveAndSense(Grid* destination)
 		dir = UP;
 	if (dir == robotDir)
 	{
+		experiencedPath.push_back(_arena->getGrid(_robot->getPosX(), _robot->getPosY()));
 		_robot->moveForwardAndSense(10, _arena);
 		return true;
 	}

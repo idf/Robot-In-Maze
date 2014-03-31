@@ -242,7 +242,7 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 {
 	// Mark current robot location as UNOCCUPIED
 	for (int i = -1; i < 2; ++i)
-		for (int j = -2; j < 2; ++j)
+		for (int j = -1; j < 2; ++j)
 			arena->setGridType(this->_posX + i, this->_posY + j, UNOCCUPIED);
 	// determine sensor location (x,y), and sensor direction (enum)
 
@@ -390,9 +390,11 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 {
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	int i;
+	bool setObstacle = true;
 	if (range == -1) // to far or too near to detect. Dont open for safety reason
 	{
-		return;
+		range = SMALL_IR_RANGE;
+		setObstacle = false;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (i = 0; i <= range/10; ++i)  // NOTE: DIFFERENT
@@ -410,8 +412,8 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
-	//cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
-	arena->setGridType(x, y, OBSTACLE);
+	if (setObstacle)
+		arena->setGridType(x, y, OBSTACLE);
 }
 
 // US will only set free. It will not set obstacle.
@@ -421,7 +423,6 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 	if (range == -1) // to far to detect
 	{
 		return;
-		//range = US_RANGE;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (int i = 0; i < range/10; ++i)  // NOTE: DIFFERENT
@@ -434,6 +435,17 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case RIGHT: ++x; break;
 		}
 		arena->setGridType(x, y, UNOCCUPIED);
+	}
+	if (range == 0)
+	{
+		switch (direction)
+		{
+		case DOWN: ++y; break;
+		case LEFT: --x; break;
+		case UP: --y; break;
+		case RIGHT: ++x; break;
+		}
+		arena->setGridType(x, y, OBSTACLE);
 	}
 }
 

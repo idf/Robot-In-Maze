@@ -39,6 +39,7 @@ private:
 	bool _safetyDistanceMode;
 	bool _pathIsSafe;
 	std::vector<Grid*> prev, prevPrev;
+	std::vector<Grid*> experiencedPath;
 };
 
 #endif
