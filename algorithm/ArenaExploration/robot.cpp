@@ -393,7 +393,7 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 	bool setObstacle = true;
 	if (range == -1) // to far or too near to detect. Dont open for safety reason
 	{
-		range = SMALL_IR_RANGE;
+		range = SMALL_IR_RANGE - 10;
 		setObstacle = false;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
@@ -436,17 +436,17 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		}
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
-	if (range == 0)
-	{
-		switch (direction)
-		{
-		case DOWN: ++y; break;
-		case LEFT: --x; break;
-		case UP: --y; break;
-		case RIGHT: ++x; break;
-		}
-		arena->setGridType(x, y, OBSTACLE);
-	}
+	//if (range == 0)
+	//{
+	//	switch (direction)
+	//	{
+	//	case DOWN: ++y; break;
+	//	case LEFT: --x; break;
+	//	case UP: --y; break;
+	//	case RIGHT: ++x; break;
+	//	}
+	//	arena->setGridType(x, y, OBSTACLE);
+	//}
 }
 
 #ifdef GUI

@@ -47,15 +47,27 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				return true;
 			}
 			// move to new place, sense the surrounding
+			for (vector<Grid*>::iterator i = experiencedPath.begin(); i != experiencedPath.end(); ++i)
+			{
+				for (int j = -1; j < 2; ++j)
+					for (int k = -1; k < 2; ++k)
+						_arena->setGridType((*i)->getX() + j,(*i)->getY() + k, UNOCCUPIED);
+			}
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
 			
 			// resolve direction path problem
 			if (isSamePath(prevPrev, result))
 			{
+				if (prev.begin() == prev.end() && prevPrev.begin() == prevPrev.end())
+					return false; // TODO CHANGE to L SHAPE
 				cout << "stuck, choose one path!" <<endl;
 				vector<Grid*>::reverse_iterator i = result.rbegin();
-				while (!getRobotToMoveAndSense(*i))
-					++i;
+				if (result.begin() != result.end())
+				{
+					while (i != result.rend() && !getRobotToMoveAndSense(*i))
+						++i;
+				}
+				// if there is no path to go, it will stuck here -> loop by timer, and both is empty.
 				prevPrev = prev;
 				prev = result;
 				return true;
