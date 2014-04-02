@@ -23,13 +23,13 @@ Eyes::Eyes(
   this->sharp[2] = new SharpIR(ir_pin_2, 50, 95, SHORT);
   this->sharp[3] = new SharpIR(ir_pin_3, 50, 95, SHORT);
 
-  this->ultra_offsets[0] = 5;
-  this->ultra_offsets[1] = 5;
+  this->ultra_offsets[0] = 4;
+  this->ultra_offsets[1] = 4;
 
-  this->sharp_offsets[0] = 5;
-  this->sharp_offsets[1] = 5;
-  this->sharp_offsets[2] = 3;
-  this->sharp_offsets[3] = 5;
+  this->sharp_offsets[0] = 6;
+  this->sharp_offsets[1] = 6;
+  this->sharp_offsets[2] = 5;
+  this->sharp_offsets[3] = 6;
 }
 void Eyes::init() {
   for(int i=0; i<ULTRA_SIZE; i++)

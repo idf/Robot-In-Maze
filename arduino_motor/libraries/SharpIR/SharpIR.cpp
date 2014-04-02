@@ -41,7 +41,7 @@
 
 #include "Arduino.h"
 #include "SharpIR.h"
-#include "Servo.h"
+//#include "Servo.h"
 
 
 SharpIR::SharpIR(int irPin, int avg, int tolerance, int sensorModel) {
