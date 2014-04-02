@@ -25,8 +25,8 @@ void loop(void)
 { 
   
   warmingUp(); serialCommnder->receive_exec_command();
-  //warmingUp(); pidMgr->setScale(2.5`); moveForward(10); pidMgr->restore(); printCounts(); delay(400); 
-  //turnRight(90);  printCounts(); delay(400);
+  //warmingUp(); pidMgr->setScale(2.5); moveForward(10); pidMgr->restore(); printCounts(); delay(400); 
+  //warmingUp(); turnRight(90);  printCounts(); delay(400);
 
   //calibrator->calibrate(6); delay(10000);
   //calibrator->test_calibrate(); delay(1000);
@@ -49,7 +49,7 @@ void warmingUp() {
     first_time = false;
     if(Config::verbose){
       Serial.print(F("warmingUp finished, waiting for 1s"));
-      delay(1000);
+      delay(5000);
     }
   }
 }
