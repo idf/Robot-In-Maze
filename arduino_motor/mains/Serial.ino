@@ -92,7 +92,8 @@ void SerialCommnder::send_sensor_readings(
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
     pidMgr->setScale(SCALE);
-    moveForward(parameter); delay(100);
+    if (eyes->is_safe_forward(parameter))  
+      moveForward(parameter); delay(100);
     this->send_command_complete(function_code, 200);
     pidMgr->restore();
     return true;
@@ -118,7 +119,8 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 
   else if(function_code==20) {
     pidMgr->setScale(EXPLORE_SCALE);
-    moveForward(parameter);
+    if (eyes->is_safe_forward(parameter))  
+      moveForward(parameter);
     getSensorReadings();
     calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);

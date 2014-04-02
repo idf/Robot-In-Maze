@@ -1,6 +1,7 @@
 #include "Calibrator.h"
-#define TRIAL_INTERVAL (30*1000)
-#define TARGET_DISTANCE 5
+#define TRIAL_INTERVAL (10*1000)
+#define TARGET_DISTANCE 4 
+// Target Distance, experimentally adjusted
 //public 
 
 Calibrator::Calibrator(Eyes* frontEye) {

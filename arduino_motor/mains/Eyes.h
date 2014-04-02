@@ -34,6 +34,8 @@ public:
   int output_reading_ir_left();
   int output_reading_ir_right();
 
+  bool is_safe_forward(int dis);
+
 private: 
   int get_ultra_reading(int index); // to clear the check list
   int get_ir_reading(int index);

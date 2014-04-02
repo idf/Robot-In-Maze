@@ -26,10 +26,10 @@ Eyes::Eyes(
   this->ultra_offsets[0] = 4;
   this->ultra_offsets[1] = 4;
 
-  this->sharp_offsets[0] = 6;
-  this->sharp_offsets[1] = 6;
-  this->sharp_offsets[2] = 5;
-  this->sharp_offsets[3] = 6;
+  this->sharp_offsets[0] = 5; // 6;
+  this->sharp_offsets[1] = 5; // 6;
+  this->sharp_offsets[2] = 3; // 5;
+  this->sharp_offsets[3] = 5; // 6;
 }
 void Eyes::init() {
   for(int i=0; i<ULTRA_SIZE; i++)
@@ -86,6 +86,13 @@ void Eyes::test_readings() {
     Serial.print(F(" Ultrasound Distance :"));
     Serial.println(dis);
   }
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+bool Eyes::is_safe_forward(int dis) {
+  int avg_reading = (this->output_reading_ir_left() + this->output_reading_ir_right()) / 2;
+  if(avg_reading==-1) return true;
+  if(avg_reading>=dis) return true;
+  return false;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private

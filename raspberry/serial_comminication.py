@@ -11,7 +11,7 @@ from settings import *
 __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
-MAX_CREDITS = 8 # tested
+MAX_CREDITS = 7  # tested
 
 class SerialAPI(object):
     def __init__(self, port=None, data_rate=9600,production=True):

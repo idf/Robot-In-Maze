@@ -147,7 +147,6 @@ void moveForward(double dist)
   errorCumulator->change_to_forward_mode();
   const int isLeftForward = 1;
   const int isRightForward = 1;
-
   double noOfTicksForDist = distCentimeter(dist);
   double realNoOfTicksForDist = reachTickTarget(isLeftForward, isRightForward, noOfTicksForDist);
 }
