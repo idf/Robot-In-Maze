@@ -20,34 +20,33 @@ void loop(){
 }
 
 */
-//#include <Wire.h>
-//#include <HMC5883L.h>
-//#include "HMC5883LCompass.h"
+#include <Wire.h>
+#include <HMC5883L.h>
+#include "HMC5883LCompass.h"
 
-//void HMC5883LCompass::compassSetup() {
+void HMC5883LCompass::compassSetup() {
   // Initilization 
-  //Wire.begin();
-  //this->compass = HMC5883L(); //new instance of HMC5883L library
-  //setupHMC5883L(); //setup the HMC5883L
+  Wire.begin();
+  this->compass = HMC5883L(); //new instance of HMC5883L library
+  setupHMC5883L(); //setup the HMC5883L
 
   //Setup
-  //compass.SetScale(1.3);
-  //compass.SetMeasurementMode(Measurement_Continuous);
-//}
-/*
+  compass.SetScale(1.3);
+  compass.SetMeasurementMode(Measurement_Continuous);
+}
+
 float HMC5883LCompass::getHeading(){
   //Get the reading from the HMC5883L and calculate the heading
   MagnetometerScaled scaled = compass.ReadScaledAxis(); //scaled values from compass.
   float heading = atan2(scaled.YAxis, scaled.XAxis);
-  float declinationAngle = 0.00378;
+  float declinationAngle = 0.00378;//at Singapore
   heading += declinationAngle;
-  heading = -heading;
   
   // Correct for when signs are reversed.
   // take absolute values for coumulative angle
 
-  //if(heading < 0) heading += 2*PI;
-  //if(heading > 2*PI) heading -= 2*PI;
+  if(heading < 0) heading += 2*PI;
+  if(heading > 2*PI) heading -= 2*PI;
 
 
   return heading * RAD_TO_DEG; //radians to degrees
@@ -69,7 +68,7 @@ if (raw.YAxis < miny)
 }
 if (raw.XAxis > maxx)
 {
-     maxx=raw.XAxis;/* code 
+     maxx=raw.XAxis;
 }
 if (raw.YAxis > maxy)
 {
@@ -82,4 +81,4 @@ if (raw.YAxis > maxy)
 
   
 
-}*/
+}
