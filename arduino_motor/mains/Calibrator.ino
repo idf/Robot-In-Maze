@@ -1,5 +1,6 @@
 #include "Calibrator.h"
 #define TRIAL_INTERVAL (10*1000)
+#define TRIAL_UPPER_LIMIT 9
 #define TARGET_DISTANCE 4 
 // Target Distance, experimentally adjusted
 //public 
@@ -45,10 +46,14 @@ void Calibrator::try_calibrate() {
   int left_reading = frontEye->output_reading_ir_left();
   int right_reading = frontEye->output_reading_ir_right();
   if(left_reading==0&&right_reading==0) {
-    unsigned long delta_time = millis() - this->last_time_trial;
-    if(delta_time>TRIAL_INTERVAL) {
-      this->one_side_calibrate(1);
-      this->last_time_trial = millis();
+    left_reading = frontEye->get_ir_reading_left();
+    right_reading = frontEye->get_ir_reading_right();
+    if(left_reading<TRIAL_UPPER_LIMIT && right_reading<TRIAL_UPPER_LIMIT) {
+      unsigned long delta_time = millis() - this->last_time_trial;
+      if(delta_time>TRIAL_INTERVAL) {
+        this->one_side_calibrate(1);
+        this->last_time_trial = millis();
+      }
     }
   }
 }

@@ -13,7 +13,7 @@ bool SerialCommnder::receive_exec_command() {
   
   if(Serial.available()>0) {
     int function_code;
-    double parameter;
+    long parameter;
 
     long comamnd_int = Serial.parseInt();
     function_code = comamnd_int/100000;
