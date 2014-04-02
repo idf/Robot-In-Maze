@@ -12,12 +12,10 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector *
 #ifdef GUI
 	_endY = ARENA_END_Y;
 #else
-	_endY = ARENA_END_Y;
+	_endY = ARENA_START_Y;
 #endif
 	_destinationCount = 0;
 	_conn = conn;
-	_safetyDistanceMode = true;
-	_pathIsSafe = true;
 }
 PathFinder::~PathFinder()
 {}
@@ -31,21 +29,13 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 #ifdef GUI
 	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY)&& time(0) - start < timeLimitInSeconds)
 #else
-	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY) && time(0) - start < timeLimitInSeconds) // exploration not done
+	if (_destinationCount < 4 && time(0) - start < timeLimitInSeconds) // exploration not done
 #endif
 	{
 		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
 		cout <<"time elapsed: " << time(0) - start << endl;
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
 		{
-			// if not reachable, means it is detected. Find next location
-			if(!pointIsWalkable(_endX, _endY))
-			{
-				cout << "old destination: " << _endX << _endY;
-				this->selectNextDestination();
-				cout << "new destination: " << _endX << _endY << endl;
-				return true;
-			}
 			// move to new place, sense the surrounding
 			for (vector<Grid*>::iterator i = experiencedPath.begin(); i != experiencedPath.end(); ++i)
 			{
@@ -55,11 +45,18 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			}
 			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
 			
+			// If there is no path to current goal, find next location
+			if(result.begin() == result.end())
+			{
+				cout << "old destination: " << _endX << _endY;
+				this->selectNextDestination();
+				cout << "new destination: " << _endX << _endY << endl;
+				return true;
+			}
+
 			// resolve direction path problem
 			if (isSamePath(prevPrev, result))
 			{
-				if (prev.begin() == prev.end() && prevPrev.begin() == prevPrev.end())
-					return false; // TODO CHANGE to L SHAPE
 				cout << "stuck, choose one path!" <<endl;
 				vector<Grid*>::reverse_iterator i = result.rbegin();
 				if (result.begin() != result.end())
@@ -75,15 +72,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			prevPrev = prev;
 			prev = result;
 			vector<Grid*>::reverse_iterator i = result.rbegin();
-			if (result.begin() != result.end()) // list not empty
-				getRobotToMoveAndSense(*i);
-			else	// if there is no path to current location, find next location
-			{
-				cout << "old destination: " << _endX << _endY;
-				this->selectNextDestination();
-				cout << "new destination: " << _endX << _endY << endl;
-				return true;
-			}
+			getRobotToMoveAndSense(*i);
 			return true;
 		}
 		else  // goal reached, calibrate at goal and go to next destination
@@ -105,7 +94,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			return true;
 		}
 	}
-	else 
+	else // exploration done or time exceeded
 	{
 		for (vector<Grid*>::iterator i = experiencedPath.begin(); i != experiencedPath.end(); ++i)
 		{
@@ -113,7 +102,7 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 				for (int k = -1; k < 2; ++k)
 					_arena->setGridType((*i)->getX() + j,(*i)->getY() + k, UNOCCUPIED);
 		}
-		return false; // exploration complete
+		return false; 
 	}
 }
 
@@ -178,6 +167,7 @@ int PathFinder::addSafeWeight(Grid* grid)
 // astar, not the shortest path
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY, bool oneShortestPathRun)
 {
+	cout << "Pathfinder: " << endX << endY << endl;
 	vector<Grid*> path;
 	Grid *current, *child, *start, *end;
 	start = _arena->getGrid(startX, startY);
@@ -234,9 +224,20 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		if (current == end)
 			break;
 
-		// check if there is no path to go. if yes, return a null path
+		// check if there is no path to go. if yes, reset all and return a null path
 		if (openList.begin() == openList.end())
+		{
+			for (i = openList.begin(); i != openList.end(); ++ i)
+				(*i)->opened = false;
+
+			for (i = closedList.begin(); i != closedList.end(); ++ i)
+				(*i)->closed = false;
+
+			for (int i = 0; i < ARENA_X_SIZE; ++i)
+				for (int j = 0; j < ARENA_Y_SIZE; ++j)
+					_arena->getGrid(i, j)->parent = NULL;
 			return path;
+		}
 
 		// Remove the current point from the openList
 		current->opened = false;
@@ -318,6 +319,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					child->parent = current;
 					child->computeScores(end);
 				}
+
 			}
 		}
 		++n;
@@ -325,14 +327,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 
 	// Reset
 	for (i = openList.begin(); i != openList.end(); ++ i)
-	{
 		(*i)->opened = false;
-	}
 
 	for (i = closedList.begin(); i != closedList.end(); ++ i)
-	{
 		(*i)->closed = false;
-	}
 
 	// Resolve the path starting from the end point
 	while (current->hasParent() && current != start)

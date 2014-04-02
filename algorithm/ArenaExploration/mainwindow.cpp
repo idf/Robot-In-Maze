@@ -100,12 +100,13 @@ bool MainWindow::exploreProcessHandler()
 		Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::shortestPathHandler), 250 );
 		return false;
 #else
-		robot->calibrateAtGoal();
-		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-		movementList = pathFinder->getMovementList(result);
-		pathFinder->runOnePath(movementList, false);
+		if (robot->getPosX() != ARENA_START_X || robot->getPosY() != ARENA_START_Y)
+		{
+			result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
+			movementList = pathFinder->getMovementList(result);
+			pathFinder->runOnePath(movementList, false);
+		}
 		robot->calibrateAtStart();
-
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
 		movementList = pathFinder->getMovementList(result);
 		pathFinder->runOnePath(movementList, true);
