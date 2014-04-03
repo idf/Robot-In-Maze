@@ -18,7 +18,7 @@ MainWindow::MainWindow()
 	
 	// initialize display structure5
 	percentageEntry.set_text("100");
-	timeLimitEntry.set_text("360");
+	timeLimitEntry.set_text("400");
 	this->add(vbox);
 	vbox.pack_start(arenaDisplay);
 	vbox.pack_start(hbox);
@@ -70,15 +70,15 @@ bool MainWindow::exploreProcessHandler()
 	//robot->calibrateAtStart();
 	std::vector<std::pair<std::string, int>*>* movementList = new std::vector<std::pair<std::string, int>*>();
 	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
-	//movementList->push_back(new pair<string, int>("moveForward", 10));
-	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
-	//movementList->push_back(new pair<string, int>("moveForward", 20));
-	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
-	//movementList->push_back(new pair<string, int>("moveForward", 130));
-	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
-	//movementList->push_back(new pair<string, int>("moveForward", 70));
-	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
 	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 80));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 60));
+	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 60));
 	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
 	//movementList->push_back(new pair<string, int>("moveForward", 30));
 	//pathFinder->runOnePath(movementList, true);
@@ -117,6 +117,8 @@ bool MainWindow::exploreProcessHandler()
 #else
 		if (robot->getPosX() != ARENA_START_X || robot->getPosY() != ARENA_START_Y)
 		{
+			if (robot->getPosX() == ARENA_END_X && robot->getPosY() == ARENA_END_Y)
+				robot->calibrateAtGoal();
 			result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
 			movementList = pathFinder->getMovementList(result);
 			pathFinder->runOnePath(movementList, false);

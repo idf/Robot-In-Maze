@@ -81,11 +81,11 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			switch (_destinationCount)
 			{
 			case 0: 
-				_robot->calibrateAtUpperRight(); break;
+				_robot->calibrateAtBottomLeft(); break;
 			case 1:
 				_robot->calibrateAtGoal(); break;
 			case 2:
-				_robot->calibrateAtBottomLeft(); break;
+				_robot->calibrateAtUpperRight(); break;
 			default:
 				break;
 			}
@@ -387,6 +387,7 @@ bool PathFinder::substituteNewPoint(int x, int y)
 // rotate or move forward
 bool PathFinder::getRobotToMoveAndSense(Grid* destination)
 {
+	cout << "robot move sent!" << endl;
 #ifdef HARDWARE
 	int xDiff = destination->getX() - _robot->getPosX();
 	int yDiff = destination->getY() - _robot->getPosY();
