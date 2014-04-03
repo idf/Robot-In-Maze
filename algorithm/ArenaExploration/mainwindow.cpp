@@ -54,10 +54,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
+	robot->senseEnvironment(arena, fullArena);
 #ifdef ANDROID
 	conn->waitForAndroidExplore();
 #endif
-	robot->senseEnvironment(arena, fullArena);
 #ifdef GUI
 	this->refreshAllDisplay();
 #endif
