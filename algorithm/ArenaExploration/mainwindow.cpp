@@ -11,7 +11,7 @@ MainWindow::MainWindow()
 {
 	conn = new Connector();
 	arena = new Arena();
-	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT, conn);
+	robot = new Robot(ARENA_START_X, ARENA_START_Y, DOWN, conn);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
 	pathFinder = new PathFinder(robot, arena, fullArena, conn);
@@ -67,7 +67,22 @@ void MainWindow::startExplorationButtonClicked()
 
 bool MainWindow::exploreProcessHandler()
 {
-	std::vector<std::pair<std::string, int>*>* movementList;
+	//robot->calibrateAtStart();
+	std::vector<std::pair<std::string, int>*>* movementList = new std::vector<std::pair<std::string, int>*>();
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 10));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 20));
+	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 130));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 70));
+	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//pathFinder->runOnePath(movementList, true);
+	//return false;
 	std::vector<Grid*> result;
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 #ifdef GUI

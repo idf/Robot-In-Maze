@@ -8,11 +8,11 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector *
 	_robot = robot;
 	_arena = arena;
 	_fullArena = fullArena;
-	_endX = ARENA_END_X;
+	_endX = ARENA_START_X;
 #ifdef GUI
 	_endY = ARENA_END_Y;
 #else
-	_endY = ARENA_START_Y;
+	_endY = ARENA_END_Y;
 #endif
 	_destinationCount = 0;
 	_conn = conn;
@@ -578,11 +578,11 @@ void PathFinder::selectNextDestination()
 	switch (_destinationCount)
 	{
 	case 0: // set next dest as goal
-		_endY = ARENA_END_Y; break;
+		_endX = ARENA_END_X; break;
 	case 1:
-		_endX = ARENA_START_X; break;
-	case 2:
 		_endY = ARENA_START_Y; break;
+	case 2:
+		_endX = ARENA_START_X; break;
 	default:
 		break;
 	}
