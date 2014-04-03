@@ -11,11 +11,11 @@ float distCentimeter(float centimeter)
   } else if (centimeter <= 30) {
     divisibleTicks = 18.8;
   } else if (centimeter <= 40) {
-    divisibleTicks = 18.9;
+    divisibleTicks = 18.8;
   } else if (centimeter <= 50) {
-    divisibleTicks = 19.0;
+    divisibleTicks = 18.9;
   } else if (centimeter <= 75) {
-    divisibleTicks = 19.1;
+    divisibleTicks = 19.0;
   } else {
     divisibleTicks = 19.2;
   }

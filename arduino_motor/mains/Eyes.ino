@@ -89,9 +89,9 @@ void Eyes::test_readings() {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 bool Eyes::is_safe_forward(int dis) {
-  int avg_reading = (this->output_reading_ir_left() + this->output_reading_ir_right()) / 2;
-  if(avg_reading==-1) return true;
-  if(avg_reading>=dis) return true;
+  int reading = this->output_reading_ir(2);
+  if(reading>=dis || reading==-1)
+    return true;
   return false;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////

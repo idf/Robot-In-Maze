@@ -92,19 +92,18 @@ void SerialCommnder::send_sensor_readings(
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
     pidMgr->setScale(SCALE);
-    if (eyes->is_safe_forward(parameter))  
-      moveForward(parameter); delay(100);
+    moveForward(parameter); delay(100);
     this->send_command_complete(function_code, 200);
     pidMgr->restore();
     return true;
   }
   else if(function_code==1) {
-    turnLeft(parameter); delay(150);
+    turnLeft(parameter); delay(300);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==2) {
-    turnRight(parameter); delay(150);
+    turnRight(parameter); delay(300); // turning is not accurate in shortest path 
     this->send_command_complete(function_code, 200);
     return true;
   }
