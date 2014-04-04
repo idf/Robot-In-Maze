@@ -102,7 +102,52 @@ double driftToTarget(int isLeftForward, int isRightForward, double target_tick) 
   //setScale(1/0.35);
   Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
-  delay(300);
+  //delay(300);
+  return avgTicksForAngleOrDist;
+}
+
+
+double driftToTargetLeft(int isLeftForward, int isRightForward, double target_tick) {
+  resetPololuTicks(); // since we only cares about the difference, the starting point better set to 0 to avoid overflow
+  double avgTicksForAngleOrDist = 0;
+  long firstLeftCount = leftCnt;//leftCnt();
+  long firstRightCount = rightCnt;//rightCnt();
+  
+  while (target_tick - avgTicksForAngleOrDist > Config::MIN_SPEED*2) { //target_tick - change to 'angle' for other formula // 200 is tested
+  // the tolerance value affect the turning errors
+
+    double leftTicksForAngleOrDist = leftCnt;
+    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
+
+    double rightlTicksForAngleOrDist = rightCnt;
+    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
+
+    avgTicksForAngleOrDist = -1*(leftTicksForAngleOrDist - rightTicksForAngleOrDist) / 2; // DRIFT
+    configureDriftMotor(isLeftForward, isRightForward);
+
+    /* IMPORTANT */
+    //if(isLeftForward*isRightForward>0)
+      delay(Config::MIN_SPEED*0.5); // long distance problem
+  }
+  // fading
+  //setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
+  while (target_tick - avgTicksForAngleOrDist > 0) { // tolerance
+  // the tolerance value affect the turning errors
+
+    double leftTicksForAngleOrDist = leftCnt;
+    leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
+
+    double rightlTicksForAngleOrDist = rightCnt;
+    rightTicksForAngleOrDist = abs(rightlTicksForAngleOrDist - firstRightCount); 
+    
+
+    avgTicksForAngleOrDist = -1*(leftTicksForAngleOrDist - rightTicksForAngleOrDist) / 2; // DRIFT
+    configureDriftMotor(isLeftForward, isRightForward);
+  }
+  //setScale(1/0.35);
+  Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);
+  motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED);
+  //delay(300);
   return avgTicksForAngleOrDist;
 }
 
@@ -112,20 +157,36 @@ void driftRight(double angle) {
   const int isLeftForward = 1;
   const int isRightForward = 1;
 
-  double adjusted_angle = errorCumulator->adjust_turning_angle(-1*isRightForward*angle);
-  adjusted_angle = abs(adjusted_angle);
-  double noOfTicksForAngle = adjusted_angle*Config::TICKS_PER_DEGREE;
+  double noOfTicksForAngle = angle*Config::TICKS_PER_DEGREE;
 
   setScaleLeft(2);
-  setScaleRight(0.5);
+  setScaleRight(0.8);
   double realNoOfTicksForAngle = driftToTarget(isLeftForward, isRightForward, noOfTicksForAngle);
-  setScaleRight(1/0.5);
+  setScaleRight(1/0.8);
   setScaleLeft(1/2.0);
 
-  errorCumulator->record_turning_error(isRightForward*adjusted_angle, (realNoOfTicksForAngle - noOfTicksForAngle)/Config::TICKS_PER_DEGREE); 
+  
 }
 
 
+
+
+void driftLeft(double angle) { 
+  errorCumulator->change_to_left_mode();
+  const int isLeftForward = 1;
+  const int isRightForward = 1;
+
+  
+  double noOfTicksForAngle = angle*Config::TICKS_PER_DEGREE;
+
+  setScaleRight(2);
+  setScaleLeft(0.8);
+  double realNoOfTicksForAngle = driftToTargetLeft(isLeftForward, isRightForward, noOfTicksForAngle);
+  setScaleLeft(1/0.8);
+  setScaleRight(1/2.0);
+
+  
+}
 
 
 

@@ -75,9 +75,11 @@ void loop(void)
   //Serial.println(errorCumulator->get_compass_read());
   // serialCommnder->receive_exec_command();
   
-  driftRight(90);
+  driftRight(180);
+  driftLeft(360);
+  driftRight(180);
   
-  delay(10000);
+  //delay(10000);
   //servo_ir->servoScan(60, 120);
   //servo_ir->print_dist_array();
   //delay(5000); //to slow down the serial print
