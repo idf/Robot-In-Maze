@@ -113,7 +113,8 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   }
 
   // fading
-  pidMgr->setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
+  double scale = 0.35;
+  pidMgr->setScale(scale); // small, increase accuracy, too small, cannot move (torque)
   while (target_tick - avgTicksForAngleOrDist > 0) { 
     double leftTicksForAngleOrDist = leftCnt;
     leftTicksForAngleOrDist = abs(leftTicksForAngleOrDist - firstLeftCount);
@@ -126,7 +127,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
     configureMotor(isLeftForward, isRightForward);
   }
   motorShield.setBrakes(Config::DESIGNED_MAX_SPEED, Config::DESIGNED_MAX_SPEED); 
-  pidMgr->setScale(1/0.35);
+  pidMgr->setScale(1/scale);
   delay(40); // vital for ticks target
   if(Config::verbose){
     Serial.print(F("Ticks statistics: ")); Serial.print(avgTicksForAngleOrDist); Serial.print(F(" / ")); Serial.println(target_tick);

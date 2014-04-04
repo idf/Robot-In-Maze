@@ -9,10 +9,14 @@ public:
   void calibrate(int situation);
   void test_calibrate();
   void try_calibrate();
+  
 
 private:
   Eyes* frontEye; // to get the sensor reading
   double turned_angle; // to restore original orientation 
+
+  void sided_calibrate();
+  void front_calibrate();
 
 
   void one_side_calibrate();

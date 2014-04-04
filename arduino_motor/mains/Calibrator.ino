@@ -1,5 +1,5 @@
 #include "Calibrator.h"
-#define TRIAL_INTERVAL (10*1000)
+#define TRIAL_INTERVAL (0.5*1000)
 #define TRIAL_UPPER_LIMIT 9
 #define TARGET_DISTANCE 4 
 // Target Distance, experimentally adjusted
@@ -41,24 +41,50 @@ void Calibrator::calibrate(int situation) {
 void Calibrator::test_calibrate() {
   this->one_side_calibrate(1);
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Calibrator::try_calibrate() {
+  unsigned long delta_time = millis() - this->last_time_trial;
+  if(delta_time>TRIAL_INTERVAL) {
+    this->front_calibrate();
+    this->sided_calibrate();
+    this->last_time_trial = millis();
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//private
+void Calibrator::sided_calibrate() {
+  const int TOO_CLOSE = 2
+  
+  int left_reading = frontEye->get_ultra_reading_left();
+  if (left_reading<TOO_CLOSE) {
+    turnLeft(90); delay(100);
+    this->front_calibrate();
+    turnRight(90); delay(100);
+  }
+
+  int right_reading = frontEye->get_ultra_reading_right();
+  if (right_reading<TOO_CLOSE) {
+    turnRight(90); delay(100);
+    this->front_calibrate();
+    turnLeft(90); delay(100);
+  }
+
+}
+void Calibrator::front_calibrate() {
   int left_reading = frontEye->output_reading_ir_left();
   int right_reading = frontEye->output_reading_ir_right();
   if(left_reading==0&&right_reading==0) {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
     if(left_reading<TRIAL_UPPER_LIMIT && right_reading<TRIAL_UPPER_LIMIT) {
-      unsigned long delta_time = millis() - this->last_time_trial;
-      if(delta_time>TRIAL_INTERVAL) {
-        this->one_side_calibrate(1);
-        this->last_time_trial = millis();
-      }
+      this->one_side_calibrate(1);
     }
-  }
+  }  
 }
 
-//private
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void Calibrator::one_side_calibrate() {
   this->one_side_calibrate(3);
 }

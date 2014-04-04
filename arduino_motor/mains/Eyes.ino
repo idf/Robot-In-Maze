@@ -72,6 +72,12 @@ int Eyes::output_reading_ir_left() {
 int Eyes::output_reading_ir_right() {
   return this->output_reading_ir(1);
 }
+int Eyes::get_ultra_reading_left() {
+  return this->get_ultra_reading(0);
+}
+int Eyes::get_ultra_reading_right() {
+  return this->get_ultra_reading(1);
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void Eyes::test_readings() {
   for(int i=0; i<SHARP_SIZE; i++) {

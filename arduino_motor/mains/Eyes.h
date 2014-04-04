@@ -33,6 +33,8 @@ public:
   int get_ir_reading_right();  
   int output_reading_ir_left();
   int output_reading_ir_right();
+  int get_ultra_reading_left();
+  int get_ultra_reading_right();
 
   bool is_safe_forward(int dis);
 
