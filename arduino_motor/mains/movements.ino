@@ -154,7 +154,7 @@ void moveForward(double dist)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void moveBackward(double dist) 
 {  
-  errorCumulator->change_to_forward_mode();
+  errorCumulator->change_to_backward_mode();
   const int isLeftForward = -1;
   const int isRightForward = -1;
 

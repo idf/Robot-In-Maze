@@ -28,6 +28,7 @@ public:
 
   // turning and forward mode switching 
   void change_to_forward_mode();
+  void change_to_backward_mode();
   void change_to_right_mode();
   void change_to_left_mode();
   //HMC5883LCompass* compass;
@@ -48,6 +49,11 @@ private:
   double forward_deltaX;
   double forward_deltaY;
   double forward_theta;
+
+  double backward_deltaX;
+  double backward_deltaY;
+  double backward_theta;
+
 
   void change_to_turning_mode(int mode);
   float get_diff_angle(float alpha_t, float alpha_0);
