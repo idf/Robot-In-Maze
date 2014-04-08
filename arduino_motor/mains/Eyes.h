@@ -6,7 +6,7 @@
 //#define LONG 20150
 #define RANGE_TEST_DELAY 7
 #define ULTRA_SIZE 2
-#define SHARP_SIZE 4
+#define SHARP_SIZE 5
 class Eyes{
 public:
   Eyes(
@@ -17,7 +17,8 @@ public:
     unsigned char ir_pin_0, 
     unsigned char ir_pin_1, 
     unsigned char ir_pin_2, 
-    unsigned char ir_pin_3
+    unsigned char ir_pin_3,
+    unsigned char ir_pin_4
     );
 
   void init();

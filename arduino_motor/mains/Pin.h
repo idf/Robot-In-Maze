@@ -44,8 +44,8 @@ public:
 
 
   //static const unsigned char SERVO = 9; // TODO change
-  static const unsigned char ULTRA_1_PWM = 11;  //front ultrasound
-  static const unsigned char ULTRA_1_TRIG = 13; //front ultrasound
+  static const unsigned char ULTRA_1_PWM = 11;  //side ultrasound
+  static const unsigned char ULTRA_1_TRIG = 13; //side ultrasound
   
   static const unsigned char ULTRA_2_PWM = 6;   //side ultrasound
   static const unsigned char ULTRA_2_TRIG = 12; //side ultrasound
@@ -53,7 +53,9 @@ public:
   static const unsigned char FRONT_IR_LEFT = A0;
   static const unsigned char FRONT_IR_RIGHT = A1;
 
-  static const unsigned char LEFT_IR = A2; //right IR
-  static const unsigned char RIGHT_IR = A3; //front center
+  static const unsigned char SIDED_RIGHT_IR = A2; 
+  static const unsigned char CENTER_IR = A3;
+
+  static const unsigned char SIDED_LEFT_IR = A4;  
 };
 #endif

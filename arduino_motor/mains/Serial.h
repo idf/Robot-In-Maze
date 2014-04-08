@@ -7,7 +7,14 @@ public:
   SerialCommnder();
   bool receive_exec_command();
   void send_command_complete(int function_code, int status_code);
-  void send_sensor_readings(int front_value, int front_left_value, int front_right_value, int left_value, int right_value, int side_ultra_value);
+  void send_sensor_readings(
+                            int value0, 
+                            int value1, 
+                            int value2, 
+                            int value3, 
+                            int value4,
+                            int value10,
+                            int value11);
   void send_ready_signal();
   int get_command();
 
