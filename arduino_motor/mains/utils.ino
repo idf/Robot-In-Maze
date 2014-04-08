@@ -65,6 +65,7 @@ void getSensorReadings() {
     eyes->output_reading_ir(1),
     eyes->output_reading_ir(2),
     eyes->output_reading_ir(3),
+    eyes->output_reading_ir(4),
     eyes->output_reading_ultra(0),
     eyes->output_reading_ultra(1)
     );

@@ -12,7 +12,8 @@ Eyes::Eyes(
     unsigned char ir_pin_0, 
     unsigned char ir_pin_1, 
     unsigned char ir_pin_2, 
-    unsigned char ir_pin_3
+    unsigned char ir_pin_3, 
+    unsigned char ir_pin_4
 
     ) { 
   this->ultrasound[0] = new Ultrasound(ultra_pin_0_1, ultra_pin_0_2);
@@ -22,6 +23,7 @@ Eyes::Eyes(
   this->sharp[1] = new SharpIR(ir_pin_1, 50, 95, SHORT);
   this->sharp[2] = new SharpIR(ir_pin_2, 50, 95, SHORT);
   this->sharp[3] = new SharpIR(ir_pin_3, 50, 95, SHORT);
+  this->sharp[4] = new SharpIR(ir_pin_4, 50, 95, SHORT);
 
   this->ultra_offsets[0] = 5;
   this->ultra_offsets[1] = 5;
@@ -30,14 +32,17 @@ Eyes::Eyes(
   this->sharp_offsets[1] = 5; // 6; // 7 April
   this->sharp_offsets[2] = 3; // 5;
   this->sharp_offsets[3] = 5; // 6;
+  this->sharp_offsets[4] = 5; // 6;
 
   for(int i=0; i<SHARP_SIZE; i++) {
     this->range[i][0]= 27;
     this->range[i][1]=6;
+    if(i>=SHARP_SIZE-2) {
+      this->range[i][0]= 37;
+      this->range[i][1]=6;
+    }
   }
-  
-  this->range[SHARP_SIZE-1][0] = 37;
-  this->range[SHARP_SIZE-1][1] = 6;
+
 }
 void Eyes::init() {
   for(int i=0; i<ULTRA_SIZE; i++)

@@ -62,6 +62,7 @@ void SerialCommnder::send_sensor_readings(
                                           int value1, 
                                           int value2, 
                                           int value3, 
+                                          int value4,
                                           int value10,
                                           int value11) {
   Serial.print(F("{\"sensors\":["));
@@ -77,6 +78,9 @@ void SerialCommnder::send_sensor_readings(
 
   Serial.print(F("{\"sensor\":")); Serial.print(3); 
   Serial.print(F(",\"value\":")); Serial.print(value3); Serial.print(F("}")); Serial.print(F(","));
+
+   Serial.print(F("{\"sensor\":")); Serial.print(4); 
+  Serial.print(F(",\"value\":")); Serial.print(value4); Serial.print(F("}")); Serial.print(F(","));
 
   Serial.print(F("{\"sensor\":")); Serial.print(10);
   Serial.print(F(",\"value\":")); Serial.print(value10); Serial.print(F("}")); Serial.print(F(","));
