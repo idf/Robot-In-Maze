@@ -55,10 +55,10 @@ void Calibrator::try_calibrate() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //private
 void Calibrator::sided_calibrate() {
-  const int TOO_CLOSE = 1;
+  const int TOO_CLOSE = 3;
   
   int left_reading = frontEye->get_ultra_reading_left();
-  if (left_reading<TOO_CLOSE) {
+  if (left_reading<TOO_CLOSE&&frontEye->output_reading_ir(4)==0) {
     turnLeft(90); delay(100);
     //moveBackward(TARGET_DISTANCE-left_reading-1);
     this->front_calibrate();
