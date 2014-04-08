@@ -11,7 +11,7 @@ MainWindow::MainWindow()
 {
 	conn = new Connector();
 	arena = new Arena();
-	robot = new Robot(ARENA_START_X, ARENA_START_Y, DOWN, conn);
+	robot = new Robot(ARENA_START_X, ARENA_START_Y, RIGHT, conn);
 	fullArena = new Arena();  // simulation purpose
 	io = new MapIO(arena, fullArena);
 	pathFinder = new PathFinder(robot, arena, fullArena, conn);
@@ -55,6 +55,7 @@ MainWindow::~MainWindow()
 void MainWindow::startExplorationButtonClicked()
 {
 	robot->senseEnvironment(arena, fullArena);
+	io->printArena(arena);
 #ifdef ANDROID
 	conn->waitForAndroidExplore();
 #endif

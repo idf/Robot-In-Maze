@@ -8,11 +8,11 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector *
 	_robot = robot;
 	_arena = arena;
 	_fullArena = fullArena;
-	_endX = ARENA_START_X;
+	_endX = ARENA_END_X;
 #ifdef GUI
 	_endY = ARENA_END_Y;
 #else
-	_endY = ARENA_END_Y;
+	_endY = ARENA_START_Y;
 #endif
 	_destinationCount = 0;
 	_conn = conn;
@@ -32,8 +32,6 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 	if (_destinationCount < 4 && time(0) - start < timeLimitInSeconds) // exploration not done
 #endif
 	{
-		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
-		cout <<"time elapsed: " << time(0) - start << endl;
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
 		{
 			// move to new place, sense the surrounding
@@ -73,6 +71,8 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			prev = result;
 			vector<Grid*>::reverse_iterator i = result.rbegin();
 			getRobotToMoveAndSense(*i);
+			cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
+			cout <<"time elapsed: " << time(0) - start << endl;
 			return true;
 		}
 		else  // goal reached, calibrate at goal and go to next destination
@@ -81,11 +81,11 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			switch (_destinationCount)
 			{
 			case 0: 
-				_robot->calibrateAtBottomLeft(); break;
+				_robot->calibrateAtUpperRight(); break;
 			case 1:
 				_robot->calibrateAtGoal(); break;
 			case 2:
-				_robot->calibrateAtUpperRight(); break;
+				_robot->calibrateAtBottomLeft(); break;
 			default:
 				break;
 			}
@@ -579,11 +579,11 @@ void PathFinder::selectNextDestination()
 	switch (_destinationCount)
 	{
 	case 0: // set next dest as goal
-		_endX = ARENA_END_X; break;
+		_endY = ARENA_END_Y; break;
 	case 1:
-		_endY = ARENA_START_Y; break;
-	case 2:
 		_endX = ARENA_START_X; break;
+	case 2:
+		_endY = ARENA_START_Y; break;
 	default:
 		break;
 	}

@@ -422,7 +422,8 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	if (range == -1) // to far to detect
 	{
-		return;
+		//return;
+		range = US_RANGE;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (int i = 0; i < range/10; ++i)  // NOTE: DIFFERENT
@@ -436,7 +437,7 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		}
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
-	//if (range == 0)
+	//if (range <= 0)
 	//{
 	//	switch (direction)
 	//	{
