@@ -27,7 +27,7 @@ Eyes::Eyes(
   this->ultra_offsets[1] = 4;
 
   this->sharp_offsets[0] = 5; // 6;
-  this->sharp_offsets[1] = 5; // 6;
+  this->sharp_offsets[1] = 5; // 6; // 7 April
   this->sharp_offsets[2] = 3; // 5;
   this->sharp_offsets[3] = 5; // 6;
 }

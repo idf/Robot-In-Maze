@@ -55,7 +55,7 @@ void Calibrator::try_calibrate() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //private
 void Calibrator::sided_calibrate() {
-  const int TOO_CLOSE = 2;
+  const int TOO_CLOSE = 1;
   
   int left_reading = frontEye->get_ultra_reading_left();
   if (left_reading<TOO_CLOSE) {
