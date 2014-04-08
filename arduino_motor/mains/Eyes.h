@@ -4,7 +4,7 @@
 #include <Ultrasound.h>
 #define SHORT 1080
 //#define LONG 20150
-#define RANGE_TEST_DELAY 7
+#define RANGE_TEST_DELAY 15
 #define ULTRA_SIZE 2
 #define SHARP_SIZE 4
 class Eyes{
@@ -50,6 +50,7 @@ private:
 
   int ultra_offsets[ULTRA_SIZE];
   int sharp_offsets[SHARP_SIZE];
+  int range[SHARP_SIZE][2];
 };
 #endif
 

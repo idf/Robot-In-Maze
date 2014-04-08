@@ -60,13 +60,15 @@ void Calibrator::sided_calibrate() {
   int left_reading = frontEye->get_ultra_reading_left();
   if (left_reading<TOO_CLOSE) {
     turnLeft(90); delay(100);
+    //moveBackward(TARGET_DISTANCE-left_reading-1);
     this->front_calibrate();
     turnRight(90); delay(100);
   }
 
   int right_reading = frontEye->get_ultra_reading_right();
-  if (right_reading<TOO_CLOSE) {
+  if (right_reading<TOO_CLOSE&&frontEye->output_reading_ir(3)==0) {
     turnRight(90); delay(100);
+    //moveBackward(TARGET_DISTANCE-right_reading-1);
     this->front_calibrate();
     turnLeft(90); delay(100);
   }

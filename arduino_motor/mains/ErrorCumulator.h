@@ -31,6 +31,7 @@ public:
   void change_to_backward_mode();
   void change_to_right_mode();
   void change_to_left_mode();
+  void reset();
   //HMC5883LCompass* compass;
 private:
   //HMC5883LCompass* compass; // public for testing purpose

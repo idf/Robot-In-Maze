@@ -141,6 +141,7 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
   }
   else if(function_code==98) {
     calibrator->calibrate(parameter);
+    errorCumulator->reset();
     this->send_command_complete(function_code, 200);
     return true;
   }

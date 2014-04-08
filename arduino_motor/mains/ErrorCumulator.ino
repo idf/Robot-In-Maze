@@ -201,7 +201,23 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
   }
 }
 
+void ErrorCumulator::reset() {
+  this->forward_deltaX = 0;
+  this->forward_deltaY = 0;
+  this->forward_theta = 0;
 
+  this->right_deltaX = 0;
+  this->right_deltaY = 0;
+  this->right_theta = 0;
+
+  this->left_deltaX = 0;
+  this->left_deltaY = 0;
+  this->left_theta = 0;
+
+  this->backward_deltaX = 0;
+  this->backward_deltaY = 0;
+  this->backward_theta = 0;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /**
 return the angle difference within 180 degrees give two angle in the range [-180, +180]
