@@ -47,6 +47,8 @@ void Eyes::init() {
 int Eyes::output_reading_ultra(int index) {
   int dis = this->get_ultra_reading(index);
 
+  if(dis==-1) return -1; // avoid reading as 2590 issues 
+
   dis -= Config::VIRTUAL_OFFSET;
 
   if(this->is_within_range(this->ultrasound[index], index)) 
@@ -122,6 +124,10 @@ int Eyes::get_ir_reading(int index) {
 }
 
 
+/**
+ * avoid IR sensor spikes
+ * @type {boolean}
+ */
 bool Eyes::is_within_range(SharpIR* sensor, int index) {
   for(int i=0; i<5; i++) {
     int distance = sensor->distance();
@@ -132,6 +138,10 @@ bool Eyes::is_within_range(SharpIR* sensor, int index) {
   return true;
 }
 
+/**
+ * avoid ultra sensor spikes 
+ * @type {boolean}
+ */
 bool Eyes::is_within_range(Ultrasound* sensor, int index) {
   for(int i=0; i<5; i++) {
     int distance = sensor->dist();
