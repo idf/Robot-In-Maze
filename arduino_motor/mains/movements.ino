@@ -76,12 +76,8 @@ void configureMotor(int isM1Forward, int isM2Forward)
   int m2Speed = isM2Forward * map(pidMgr->OutputRight, Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT, Config::MIN_SPEED, Config::MAX_SPEED);
 
   // if(isM1Forward*isM2Forward>0) delay(200); // replace print // move to reachTarget
-  /*
-  Serial.print(F("leftTicks: ")); Serial.println(leftTicks);
-  Serial.print(F("rightTicks: ")); Serial.println(rightTicks);
-  Serial.print(F("InputMid: ")); Serial.println(InputMid);
-  Serial.print(F("SetpointLeft: ")); Serial.println(SetpointLeft);
-  Serial.print(F("SetpointRight: ")); Serial.println(SetpointRight);
+  
+ /*
   
   Serial.print(F("m1: ")); Serial.println(m1Speed);
   Serial.print(F("m2: ")); Serial.println(m2Speed);

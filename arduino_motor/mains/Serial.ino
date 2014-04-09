@@ -1,6 +1,7 @@
 #include "Serial.h"
 #include "globals.h"
 #define SCALE 2
+// 2 is the max
 #define EXPLORE_SCALE 1.0
 // public
 SerialCommnder::SerialCommnder() {

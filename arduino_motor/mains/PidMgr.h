@@ -22,6 +22,6 @@ private:
   double current_scale;
 
   static const double kp=0.5, ki=0.25, kd=0;
-  static const double kp_mid=1, ki_mid=0.05, kd_mid=0.25;
+  static const double kp_mid=2, ki_mid=0.05, kd_mid=0.25;
 };
 #endif
