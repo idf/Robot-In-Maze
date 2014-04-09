@@ -23,8 +23,8 @@ void PidMgr::init() {
 
   // for controlling the speed 
   
-  leftPID->SetOutputLimits(Config::PID_LOWER_LIMIT/2, Config::PID_UPPER_LIMIT/2);
-  rightPID->SetOutputLimits(Config::PID_LOWER_LIMIT/2, Config::PID_UPPER_LIMIT/2);
+  leftPID->SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
+  rightPID->SetOutputLimits(Config::PID_LOWER_LIMIT, Config::PID_UPPER_LIMIT);
   midPID->SetOutputLimits(-Config::PID_SETPOINT/2, Config::PID_SETPOINT/2);
 }
 

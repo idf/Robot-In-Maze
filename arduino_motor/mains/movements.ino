@@ -53,12 +53,16 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
   
   pidMgr->midPID->Compute();
+  
   pidMgr->SetpointRight = Config::PID_SETPOINT  + map(
-    pidMgr->OutputMid,-Config::PID_SETPOINT/2, 
+    pidMgr->OutputMid,
+    -Config::PID_SETPOINT/2, 
     Config::PID_SETPOINT/2, 
+
     -Config::PID_SETPOINT,
     +Config::PID_SETPOINT
     );
+
   pidMgr->rightPID->Compute();
   pidMgr->leftPID->Compute();
 

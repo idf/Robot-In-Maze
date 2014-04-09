@@ -23,13 +23,13 @@ Eyes::Eyes(
   this->sharp[2] = new SharpIR(ir_pin_2, 50, 95, SHORT);
   this->sharp[3] = new SharpIR(ir_pin_3, 50, 95, SHORT);
 
-  this->ultra_offsets[0] = 4;
-  this->ultra_offsets[1] = 4;
+  this->ultra_offsets[0] = 2;
+  this->ultra_offsets[1] = 2;
 
-  this->sharp_offsets[0] = 5; // 6;
-  this->sharp_offsets[1] = 5; // 6; // 7 April
-  this->sharp_offsets[2] = 3; // 5;
-  this->sharp_offsets[3] = 5; // 6;
+  this->sharp_offsets[0] = 4; 
+  this->sharp_offsets[1] = 5; 
+  this->sharp_offsets[2] = 3; 
+  this->sharp_offsets[3] = 5; 
 
   for(int i=0; i<SHARP_SIZE; i++) {
     this->range[i][0]= 27;
@@ -130,7 +130,7 @@ bool Eyes::is_within_range(SharpIR* sensor, int index) {
 }
 
 bool Eyes::is_within_range(Ultrasound* sensor, int index) {
-  for(int i=0; i<7; i++) {
+  for(int i=0; i<2; i++) {
     int distance = sensor->dist();
     if(distance>107 || distance<3) // TODO
       return false;
