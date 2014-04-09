@@ -53,12 +53,16 @@ void configureMotor(int isM1Forward, int isM2Forward)
 
   
   pidMgr->midPID->Compute();
+  
   pidMgr->SetpointRight = Config::PID_SETPOINT  + map(
-    pidMgr->OutputMid,-Config::PID_SETPOINT/2, 
+    pidMgr->OutputMid,
+    -Config::PID_SETPOINT/2, 
     Config::PID_SETPOINT/2, 
+
     -Config::PID_SETPOINT,
     +Config::PID_SETPOINT
     );
+
   pidMgr->rightPID->Compute();
   pidMgr->leftPID->Compute();
 
@@ -113,6 +117,7 @@ double reachTickTarget(int isLeftForward, int isRightForward, double target_tick
   }
 
   // fading
+  
   pidMgr->setScale(0.35); // small, increase accuracy, too small, cannot move (torque)
   while (target_tick - avgTicksForAngleOrDist > 0) { 
     double leftTicksForAngleOrDist = leftCnt;
@@ -147,14 +152,13 @@ void moveForward(double dist)
   errorCumulator->change_to_forward_mode();
   const int isLeftForward = 1;
   const int isRightForward = 1;
-
   double noOfTicksForDist = distCentimeter(dist);
   double realNoOfTicksForDist = reachTickTarget(isLeftForward, isRightForward, noOfTicksForDist);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void moveBackward(double dist) 
 {  
-  errorCumulator->change_to_forward_mode();
+  errorCumulator->change_to_backward_mode();
   const int isLeftForward = -1;
   const int isRightForward = -1;
 

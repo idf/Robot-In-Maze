@@ -3,22 +3,24 @@
 float distCentimeter(float centimeter) 
 {
   float divisibleTicks;
-  /*
+  
   if (centimeter <= 10) {
-    divisibleTicks = 18.7; 
+    divisibleTicks = 18.8; 
   } else if (centimeter <= 20) {
-    divisibleTicks = 18.65;
-  } else if (centimeter <= 35) {
-    divisibleTicks = 19.05;
+    divisibleTicks = 18.8;
+  } else if (centimeter <= 30) {
+    divisibleTicks = 18.8;
+  } else if (centimeter <= 40) {
+    divisibleTicks = 18.8;
   } else if (centimeter <= 50) {
-    divisibleTicks = 18.5;
+    divisibleTicks = 18.9;
   } else if (centimeter <= 75) {
-    divisibleTicks = 18.97;
+    divisibleTicks = 19.0;
   } else {
-    divisibleTicks = 18.7;
+    divisibleTicks = 19.0;
   }
-  */
-  divisibleTicks = 18.8;
+  
+  
   float ticksForOneCentimeter = Config::COUNTS_PER_REVOLUTION/divisibleTicks;
   float dist = ticksForOneCentimeter * centimeter;
   return dist;
@@ -59,12 +61,12 @@ double angle_to_ticks(double angle) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void getSensorReadings() {
   serialCommnder->send_sensor_readings(
-    frontEye->output_reading_ultra(),
-    frontEye->output_reading_ir_left(),
-    frontEye->output_reading_ir_right(),
-    sideEye->output_reading_left(),
-    sideEye->output_reading_right(),
-    sideEye->output_reading_ultra()
+    eyes->output_reading_ir(0),
+    eyes->output_reading_ir(1),
+    eyes->output_reading_ir(2),
+    eyes->output_reading_ir(3),
+    eyes->output_reading_ultra(0),
+    eyes->output_reading_ultra(1)
     );
 }
 

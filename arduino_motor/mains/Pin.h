@@ -53,7 +53,7 @@ public:
   static const unsigned char FRONT_IR_LEFT = A0;
   static const unsigned char FRONT_IR_RIGHT = A1;
 
-  static const unsigned char LEFT_IR = A2;
-  static const unsigned char RIGHT_IR = A3; 
+  static const unsigned char LEFT_IR = A2; //right IR
+  static const unsigned char RIGHT_IR = A3; //front center
 };
 #endif

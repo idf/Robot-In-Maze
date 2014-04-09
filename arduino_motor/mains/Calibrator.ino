@@ -1,8 +1,11 @@
 #include "Calibrator.h"
-#define TRIAL_INTERVAL (60*1000)
+#define TRIAL_INTERVAL (0.5*1000)
+#define TRIAL_UPPER_LIMIT 9
+#define TARGET_DISTANCE 5 
+// Target Distance, experimentally adjusted
 //public 
 
-Calibrator::Calibrator(FrontEye* frontEye) {
+Calibrator::Calibrator(Eyes* frontEye) {
   this->frontEye = frontEye;
 }
 
@@ -38,20 +41,52 @@ void Calibrator::calibrate(int situation) {
 void Calibrator::test_calibrate() {
   this->one_side_calibrate(1);
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Calibrator::try_calibrate() {
-  int left_reading = frontEye->output_reading_ir_left();
-  int right_reading = frontEye->output_reading_ir_right();
-  if(left_reading==10&&right_reading==10) {
-    unsigned long delta_time = millis() - this->last_time_trial;
-    if(delta_time>TRIAL_INTERVAL) {
-      this->one_side_calibrate(1);
-      this->last_time_trial = millis();
-    }
+  unsigned long delta_time = millis() - this->last_time_trial;
+  if(delta_time>TRIAL_INTERVAL) {
+    this->front_calibrate();
+    this->sided_calibrate();
+    this->last_time_trial = millis();
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 //private
+void Calibrator::sided_calibrate() {
+  const int TOO_CLOSE = 3;
+  
+  int left_reading = frontEye->get_ultra_reading_left();
+  if (left_reading<TOO_CLOSE) {
+    turnLeft(90); delay(100);
+    //moveBackward(TARGET_DISTANCE-left_reading-1);
+    this->front_calibrate();
+    turnRight(90); delay(100);
+  }
+
+  int right_reading = frontEye->get_ultra_reading_right();
+  if (right_reading<TOO_CLOSE&&frontEye->output_reading_ir(3)==0) {
+    turnRight(90); delay(100);
+    //moveBackward(TARGET_DISTANCE-right_reading-1);
+    this->front_calibrate();
+    turnLeft(90); delay(100);
+  }
+
+}
+void Calibrator::front_calibrate() {
+  int left_reading = frontEye->output_reading_ir_left();
+  int right_reading = frontEye->output_reading_ir_right();
+  if(left_reading==0&&right_reading==0) {
+    left_reading = frontEye->get_ir_reading_left();
+    right_reading = frontEye->get_ir_reading_right();
+    if(left_reading<TRIAL_UPPER_LIMIT && right_reading<TRIAL_UPPER_LIMIT) {
+      this->one_side_calibrate(1);
+    }
+  }  
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void Calibrator::one_side_calibrate() {
   this->one_side_calibrate(3);
 }
@@ -78,32 +113,30 @@ bool Calibrator::calibrate_angle() {
   while(true) {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
-    theta = asin((left_reading - right_reading)/DETECTORS_INTERVAL)*RAD_TO_DEG; 
+    theta = asin((left_reading - right_reading) / DETECTORS_INTERVAL)*RAD_TO_DEG; 
 
-    if (left_reading>14 || right_reading>14 || left_reading<6 || right_reading<6) {
+    if (left_reading>13 || right_reading>13 || left_reading<1 || right_reading<1) {
       return false;
     }
 
     if(abs(theta)<=1) {
       break;
     }
-
+    
     if(theta>0) { // positive negative
-      if(abs(theta)>8) {
+      if(abs(theta)>6) {
         turnRight(abs(theta));
       }
       else { //avoid small angle problem
-        turnLeft(ADJUST_ANGLE); delay(100);
-        turnRight(abs(theta)+ADJUST_ANGLE); delay(100);       
+        turnRight(1);
       }
     }
     else {
-      if(abs(theta)>8) {
+      if(abs(theta)>6) {
         turnLeft(abs(theta));
       }
       else { 
-        turnRight(ADJUST_ANGLE); delay(100);
-        turnLeft(abs(theta)+ADJUST_ANGLE); delay(100);       
+        turnLeft(1);
       }
     }
 
@@ -116,7 +149,6 @@ bool Calibrator::calibrate_angle() {
 
 
 void Calibrator::calibrate_distance() {
-  const int ADJUST_DISTANCE = 3; // cm
 
   int left_reading;
   int right_reading;
@@ -127,28 +159,18 @@ void Calibrator::calibrate_distance() {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
     avg_reading = (left_reading+right_reading)/2.0;
-    delta = avg_reading - 10; // actual - expected 
+    delta = avg_reading - TARGET_DISTANCE; // actual - expected 
 
     if(abs(delta)<=0.5) {
       break;
     }
 
     if(delta>0) {
-      //moveBackward(ADJUST_DISTANCE); delay(100);
-      //moveForward(abs(delta)+ADJUST_DISTANCE); delay(100);
       moveForward(abs(delta));
     }
     else {
-      if(0.5*(left_reading+right_reading)>ADJUST_DISTANCE+3) { // avoid close obstable ahead
-        //moveForward(ADJUST_DISTANCE); delay(100);
-        //moveBackward(abs(delta)+ADJUST_DISTANCE); delay(100);
         moveBackward(abs(delta)); delay(100);
-      }
-      else {
-        moveBackward(abs(delta)); delay(100);
-      }
     }
-
     // testing print 
     //Serial.print(F("delta: ")); Serial.println(delta);
     //frontEye->test_readings();

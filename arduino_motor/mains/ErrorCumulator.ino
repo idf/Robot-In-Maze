@@ -2,6 +2,7 @@
 #define FORWORD 0
 #define RIGHT 1
 #define LEFT 2
+#define BACKWARD 3
 ErrorCumulator::ErrorCumulator() {
   this->theta = 0;
   this->deltaX = 0;
@@ -24,6 +25,10 @@ ErrorCumulator::ErrorCumulator() {
   this->left_deltaX = 0;
   this->left_deltaY = 0;
   this->left_theta = 0;
+
+  this->backward_deltaX = 0;
+  this->backward_deltaY = 0;
+  this->backward_theta = 0;
 
 }
 void ErrorCumulator::init() {
@@ -94,6 +99,11 @@ void ErrorCumulator::change_to_forward_mode() {
     this->left_deltaY = this->deltaY;
     this->left_theta = this->theta;
   }
+  else if(this->current_mode==BACKWARD) {
+    this->backward_deltaX = this->deltaX ;
+    this->backward_deltaY = this->deltaY;
+    this->backward_theta = this->theta;
+  }
   // end of change 
   this->reset_dead_reckoning(); // suppposed to do
   
@@ -105,6 +115,38 @@ void ErrorCumulator::change_to_forward_mode() {
   // this->theta = this->turning_error; // = rather than +=
 
   this->current_mode=FORWORD;
+}
+
+
+void ErrorCumulator::change_to_backward_mode() {
+  if(this->current_mode==BACKWARD)
+    return ;
+  else if(this->current_mode==RIGHT) {
+    this->right_deltaX = this->deltaX ;
+    this->right_deltaY = this->deltaY;
+    this->right_theta = this->theta;
+  }
+  else if(this->current_mode==LEFT) {
+    this->left_deltaX = this->deltaX ;
+    this->left_deltaY = this->deltaY;
+    this->left_theta = this->theta;
+  }
+  else if(this->current_mode==FORWORD) {
+    this->forward_deltaX = this->deltaX ;
+    this->forward_deltaY = this->deltaY;
+    this->forward_theta = this->theta;
+  }
+  // end of change 
+  this->reset_dead_reckoning(); // suppposed to do
+  
+  this->deltaX = this->backward_deltaX;
+  this->deltaY = this->backward_deltaY;
+  this->theta = this->backward_theta;
+  
+  
+  // this->theta = this->turning_error; // = rather than +=
+
+  this->current_mode=BACKWARD;
 }
 
 void ErrorCumulator::change_to_right_mode() {
@@ -122,19 +164,24 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
     return;
   }
   else if (this->current_mode==FORWORD) {
-    this->forward_deltaX = this->deltaX ;
+    this->forward_deltaX = this->deltaX;
     this->forward_deltaY = this->deltaY;
-    this->forward_theta = this->theta ;
+    this->forward_theta = this->theta;
     
     // this->turning_error += this->theta; // theta +/- consistent
   }
+  else if (this->current_mode==BACKWARD) {
+    this->backward_deltaX = this->deltaX;
+    this->backward_deltaY = this->deltaY;
+    this->backward_theta = this->theta;
+  }
   else if(this->current_mode==RIGHT) {
-    this->right_deltaX = this->deltaX ;
+    this->right_deltaX = this->deltaX;
     this->right_deltaY = this->deltaY;
     this->right_theta = this->theta;  
   }
   else if(this->current_mode==LEFT) {
-    this->left_deltaX = this->deltaX ;
+    this->left_deltaX = this->deltaX;
     this->left_deltaY = this->deltaY;
     this->left_theta = this->theta;
   }
@@ -154,7 +201,23 @@ void ErrorCumulator::change_to_turning_mode(int mode) {
   }
 }
 
+void ErrorCumulator::reset() {
+  this->forward_deltaX = 0;
+  this->forward_deltaY = 0;
+  this->forward_theta = 0;
 
+  this->right_deltaX = 0;
+  this->right_deltaY = 0;
+  this->right_theta = 0;
+
+  this->left_deltaX = 0;
+  this->left_deltaY = 0;
+  this->left_theta = 0;
+
+  this->backward_deltaX = 0;
+  this->backward_deltaY = 0;
+  this->backward_theta = 0;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /**
 return the angle difference within 180 degrees give two angle in the range [-180, +180]

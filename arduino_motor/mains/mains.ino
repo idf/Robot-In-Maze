@@ -15,8 +15,7 @@ void setup(void)
   motorShield.init();
   //PololuWheelEncoders::init(Pin::M1_ENCODER_A, Pin::M1_ENCODER_B, Pin::M2_ENCODER_A, Pin::M2_ENCODER_B); // 4 pins required
   errorCumulator->init();
-  frontEye->init(); 
-  sideEye->init();
+  eyes->init();
   calibrator->init();
   pidMgr->init();
   resetPololuTicks();
@@ -26,13 +25,12 @@ void loop(void)
 { 
   
   warmingUp(); serialCommnder->receive_exec_command();
-  //warmingUp(); pidMgr->setScale(2.5`); moveForward(10); pidMgr->restore(); printCounts(); delay(400); 
-  //turnRight(90);  printCounts(); delay(400);
+  //warmingUp(); moveForward(10); pidMgr->setScale(2); moveForward(30); pidMgr->restore(); printCounts(); errorCumulator->print_dead_reckoning(); delay(400); 
+  //warmingUp(); turnLeft(90);  printCounts(); delay(400);
 
   //calibrator->calibrate(6); delay(10000);
-
-  //frontEye->test_readings();
-  //sideEye->test_readings();
+  //calibrator->test_calibrate(); delay(1000);
+  //eyes->test_readings();
   //getSensorReadings(); delay(1000);
 
   //softwareProjectLabSqure();  

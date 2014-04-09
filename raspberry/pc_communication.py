@@ -74,9 +74,13 @@ class PcAPI (object):
         print_msg(self.name, "Message received: %s" % msg)
         
         msg = msg[msg.find("{"):] # cleaning data
-        msg = msg.replace("}\n{", ",") # in case of combined socket  
+        msg = msg.replace("}\n{", ",") # in case of combined socket
 
-        msg_dict = json.loads(msg)
+        try:
+            msg_dict = json.loads(msg)
+        except ValueError as e:
+            print_msg(self.name, "Duplicated Key: "+str(e.message))
+            msg_dict = msg[msg.find("{"):msg.find("}")+1]
         return msg_dict
 
     def communicate_with_pc(self):

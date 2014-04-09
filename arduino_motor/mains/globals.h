@@ -3,10 +3,9 @@
 #include "Pin.h"
 #include "Serial.h"
 #include "ErrorCumulator.h"
-#include "FrontEye.h"
-#include "SideEye.h"
 #include "Calibrator.h"
 #include "PidMgr.h"
+#include "Eyes.h"
 //#include "ServoIR.h"
 /* 
 M1 on LEFT
@@ -30,9 +29,8 @@ DualVNH5019MotorShield motorShield(Pin::INA1, Pin::INB1, Pin::EN1DIAG1, Pin::CS1
 
 SerialCommnder* serialCommnder = new SerialCommnder(); 
 ErrorCumulator* errorCumulator = new ErrorCumulator();
-FrontEye* frontEye = new FrontEye(Pin::ULTRA_1_PWM , Pin::ULTRA_1_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT);
-SideEye* sideEye = new SideEye(Pin::LEFT_IR, Pin::RIGHT_IR, Pin::ULTRA_2_PWM , Pin::ULTRA_2_TRIG);
-Calibrator* calibrator = new Calibrator(frontEye);
+Eyes* eyes = new Eyes(Pin::ULTRA_1_PWM, Pin::ULTRA_1_TRIG, Pin::ULTRA_2_PWM, Pin::ULTRA_2_TRIG, Pin::FRONT_IR_LEFT, Pin::FRONT_IR_RIGHT, Pin::RIGHT_IR, Pin::LEFT_IR);
+Calibrator* calibrator = new Calibrator(eyes);
 PidMgr* pidMgr = new PidMgr();
 //ServoIR* servo_ir = new ServoIR(Pin::SERVO, Pin::FRONT_IR);
 #endif

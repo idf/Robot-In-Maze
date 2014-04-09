@@ -11,7 +11,7 @@ from settings import *
 __author__ = 'Danyang'
 FUNCTION = 0
 SENSOR = 1
-MAX_CREDITS = 8 # tested
+MAX_CREDITS = 7  # tested
 
 class SerialAPI(object):
     def __init__(self, port=None, data_rate=9600,production=True):
@@ -129,7 +129,7 @@ class SerialAPI(object):
         """
         # if self.ready==True:
         self.ser.write(self._convert_to_machine_code(function_code, parameter)+"\r\n")  # Patched for bulk messaging
-        time.sleep(0.05)
+        time.sleep(0.5)
 
 
     def read(self):
@@ -143,12 +143,14 @@ class SerialAPI(object):
         while True:  # keep fetching until found json
             data = self.ser.readline() # waits for the arduino to send a serial and will not continue unless it fetches a serial
 
-            if "{" in data: # only check for starting "{" # naive type checking
+            if "{" in data and "}" in data: # only check for starting "{" # naive type checking
                 receive_data = data[data.find("{"):]
                 break
             else:
                 # if no json, wait
+                time.sleep(0.05)
                 continue
+
 
         print_msg(self.name, "received serial data: %s"%receive_data)
         try:
@@ -187,7 +189,7 @@ class SerialAPI(object):
         :return:
         :except: index error when the commands queue is empty
         """
-        command_pair = self.commands_outgoing.queue[0] # peek
+        command_pair = self.commands_outgoing.queue[0]  # peek
         # Patched for bulk messaging
         if command_pair[0] in self.non_waiting_commands:
             if self.credits<=0:
@@ -271,7 +273,7 @@ class SerialExecutionThread(AbstractThread):
 
         self.serial_api = serial_api
         # daemon thread
-        self.setDaemon(True)
+        # self.setDaemon(True)
 
     @Override(AbstractThread)
     def run(self):
@@ -294,8 +296,13 @@ class SerialExecutionThread(AbstractThread):
                     self.print_msg("Waiting for refilling credits")
                     while True:
                         ack, type_data, data = self.serial_api.response()
-                        if self.serial_api.credits==MAX_CREDITS:
+
+                        if self.serial_api.credits>=MAX_CREDITS:
+                            if self.serial_api.credits>MAX_CREDITS:
+                                print_msg(self.name, "ERROR - Received extra credit")
+                            self.serial_api.credits=MAX_CREDITS
                             break
+
                         time.sleep(0.05)
 
                 elif not command_pair[0] in self.serial_api.non_waiting_commands:  # Patched for bulk messaging

@@ -36,7 +36,3 @@ Analog pin A2 IR3
 Analog pin A3 IR4
 Analog pin A4 for compass SDA
 Analog pin A5 for compass SCL
-
-
-
-

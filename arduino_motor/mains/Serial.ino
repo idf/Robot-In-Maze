@@ -13,7 +13,7 @@ bool SerialCommnder::receive_exec_command() {
   
   if(Serial.available()>0) {
     int function_code;
-    double parameter;
+    long parameter;
 
     long comamnd_int = Serial.parseInt();
     function_code = comamnd_int/100000;
@@ -58,31 +58,31 @@ void SerialCommnder::send_ready_signal() {
 }
 
 void SerialCommnder::send_sensor_readings(
-                                          int front_value, 
-                                          int front_left_value, 
-                                          int front_right_value, 
-                                          int left_value, 
-                                          int right_value,
-                                          int side_ultra_value) {
+                                          int value0, 
+                                          int value1, 
+                                          int value2, 
+                                          int value3, 
+                                          int value10,
+                                          int value11) {
   Serial.print(F("{\"sensors\":["));
-  // front 
+
   Serial.print(F("{\"sensor\":")); Serial.print(0);
-  Serial.print(F(",\"value\":")); Serial.print(front_value); Serial.print(F("}")); Serial.print(F(","));
+  Serial.print(F(",\"value\":")); Serial.print(value0); Serial.print(F("}")); Serial.print(F(","));
 
   Serial.print(F("{\"sensor\":")); Serial.print(1);
-  Serial.print(F(",\"value\":")); Serial.print(front_left_value); Serial.print(F("}")); Serial.print(F(","));
+  Serial.print(F(",\"value\":")); Serial.print(value1); Serial.print(F("}")); Serial.print(F(","));
 
   Serial.print(F("{\"sensor\":")); Serial.print(2);
-  Serial.print(F(",\"value\":")); Serial.print(front_right_value); Serial.print(F("}")); Serial.print(F(","));
-  // left
-  Serial.print(F("{\"sensor\":")); Serial.print(10); 
-  Serial.print(F(",\"value\":")); Serial.print(left_value); Serial.print(F("}")); Serial.print(F(","));
-  // right
+  Serial.print(F(",\"value\":")); Serial.print(value2); Serial.print(F("}")); Serial.print(F(","));
+
+  Serial.print(F("{\"sensor\":")); Serial.print(3); 
+  Serial.print(F(",\"value\":")); Serial.print(value3); Serial.print(F("}")); Serial.print(F(","));
+
+  Serial.print(F("{\"sensor\":")); Serial.print(10);
+  Serial.print(F(",\"value\":")); Serial.print(value10); Serial.print(F("}")); Serial.print(F(","));
+
   Serial.print(F("{\"sensor\":")); Serial.print(11);
-  Serial.print(F(",\"value\":")); Serial.print(right_value); Serial.print(F("}")); Serial.print(F(","));
-  // right ultra
-  Serial.print(F("{\"sensor\":")); Serial.print(12);
-  Serial.print(F(",\"value\":")); Serial.print(side_ultra_value); Serial.print(F("}"));
+  Serial.print(F(",\"value\":")); Serial.print(value11); Serial.print(F("}"));
   //end
   Serial.println(F("]}"));
    
@@ -92,18 +92,18 @@ void SerialCommnder::send_sensor_readings(
 bool SerialCommnder::exec_command(int function_code, double parameter) {
   if(function_code==0) {
     pidMgr->setScale(SCALE);
-    moveForward(parameter); delay(50);
+    moveForward(parameter); delay(100);
     this->send_command_complete(function_code, 200);
     pidMgr->restore();
     return true;
   }
   else if(function_code==1) {
-    turnLeft(parameter); delay(50);
+    turnLeft(parameter); delay(300);
     this->send_command_complete(function_code, 200);
     return true;
   }
   else if(function_code==2) {
-    turnRight(parameter); delay(50);
+    turnRight(parameter); delay(300); // turning is not accurate in shortest path 
     this->send_command_complete(function_code, 200);
     return true;
   }
@@ -118,37 +118,31 @@ bool SerialCommnder::exec_command(int function_code, double parameter) {
 
   else if(function_code==20) {
     pidMgr->setScale(EXPLORE_SCALE);
-    moveForward(parameter);
+    if (eyes->is_safe_forward(parameter))  
+      moveForward(parameter);
     getSensorReadings();
-    pidMgr->setScale(0.8); // for calibrate
     calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
-    pidMgr->restore();
     return true;
   }
   else if(function_code==21) {
     turnLeft(parameter);
     getSensorReadings();
-    pidMgr->setScale(0.8); // for calibrate
     calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
-    pidMgr->restore();
     return true;
   }
   else if(function_code==22) {
     turnRight(parameter);
     getSensorReadings();
-    pidMgr->setScale(0.8); // for calibrate
     calibrator->try_calibrate();
     this->send_command_complete(function_code, 200);
-    pidMgr->restore();
     return true;
   }
   else if(function_code==98) {
-    pidMgr->setScale(0.8); // for calibrate
     calibrator->calibrate(parameter);
+    errorCumulator->reset();
     this->send_command_complete(function_code, 200);
-    pidMgr->restore();
     return true;
   }
   else {
