@@ -134,6 +134,7 @@ void Robot::rotateClockwiseAndSense(int deg, Arena* arena)
 	map<int, int>* sensorData = _conn->sendRotationClockwiseAndSense(deg);
 #endif
 	++_direction;
+	cout << "robot move sent!" << endl;
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 void Robot::rotateCounterClockwiseAndSense(int deg, Arena* arena)
@@ -142,6 +143,7 @@ void Robot::rotateCounterClockwiseAndSense(int deg, Arena* arena)
 	map<int, int>* sensorData = _conn->sendRotationCounterClockwiseAndSense(deg);
 #endif
 	--_direction;
+	cout << "robot move sent!" << endl;
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 void Robot::moveForwardAndSense(int dist, Arena* arena)
@@ -160,6 +162,7 @@ void Robot::moveForwardAndSense(int dist, Arena* arena)
 		case RIGHT: // right
 			++_posX; break;
 	}
+	cout << "robot move sent!" << endl;
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 
@@ -420,9 +423,11 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int range)
 {
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
+	bool obsReturn = false;
 	if (range == -1) // to far to detect
 	{
 		//return;
+		obsReturn = true;
 		range = US_RANGE;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
@@ -435,6 +440,8 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
+		if (obsReturn && arena->getGridType(x, y) == OBSTACLE)
+			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
 	//if (range <= 0)

@@ -90,10 +90,12 @@ bool MainWindow::exploreProcessHandler()
 	this->refreshAllDisplay();
 #endif
 	io->printArena(arena);
-	while(!robot->sendItselfAndArena(arena))
-		;
-	
-	if (!continueTimer)  // exploration is done, go back to start point
+	if (continueTimer)
+	{
+		while(!robot->sendItselfAndArena(arena))
+			;
+	}
+	else  // exploration is done, go back to start point
 	{
 #ifdef GUI
 		robot->calibrateAtGoal();
