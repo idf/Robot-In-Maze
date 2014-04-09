@@ -18,7 +18,7 @@ MainWindow::MainWindow()
 	
 	// initialize display structure5
 	percentageEntry.set_text("100");
-	timeLimitEntry.set_text("360");
+	timeLimitEntry.set_text("400");
 	this->add(vbox);
 	vbox.pack_start(arenaDisplay);
 	vbox.pack_start(hbox);
@@ -54,10 +54,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::startExplorationButtonClicked()
 {
+	robot->senseEnvironment(arena, fullArena);
+	io->printArena(arena);
 #ifdef ANDROID
 	conn->waitForAndroidExplore();
 #endif
-	robot->senseEnvironment(arena, fullArena);
 #ifdef GUI
 	this->refreshAllDisplay();
 #endif
@@ -67,17 +68,34 @@ void MainWindow::startExplorationButtonClicked()
 
 bool MainWindow::exploreProcessHandler()
 {
-	std::vector<std::pair<std::string, int>*>* movementList;
+	//robot->calibrateAtStart();
+	std::vector<std::pair<std::string, int>*>* movementList = new std::vector<std::pair<std::string, int>*>();
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 80));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 60));
+	//movementList->push_back(new pair<string, int>("rotateCounterClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 60));
+	//movementList->push_back(new pair<string, int>("rotateClockwise", 90));
+	//movementList->push_back(new pair<string, int>("moveForward", 30));
+	//pathFinder->runOnePath(movementList, true);
+	//return false;
 	std::vector<Grid*> result;
 	bool continueTimer = pathFinder->explore(atoi(percentageEntry.get_text().c_str()), atoi(timeLimitEntry.get_text().c_str()));
 #ifdef GUI
 	this->refreshAllDisplay();
 #endif
 	io->printArena(arena);
-	while(!robot->sendItselfAndArena(arena))
-		;
-	
-	if (!continueTimer)  // exploration is done, go back to start point
+	if (continueTimer)
+	{
+		while(!robot->sendItselfAndArena(arena))
+			;
+	}
+	else  // exploration is done, go back to start point
 	{
 #ifdef GUI
 		robot->calibrateAtGoal();
@@ -100,12 +118,15 @@ bool MainWindow::exploreProcessHandler()
 		Glib::signal_timeout().connect( sigc::mem_fun(*this, &MainWindow::shortestPathHandler), 250 );
 		return false;
 #else
-		robot->calibrateAtGoal();
-		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
-		movementList = pathFinder->getMovementList(result);
-		pathFinder->runOnePath(movementList, false);
+		if (robot->getPosX() != ARENA_START_X || robot->getPosY() != ARENA_START_Y)
+		{
+			if (robot->getPosX() == ARENA_END_X && robot->getPosY() == ARENA_END_Y)
+				robot->calibrateAtGoal();
+			result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_START_X, ARENA_START_Y, true);
+			movementList = pathFinder->getMovementList(result);
+			pathFinder->runOnePath(movementList, false);
+		}
 		robot->calibrateAtStart();
-
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
 		movementList = pathFinder->getMovementList(result);
 		pathFinder->runOnePath(movementList, true);

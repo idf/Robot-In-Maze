@@ -6,8 +6,8 @@
 #define ARENA_UNIT_DISTANCE 10
 #define ARENA_START_X 1
 #define ARENA_START_Y 1
-#define ARENA_END_X 17
-#define ARENA_END_Y 12
+#define ARENA_END_X 18
+#define ARENA_END_Y 13
 
 #include <cstdlib>
 #include <map>

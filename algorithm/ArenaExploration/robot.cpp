@@ -58,16 +58,16 @@ Robot::Robot(int x, int y, DIRECTION direction, Connector* conn):
 	// initialize sensor configuration
 	Sensor* IRFrontL = new Sensor(IRFRONTL_ID, 0, Sensor::IR);
 	Sensor* IRFrontR = new Sensor(IRFRONTR_ID, 0, Sensor::IR);
-	Sensor* IRLeft = new Sensor(IRLEFT_ID, 90, Sensor::IR);
+	Sensor* IRFrontC = new Sensor(IRFRONTC_ID, 0, Sensor::IR);
 	Sensor* IRRight = new Sensor(IRRIGHT_ID, 270, Sensor::IR);
-	Sensor* USFront = new Sensor(USFRONT_ID, 0, Sensor::US);
-	Sensor* USSide = new Sensor(USSIDE_ID, 0, Sensor::US);
+	Sensor* USLeft = new Sensor(USLEFT_ID, 0, Sensor::US);
+	Sensor* USRight = new Sensor(USRIGHT_ID, 0, Sensor::US);
 	_sensors.push_back(IRFrontL);
 	_sensors.push_back(IRFrontR);
-	_sensors.push_back(IRLeft);
+	_sensors.push_back(IRFrontC);
 	_sensors.push_back(IRRight);
-	_sensors.push_back(USFront);
-	_sensors.push_back(USSide);
+	_sensors.push_back(USLeft);
+	_sensors.push_back(USRight);
 }
 Robot::~Robot(){}
 
@@ -134,6 +134,7 @@ void Robot::rotateClockwiseAndSense(int deg, Arena* arena)
 	map<int, int>* sensorData = _conn->sendRotationClockwiseAndSense(deg);
 #endif
 	++_direction;
+	cout << "robot move sent!" << endl;
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 void Robot::rotateCounterClockwiseAndSense(int deg, Arena* arena)
@@ -142,6 +143,7 @@ void Robot::rotateCounterClockwiseAndSense(int deg, Arena* arena)
 	map<int, int>* sensorData = _conn->sendRotationCounterClockwiseAndSense(deg);
 #endif
 	--_direction;
+	cout << "robot move sent!" << endl;
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 void Robot::moveForwardAndSense(int dist, Arena* arena)
@@ -160,6 +162,7 @@ void Robot::moveForwardAndSense(int dist, Arena* arena)
 		case RIGHT: // right
 			++_posX; break;
 	}
+	cout << "robot move sent!" << endl;
 	openArenaWithSensorData(mapDataWithSensor(sensorData), arena);
 }
 
@@ -241,10 +244,9 @@ map<Sensor*, int>* Robot::mapDataWithSensor(map<int, int>* data)
 void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 {
 	// Mark current robot location as UNOCCUPIED
-	arena->setGridType(this->_posX, this->_posY, UNOCCUPIED);
-	arena->setGridType(this->_posX+1, this->_posY, UNOCCUPIED);
-	arena->setGridType(this->_posX, this->_posY+1, UNOCCUPIED);
-	arena->setGridType(this->_posX+1, this->_posY+1, UNOCCUPIED);
+	for (int i = -1; i < 2; ++i)
+		for (int j = -1; j < 2; ++j)
+			arena->setGridType(this->_posX + i, this->_posY + j, UNOCCUPIED);
 	// determine sensor location (x,y), and sensor direction (enum)
 
 	for (map<Sensor*, int>::iterator iter = sensorData->begin(); iter != sensorData->end(); ++iter)
@@ -255,8 +257,6 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 		// fall through cases to minimize code repetition
 		switch (sensorID)
 		{
-		case IRLEFT_ID: // IRLeft
-			sensorDir--;
 		case IRFRONTL_ID: // IRFrontL
 			switch(this->_direction)
 			{
@@ -264,10 +264,30 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 				sensorX = this->_posX+1; sensorY = this->_posY+1;
 				break;
 			case LEFT:
-				sensorX = this->_posX; sensorY = this->_posY+1;
+				sensorX = this->_posX-1; sensorY = this->_posY+1;
 				break;
 			case UP:
-				sensorX = this->_posX; sensorY = this->_posY;
+				sensorX = this->_posX-1; sensorY = this->_posY-1;
+				break;
+			case RIGHT:
+				sensorX = this->_posX+1; sensorY = this->_posY-1;
+				break;
+			default:
+				break;
+			}
+			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second, sensorID);
+			break;
+		case IRFRONTC_ID:
+			switch(this->_direction)
+			{
+			case DOWN:
+				sensorX = this->_posX; sensorY = this->_posY+1;
+				break;
+			case LEFT:
+				sensorX = this->_posX-1; sensorY = this->_posY;
+				break;
+			case UP:
+				sensorX = this->_posX; sensorY = this->_posY-1;
 				break;
 			case RIGHT:
 				sensorX = this->_posX+1; sensorY = this->_posY;
@@ -283,13 +303,13 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			switch(this->_direction)
 			{
 			case DOWN:
-				sensorX = this->_posX; sensorY = this->_posY+1;
+				sensorX = this->_posX-1; sensorY = this->_posY+1;
 				break;
 			case LEFT:
-				sensorX = this->_posX; sensorY = this->_posY;
+				sensorX = this->_posX-1; sensorY = this->_posY-1;
 				break;
 			case UP:
-				sensorX = this->_posX+1; sensorY = this->_posY;
+				sensorX = this->_posX+1; sensorY = this->_posY-1;
 				break;
 			case RIGHT:
 				sensorX = this->_posX+1; sensorY = this->_posY+1;
@@ -299,68 +319,47 @@ void Robot::openArenaWithSensorData(map<Sensor*, int>* sensorData, Arena* arena)
 			}
 			openIRHorizon(arena, sensorX, sensorY, sensorDir, iter->second, sensorID);
 			break;
-		case USFRONT_ID: // USFront
+		case USLEFT_ID:
+			sensorDir--;
 			switch(this->_direction)
 			{
 			case DOWN:
-				sensorX = this->_posX; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
-				sensorX = this->_posX+1; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX+1; sensorY = this->_posY;
 				break;
 			case LEFT:
-				sensorX = this->_posX; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 				sensorX = this->_posX; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 				break;
 			case UP:
-				sensorX = this->_posX+1; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
-				sensorX = this->_posX; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX-1; sensorY = this->_posY;
 				break;
 			case RIGHT:
-				sensorX = this->_posX+1; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
-				sensorX = this->_posX+1; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX; sensorY = this->_posY-1;
 				break;
 			default: 
 				break;
 			}
+			openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 			break;
-		case USSIDE_ID:  // right ur sensor
+		case USRIGHT_ID:  // right ur sensor
 			sensorDir++;
 			switch(this->_direction)
 			{
 			case DOWN:
-				sensorX = this->_posX; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
-				sensorX = this->_posX; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX-1; sensorY = this->_posY;
 				break;
 			case LEFT:
-				sensorX = this->_posX; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
-				sensorX = this->_posX+1; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
+				sensorX = this->_posX; sensorY = this->_posY-1;
 				break;
 			case UP:
 				sensorX = this->_posX+1; sensorY = this->_posY;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
-				sensorX = this->_posX+1; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 				break;
 			case RIGHT:
-				sensorX = this->_posX+1; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 				sensorX = this->_posX; sensorY = this->_posY+1;
-				openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 				break;
 			default: 
 				break;
 			}
+			openUSHorizon(arena, sensorX, sensorY, sensorDir, iter->second);
 			break;
 		default:
 			break;
@@ -394,16 +393,11 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 {
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
 	int i;
-	bool noObstacle = false;
+	bool setObstacle = true;
 	if (range == -1) // to far or too near to detect. Dont open for safety reason
 	{
-		if (sensorID == IRLEFT_ID)
-		{
-			range = SMALL_IR_RANGE;
-			noObstacle = true;
-		}
-		else
-			return;
+		range = SMALL_IR_RANGE - 10;
+		setObstacle = false;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (i = 0; i <= range/10; ++i)  // NOTE: DIFFERENT
@@ -421,8 +415,7 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
-	//cout << "setting grid: "<< x << ", " << y << " as OBSTACLE"<<endl;
-	if (!noObstacle)
+	if (setObstacle)
 		arena->setGridType(x, y, OBSTACLE);
 }
 
@@ -430,10 +423,12 @@ void Robot::openIRHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int range)
 {
 	cout << "sensor adjusted information: " << x << ", " << y << ", " << direction << ", " << range << endl;
+	bool obsReturn = false;
 	if (range == -1) // to far to detect
 	{
-		return;
-		//range = US_RANGE;
+		//return;
+		obsReturn = true;
+		range = US_RANGE;
 	}
 	// it will set one extra grid to free. If there is an obstacle, the later part will overwrite it.
 	for (int i = 0; i < range/10; ++i)  // NOTE: DIFFERENT
@@ -445,8 +440,21 @@ void Robot::openUSHorizon(Arena* arena, int x, int y, DIRECTION direction, int r
 		case UP: --y; break;
 		case RIGHT: ++x; break;
 		}
+		if (obsReturn && arena->getGridType(x, y) == OBSTACLE)
+			return;
 		arena->setGridType(x, y, UNOCCUPIED);
 	}
+	//if (range <= 0)
+	//{
+	//	switch (direction)
+	//	{
+	//	case DOWN: ++y; break;
+	//	case LEFT: --x; break;
+	//	case UP: --y; break;
+	//	case RIGHT: ++x; break;
+	//	}
+	//	arena->setGridType(x, y, OBSTACLE);
+	//}
 }
 
 #ifdef GUI

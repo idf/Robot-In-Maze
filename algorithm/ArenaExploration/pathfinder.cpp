@@ -12,12 +12,10 @@ PathFinder::PathFinder(Robot* robot, Arena* arena, Arena* fullArena, Connector *
 #ifdef GUI
 	_endY = ARENA_END_Y;
 #else
-	_endY = ARENA_END_Y;
+	_endY = ARENA_START_Y;
 #endif
 	_destinationCount = 0;
 	_conn = conn;
-	_safetyDistanceMode = true;
-	_pathIsSafe = true;
 }
 PathFinder::~PathFinder()
 {}
@@ -31,44 +29,50 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 #ifdef GUI
 	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY)&& time(0) - start < timeLimitInSeconds)
 #else
-	if ((_robot->getPosX() != _endX || _robot->getPosY() != _endY) && time(0) - start < timeLimitInSeconds) // exploration not done
+	if (_destinationCount < 4 && time(0) - start < timeLimitInSeconds) // exploration not done
 #endif
 	{
-		cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
-		cout <<"time elapsed: " << time(0) - start << endl;
 		if (_robot->getPosX() != _endX || _robot->getPosY() != _endY)
 		{
-			// if not reachable, means it is detected. Find next location
-			if(!pointIsWalkable(_endX, _endY))
-			{
-				cout << "old destination: " << _endX << _endY;
-				this->selectNextDestination();
-				cout << "new destination: " << _endX << _endY << endl;
-				return true;
-			}
 			// move to new place, sense the surrounding
-			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
-
-			if (!this->_pathIsSafe)
+			for (vector<Grid*>::iterator i = experiencedPath.begin(); i != experiencedPath.end(); ++i)
 			{
-				cout << "recalculate path with safety distance disabled" << endl;
-				this->_safetyDistanceMode = false;
-				result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
-				this->_pathIsSafe = true;
-				this->_safetyDistanceMode = true;
+				for (int j = -1; j < 2; ++j)
+					for (int k = -1; k < 2; ++k)
+						_arena->setGridType((*i)->getX() + j,(*i)->getY() + k, UNOCCUPIED);
 			}
-
-			vector<Grid*>::reverse_iterator i = result.rbegin();
+			vector<Grid*> result = findPathBetween(_robot->getPosX(), _robot->getPosY(), _endX, _endY, false);
 			
-			if (result.begin() != result.end()) // list not empty
-				getRobotToMoveAndSense(*i);
-			else	// if there is no path to current location, find next location
+			// If there is no path to current goal, find next location
+			if(result.begin() == result.end())
 			{
 				cout << "old destination: " << _endX << _endY;
 				this->selectNextDestination();
 				cout << "new destination: " << _endX << _endY << endl;
 				return true;
 			}
+
+			// resolve direction path problem
+			if (isSamePath(prevPrev, result))
+			{
+				cout << "stuck, choose one path!" <<endl;
+				vector<Grid*>::reverse_iterator i = result.rbegin();
+				if (result.begin() != result.end())
+				{
+					while (i != result.rend() && !getRobotToMoveAndSense(*i))
+						++i;
+				}
+				// if there is no path to go, it will stuck here -> loop by timer, and both is empty.
+				prevPrev = prev;
+				prev = result;
+				return true;
+			}
+			prevPrev = prev;
+			prev = result;
+			vector<Grid*>::reverse_iterator i = result.rbegin();
+			getRobotToMoveAndSense(*i);
+			cout << _robot->getPosX() << ", " << _robot->getPosY() << _robot->getDirection() << endl;
+			cout <<"time elapsed: " << time(0) - start << endl;
 			return true;
 		}
 		else  // goal reached, calibrate at goal and go to next destination
@@ -90,8 +94,16 @@ bool PathFinder::explore(int percentage, int timeLimitInSeconds)
 			return true;
 		}
 	}
-	else 
-		return false; // exploration complete
+	else // exploration done or time exceeded
+	{
+		for (vector<Grid*>::iterator i = experiencedPath.begin(); i != experiencedPath.end(); ++i)
+		{
+			for (int j = -1; j < 2; ++j)
+				for (int k = -1; k < 2; ++k)
+					_arena->setGridType((*i)->getX() + j,(*i)->getY() + k, UNOCCUPIED);
+		}
+		return false; 
+	}
 }
 
 bool PathFinder::isSameDirection(Grid* current, Grid* next)
@@ -155,6 +167,7 @@ int PathFinder::addSafeWeight(Grid* grid)
 // astar, not the shortest path
 vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int endY, bool oneShortestPathRun)
 {
+	cout << "Pathfinder: " << endX << endY << endl;
 	vector<Grid*> path;
 	Grid *current, *child, *start, *end;
 	start = _arena->getGrid(startX, startY);
@@ -183,10 +196,9 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		else
 		{
 			// same dir, safe
-			for (i = openList.begin(); _safetyDistanceMode && i != openList.end(); ++ i)
+			for (i = openList.begin();i != openList.end(); ++ i)
 			{
-				//cout << (*i)->getX() <<  (*i)->getY();
-				if (addSafeWeight(*i) != 0 || !isSameDirection(current, *i))
+				if (!isSameDirection(current, *i))
 					continue;
 				if (!isSet || (*i)->heuristic <= current->heuristic)
 			    {
@@ -194,35 +206,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					isSet = true;
 			    }
 			}
-
-			// different dir, safe
-			if (!isSet)
-			{
-				for (i = openList.begin(); _safetyDistanceMode && i != openList.end(); ++ i)
-				{
-					if (addSafeWeight(*i) != 0)
-						continue;
-				    if (!isSet || (*i)->heuristic <= current->heuristic)
-				    {
-				        current = (*i);
-						isSet = true;
-				    }
-				}
-			}
-			if (!isSet)
-			{
-				for (i = openList.begin(); i != openList.end(); ++ i)
-				{
-					if (!isSameDirection(current, *i))
-						continue;
-				    if (!isSet || (*i)->heuristic <= current->heuristic)
-				    {
-				        current = (*i);
-						isSet = true;
-				    }
-				}
-				_pathIsSafe = false;
-			}
 			if (!isSet)
 			{
 				for (i = openList.begin(); i != openList.end(); ++ i)
@@ -233,7 +216,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 						isSet = true;
 				    }
 				}
-				_pathIsSafe = false;
 			}
 			
 		}
@@ -242,9 +224,20 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 		if (current == end)
 			break;
 
-		// check if there is no path to go. if yes, return a null path
+		// check if there is no path to go. if yes, reset all and return a null path
 		if (openList.begin() == openList.end())
+		{
+			for (i = openList.begin(); i != openList.end(); ++ i)
+				(*i)->opened = false;
+
+			for (i = closedList.begin(); i != closedList.end(); ++ i)
+				(*i)->closed = false;
+
+			for (int i = 0; i < ARENA_X_SIZE; ++i)
+				for (int j = 0; j < ARENA_Y_SIZE; ++j)
+					_arena->getGrid(i, j)->parent = NULL;
 			return path;
+		}
 
 		// Remove the current point from the openList
 		current->opened = false;
@@ -270,7 +263,6 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					current->getY() + y < 0 ||
 					current->getY() + y >= ARENA_Y_SIZE)
 					continue;
-
 				// if the robot can't move in 45 degree direction
 #ifdef STRAIGHT_MODE
 				if (abs(x) == abs(y))
@@ -327,6 +319,7 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 					child->parent = current;
 					child->computeScores(end);
 				}
+
 			}
 		}
 		++n;
@@ -334,14 +327,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 
 	// Reset
 	for (i = openList.begin(); i != openList.end(); ++ i)
-	{
 		(*i)->opened = false;
-	}
 
 	for (i = closedList.begin(); i != closedList.end(); ++ i)
-	{
 		(*i)->closed = false;
-	}
 
 	// Resolve the path starting from the end point
 	while (current->hasParent() && current != start)
@@ -361,11 +350,10 @@ vector<Grid*> PathFinder::findPathBetween(int startX, int startY, int endX, int 
 bool PathFinder::pointIsWalkable(int x, int y)
 {
 	// obstacle case
-	if (_arena->getGridType(x, y) == OBSTACLE ||
-		_arena->getGridType(x + 1, y) == OBSTACLE ||
-		_arena->getGridType(x, y + 1) == OBSTACLE ||
-		_arena->getGridType(x + 1, y + 1) == OBSTACLE)
-		return false;
+	for (int i = -1; i < 2; ++i)
+		for (int j = -1; j < 2; ++j)
+			if (_arena->getGridType(x + i, y + j) == OBSTACLE)
+				return false;
 	// border case
 	if (x + 1 >= ARENA_X_SIZE || y + 1 >= ARENA_Y_SIZE)
 		return false;
@@ -374,17 +362,12 @@ bool PathFinder::pointIsWalkable(int x, int y)
 
 bool PathFinder::pointIsAlwaysSafe(int x, int y)
 {
-	if (_arena->getGridType(x, y) != OBSTACLE &&
-		_arena->getGridType(x + 1, y) != OBSTACLE &&
-		_arena->getGridType(x, y + 1) != OBSTACLE &&
-		_arena->getGridType(x + 1, y + 1) != OBSTACLE &&
-		_arena->getGridType(x, y) != UNEXPLORED &&
-		_arena->getGridType(x + 1, y) != UNEXPLORED &&
-		_arena->getGridType(x, y + 1) != UNEXPLORED &&
-		_arena->getGridType(x + 1, y + 1) != UNEXPLORED)
-		return true;
-	else
-		return false;
+	for (int i = -1; i < 2; ++i)
+		for (int j = -1; j < 2; ++j)
+			if (_arena->getGridType(x + i, y + j) == OBSTACLE ||
+				_arena->getGridType(x + i, y + j) == UNEXPLORED )
+				return false;
+	return true;
 }
 
 bool PathFinder::substituteNewPoint(int x, int y)
@@ -402,8 +385,9 @@ bool PathFinder::substituteNewPoint(int x, int y)
 }
 
 // rotate or move forward
-void PathFinder::getRobotToMoveAndSense(Grid* destination)
+bool PathFinder::getRobotToMoveAndSense(Grid* destination)
 {
+	cout << "robot move sent!" << endl;
 #ifdef HARDWARE
 	int xDiff = destination->getX() - _robot->getPosX();
 	int yDiff = destination->getY() - _robot->getPosY();
@@ -415,7 +399,11 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 	else if (xDiff == 0 && yDiff == -1)
 		dir = UP;
 	if (dir == robotDir)
+	{
+		experiencedPath.push_back(_arena->getGrid(_robot->getPosX(), _robot->getPosY()));
 		_robot->moveForwardAndSense(10, _arena);
+		return true;
+	}
 	else 
 		{
 		if (robotDir == DOWN && dir == RIGHT)
@@ -426,6 +414,7 @@ void PathFinder::getRobotToMoveAndSense(Grid* destination)
 			_robot->rotateClockwiseAndSense(90, _arena);
 		else
 			_robot->rotateCounterClockwiseAndSense(90, _arena);
+		return false;
 		}
 #else
 	this->_robot->setLocation(destination->getX(), destination->getY());
@@ -450,7 +439,7 @@ void PathFinder::runOnePath(vector<pair<std::string, int>*>* movementList, bool 
 		}
 #ifdef ANDROID
 		cout << "Wait for android run.";
-		conn->waitForAndroidRun();
+		_conn->waitForAndroidRun();
 #else
 		cout << "Wait for button press";
 		getchar();
@@ -599,4 +588,18 @@ void PathFinder::selectNextDestination()
 		break;
 	}
 	++_destinationCount;
+}
+
+bool PathFinder::isSamePath(vector<Grid*> one, vector<Grid*> two)
+{
+	vector<Grid*>::reverse_iterator i,j;
+	for (i = one.rbegin(), j = two.rbegin(); i != one.rend() && j != two.rend(); ++i, ++j)
+	{
+		if ((*i)->getX() != (*j)->getX() || (*i)->getY() != (*j)->getY())
+			return false;
+	}
+	if (i != one.rend() || j != two.rend())
+		return false;
+	else
+		return true;
 }
