@@ -1,7 +1,7 @@
 #include "Calibrator.h"
 #define TRIAL_INTERVAL (0.5*1000)
 #define TRIAL_UPPER_LIMIT 9
-#define TARGET_DISTANCE 4 
+#define TARGET_DISTANCE 5 
 // Target Distance, experimentally adjusted
 //public 
 

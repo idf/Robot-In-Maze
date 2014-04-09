@@ -111,7 +111,10 @@ bool Eyes::is_safe_forward(int dis) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private
 int Eyes::get_ultra_reading(int index) {
-  return this->ultrasound[index]->dist()-this->ultra_offsets[index];
+  int distance = this->ultrasound[index]->dist();
+  if(distance>107 || distance<3) 
+    return -1;
+  return distance-this->ultra_offsets[index];
 }
 
 int Eyes::get_ir_reading(int index) {
@@ -130,7 +133,7 @@ bool Eyes::is_within_range(SharpIR* sensor, int index) {
 }
 
 bool Eyes::is_within_range(Ultrasound* sensor, int index) {
-  for(int i=0; i<2; i++) {
+  for(int i=0; i<5; i++) {
     int distance = sensor->dist();
     if(distance>107 || distance<3) // TODO
       return false;
