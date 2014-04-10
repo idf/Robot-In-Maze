@@ -168,7 +168,7 @@ void Calibrator::calibrate_distance() {
     }
 
     if(delta>0) {
-      moveForward(abs(delta));
+        moveForward(abs(delta)); delay(100);
     }
     else {
         moveBackward(abs(delta)); delay(100);
