@@ -1,9 +1,13 @@
-ntu.sce.mdp.15
+Robot Exploring the Random Maze
 ==============
-###Nanyang Technological University  
-###Multi-disciplinary Design Project  
+###Welcome to Fork.
+####Multi-disciplinary Design Project. 
+####Nanyang Technological University, Singapore.   
 ![pic](./img/p0.jpg)
 
+Overview
+==============
+![pic](./img/p1.jpg)
 Algorithm Requirements
 ==============
 See the ./algorithm/README.md
