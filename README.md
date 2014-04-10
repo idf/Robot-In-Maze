@@ -1,8 +1,8 @@
 ntu.sce.mdp.15
 ==============
-TO BE THE FASTEST.  
-Swifter, stronger, and more precise.  
-
+Nanyang Technological University  
+Multi-disciplinary Design Project  
+![pic](./img/p0.jpg)
 Arduino Requirements
 ==============
 See the ./arduino_motor/README.md
