@@ -26,7 +26,7 @@ Eyes::Eyes(
   this->ultra_offsets[0] = 2;
   this->ultra_offsets[1] = 2;
 
-  this->sharp_offsets[0] = 4; 
+  this->sharp_offsets[0] = 5; 
   this->sharp_offsets[1] = 5; 
   this->sharp_offsets[2] = 3; 
   this->sharp_offsets[3] = 5; 

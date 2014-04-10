@@ -1,12 +1,12 @@
 ntu.sce.mdp.15
 ==============
-TO BE THE FASTEST.  
-Swifter, stronger, and more precise.  
+###Nanyang Technological University  
+###Multi-disciplinary Design Project  
+![pic](./img/p0.jpg)
 
 Algorithm Requirements
 ==============
 See the ./algorithm/README.md
-
 
 Arduino Requirements
 ==============
