@@ -55,22 +55,22 @@ void Calibrator::try_calibrate() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //private
 void Calibrator::sided_calibrate() {
-  const int TOO_CLOSE = 3;
+  const int TOO_CLOSE = 4;
   
   int left_reading = frontEye->get_ultra_reading_left();
-  if (left_reading<TOO_CLOSE) {
-    turnLeft(90); delay(100);
-    //moveBackward(TARGET_DISTANCE-left_reading-1);
+  if (left_reading>0&& left_reading<TOO_CLOSE) {
+    turnLeft(90); 
+    moveBackward(1);
     this->front_calibrate();
-    turnRight(90); delay(100);
+    turnRight(90); 
   }
 
   int right_reading = frontEye->get_ultra_reading_right();
-  if (right_reading<TOO_CLOSE&&frontEye->output_reading_ir(3)==0) {
-    turnRight(90); delay(100);
-    //moveBackward(TARGET_DISTANCE-right_reading-1);
+  if (right_reading>0&&right_reading<TOO_CLOSE&&frontEye->output_reading_ir(3)==0) {
+    turnRight(90); 
+    moveBackward(1);
     this->front_calibrate();
-    turnLeft(90); delay(100);
+    turnLeft(90); 
   }
 
 }
@@ -158,6 +158,8 @@ void Calibrator::calibrate_distance() {
   while(true) { // break at abs(delta)<=threshold
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
+    if(abs(left_reading-right_reading)>10)
+      return ;
     avg_reading = (left_reading+right_reading)/2.0;
     delta = avg_reading - TARGET_DISTANCE; // actual - expected 
 
