@@ -126,18 +126,23 @@ bool MainWindow::exploreProcessHandler()
 			movementList = pathFinder->getMovementList(result);
 			pathFinder->runOnePath(movementList, false);
 		}
+		io->printArena(arena);
+		io->complementMap(fullArena);
+		for (vector<Grid*>::iterator i = pathFinder->experiencedPath.begin(); i != pathFinder->experiencedPath.end(); ++i)
+		{
+			for (int j = -1; j < 2; ++j)
+				for (int k = -1; k < 2; ++k)
+					fullArena->setGridType((*i)->getX() + j,(*i)->getY() + k, UNOCCUPIED);
+		}
+		io->printArena(fullArena);
+		io->generateMapDescriptorLevel1();
+		io->generateMapDescriptorLevel2();
+		io->printArena(arena);
 		robot->calibrateAtStart();
 		result = pathFinder->findPathBetween(robot->getPosX(), robot->getPosY(), ARENA_END_X, ARENA_END_Y, true);
 		movementList = pathFinder->getMovementList(result);
 		pathFinder->runOnePath(movementList, true);
 #endif
-		io->printArena(arena);
-		io->generateMapDescriptorLevel1a();
-		io->generateMapDescriptorLevel2a();
-		io->complementMap(arena);
-		io->printArena(arena);
-		io->generateMapDescriptorLevel1();
-		io->generateMapDescriptorLevel2(); 
 	}
 	return continueTimer;
 }

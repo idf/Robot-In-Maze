@@ -30,6 +30,7 @@ public:
 	void selectNextDestination();
 	time_t start;
 	bool PathFinder::isSamePath(std::vector<Grid*> one, std::vector<Grid*> two);
+	std::vector<Grid*> experiencedPath;
 private:
 	int _endX, _endY;
 	Robot* _robot;
@@ -39,7 +40,6 @@ private:
 	bool _safetyDistanceMode;
 	bool _pathIsSafe;
 	std::vector<Grid*> prev, prevPrev;
-	std::vector<Grid*> experiencedPath;
 };
 
 #endif
