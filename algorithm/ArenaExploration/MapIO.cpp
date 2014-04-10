@@ -70,6 +70,10 @@ void MapIO::readMapFromFile(std::string filename)
 
 void MapIO::complementMap(Arena* arena)
 {
+	for (int i = 0; i < ARENA_X_SIZE; ++i)
+		for (int j = 0; j < ARENA_Y_SIZE; ++j)
+			_fullArena->setGridType(i, j, _arena->getGridType(i, j));
+
 	int count;
 	for (int i = 0; i < ARENA_X_SIZE; ++i)
 		{
@@ -118,15 +122,16 @@ void MapIO::complementMap(Arena* arena)
 					arena->setGridType(i, j, OBSTACLE);
 			}
 		}
-		// set all other as unoccupied
+		//set all other as unexplored
 		for (int i = 0; i < ARENA_X_SIZE; ++i)
 		{
 			for (int j = 0; j < ARENA_Y_SIZE; ++j)
 			{
-				if (arena->getGridType(i, j) == UNEXPLORED)
-					arena->setGridType(i, j, UNOCCUPIED);
+				if (arena->getGridType(i, j) == UNOCCUPIED)
+					arena->setGridType(i, j, UNEXPLORED);
 			}
 		}
+
 }
 void MapIO::generateMapDescriptorLevel1a()
 {
@@ -138,7 +143,7 @@ void MapIO::generateMapDescriptorLevel1a()
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
-			switch(_arena->getGridType(i, j))
+			switch(_fullArena->getGridType(i, j))
 			{
 			case UNEXPLORED:
 				data.append("0");
@@ -166,7 +171,7 @@ void MapIO::generateMapDescriptorLevel2a()
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
-			switch(_arena->getGridType(i, j))
+			switch(_fullArena->getGridType(i, j))
 			{
 			case UNOCCUPIED:
 			case START:
@@ -202,7 +207,7 @@ void MapIO::generateMapDescriptorLevel1()
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
-			switch(_arena->getGridType(i, j))
+			switch(_fullArena->getGridType(i, j))
 			{
 			case UNEXPLORED:
 				data.append("0");
@@ -230,7 +235,7 @@ void MapIO::generateMapDescriptorLevel2()
 	{
 		for (int j = 0; j < ARENA_Y_SIZE; ++j)
 		{
-			switch(_arena->getGridType(i, j))
+			switch(_fullArena->getGridType(i, j))
 			{
 			case UNOCCUPIED:
 			case START:
