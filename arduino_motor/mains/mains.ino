@@ -26,12 +26,12 @@ void loop(void)
   
   warmingUp(); serialCommnder->receive_exec_command();
   
-  
+  // TESTING
   //warmingUp(); pidMgr->setScale(1); moveForward(10); pidMgr->restore(); printCounts(); errorCumulator->print_dead_reckoning(); delay(400); 
   //warmingUp(); turnLeft(90);  printCounts(); delay(400);
 
   //calibrator->calibrate(6); delay(10000);
-  //calibrator->test_calibrate(); delay(1000);
+  //calibrator->test_calibrate(); delay(3000);
   //eyes->test_readings();
   //getSensorReadings(); delay(1000);
 

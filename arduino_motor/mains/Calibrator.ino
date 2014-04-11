@@ -81,7 +81,7 @@ void Calibrator::front_calibrate() {
     left_reading = frontEye->get_ir_reading_left();
     right_reading = frontEye->get_ir_reading_right();
     if(left_reading<TRIAL_UPPER_LIMIT && right_reading<TRIAL_UPPER_LIMIT) {
-      this->one_side_calibrate(1);
+      this->one_side_calibrate(2);
     }
   }  
 }
