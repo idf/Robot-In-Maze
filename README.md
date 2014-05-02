@@ -1,4 +1,4 @@
-Robot Exploring the Random Maze
+Robot Exploring the Random Maze - 2014 Spring
 ==============
 ###Welcome to Fork.
 ####Multi-disciplinary Design Project. 
