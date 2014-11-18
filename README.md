@@ -10,15 +10,18 @@ Overview
 ![pic](./img/p1.jpg)
 Algorithm Requirements
 ==============
+PC is running the algorithm.  
 See the ./algorithm/README.md
 
 Arduino Requirements
 ==============
+Arduino is for Robot control.  
 See the ./arduino_motor/README.md
 
 
-Raspberry Requirements
+Raspberry Pi Requirements
 ==============
+Raspberry Pi is for communication middle man coordinating PC, Arduino, and Android. 
 See the ./raspberry/README.md
 
 Branch Convention
