@@ -21,7 +21,7 @@ See the ./arduino_motor/README.md
 
 Raspberry Pi Requirements
 ==============
-Raspberry Pi is for communication middle man coordinating PC, Arduino, and Android. 
+Raspberry Pi is for communication middle man coordinating PC, Arduino, and Android.  
 See the ./raspberry/README.md
 
 Branch Convention
