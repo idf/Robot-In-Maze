@@ -1,7 +1,6 @@
-ntu.sce.mdp.15
+Arduino
 ==============
-TO BE THE FASTEST.  
-Swifter, stronger, and more precise.  
+Core code in ./mains
 
 Arduino Requirements
 ==============
@@ -9,10 +8,9 @@ Arduino Requirements
 
 PololuWheelEncoder is using ISR(PCINT0_vect), interrupt Service Routine  
 !important Avoid Serial printing in Polling
-abs() in Arduino has adverse effect; thus do not use it on function's return value  
 
 NAMING CONVENTION  
-method_name  
+method_name
 functionName  
 
 Library Dependencies:  
