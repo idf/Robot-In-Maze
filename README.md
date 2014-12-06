@@ -27,3 +27,7 @@ See the ./raspberry/README.md
 Branch Convention
 ==============
 This repo follows the git-flow convention. Releases and hotfixes are maintained in the master branch. Development happens in the develop branch. 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/zhangdanyangg/robot-in-maze/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
